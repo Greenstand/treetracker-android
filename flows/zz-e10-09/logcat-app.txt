@@ -1,0 +1,668 @@
+--------- beginning of main
+11-23 03:23:02.865  8162  8162 I eeTracker.debug: Late-enabling -Xcheck:jni
+11-23 03:23:02.918  8162  8162 I eeTracker.debug: Using CollectorTypeCMC GC.
+11-23 03:23:02.919  8162  8162 W eeTracker.debug: Unexpected CPU variant for x86: x86_64.
+11-23 03:23:02.919  8162  8162 W eeTracker.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-23 03:23:02.929  8162  8162 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-23 03:23:02.958  8162  8162 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-23 03:23:02.959  8162  8162 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-23 03:23:02.959  8162  8162 W ziparchive: Unable to open '/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.dm': No such file or directory
+11-23 03:23:02.959  8162  8162 W ziparchive: Unable to open '/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.dm': No such file or directory
+11-23 03:23:03.440  8162  8162 D nativeloader: Configuring clns-7 for other apk /data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/lib/x86_64:/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/org.greenstand.android.TreeTracker.debug
+11-23 03:23:03.448  8162  8162 V GraphicsEnvironment: Currently set values for:
+11-23 03:23:03.448  8162  8162 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-23 03:23:03.448  8162  8162 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-23 03:23:03.448  8162  8162 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-23 03:23:03.448  8162  8162 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-23 03:23:03.453  8162  8162 I MultiDex: VM with version 2.1.0 has multidex support
+11-23 03:23:03.453  8162  8162 I MultiDex: Installing application
+11-23 03:23:03.453  8162  8162 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+11-23 03:23:03.470  8162  8162 D SessionsDependencies: Dependency to CRASHLYTICS added.
+11-23 03:23:03.475  8162  8162 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-23 03:23:03.490  8162  8183 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-23 03:23:03.490  8162  8183 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-23 03:23:03.501  8162  8183 I DynamiteModule: Considering local module com.google.android.gms.measurement.dynamite:105 and remote module com.google.android.gms.measurement.dynamite:115
+11-23 03:23:03.501  8162  8183 I DynamiteModule: Selected remote version of com.google.android.gms.measurement.dynamite, version >= 115
+11-23 03:23:03.501  8162  8183 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-23 03:23:03.522  8162  8162 D FirebaseSessions: Initializing Firebase Sessions SDK.
+11-23 03:23:03.524  8162  8162 I FirebaseCrashlytics: Initializing Firebase Crashlytics 18.6.3 for org.greenstand.android.TreeTracker.debug
+11-23 03:23:03.528  8162  8183 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-23 03:23:03.528  8162  8183 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-23 03:23:03.533  8162  8162 D SessionsDependencies: Subscriber CRASHLYTICS registered.
+11-23 03:23:03.587  8162  8192 E FirebaseCrashlytics: Settings request failed.
+11-23 03:23:03.591  8162  8194 I FA      : App measurement initialized, version: 95014
+11-23 03:23:03.591  8162  8194 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-23 03:23:03.591  8162  8194 I FA      : To enable faster debug mode event logging run:
+11-23 03:23:03.591  8162  8194 I FA      :   adb shell setprop debug.firebase.analytics.app org.greenstand.android.TreeTracker.debug
+11-23 03:23:03.591  8162  8162 I FirebaseInitProvider: FirebaseApp initialization successful
+11-23 03:23:03.593  8162  8162 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-23 03:23:03.610  8162  8162 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-23 03:23:03.610  8162  8162 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+11-23 03:23:03.616  8162  8190 I FirebaseCrashlytics: No version control information found
+11-23 03:23:03.622  8162  8162 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-23 03:23:03.623  8162  8162 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-23 03:23:03.629  8162  8189 W InstallationId: Error getting authentication token.
+11-23 03:23:03.629  8162  8189 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-23 03:23:03.629  8162  8189 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-23 03:23:03.637  8162  8162 I AWSKeyValueStore: Detected Android API Level = 35
+11-23 03:23:03.637  8162  8162 I AWSKeyValueStore: Creating the AWSKeyValueStore with key for sharedPreferencesForData = com.amazonaws.android.auth
+11-23 03:23:03.639  8162  8162 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:03.639  8162  8162 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:03.640  8162  8162 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.identityId
+11-23 03:23:03.644  8162  8162 D CognitoCachingCredentia: Loading credentials from SharedPreferences
+11-23 03:23:03.647  8162  8162 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:03.647  8162  8162 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:03.647  8162  8162 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.expirationDate
+11-23 03:23:03.651  8162  8191 D SessionConfigFetcher: Fetching settings from server.
+11-23 03:23:03.664  8162  8162 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-23 03:23:03.666  8162  8162 D AmazonS3Client: initialized with endpoint = https://s3.eu-central-1.amazonaws.com
+11-23 03:23:03.680  8162  8194 I FA      : Tag Manager is not found and thus will not be used
+11-23 03:23:03.746  8162  8162 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-23 03:23:03.758  8162  8201 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-23 03:23:03.761  8162  8193 D LifecycleServiceBinder: Binding service to application.
+11-23 03:23:03.789  8162  8162 W eeTracker.debug: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-23 03:23:03.802  8162  8189 D SessionLifecycleClient: Queued message 1. Queue size 1
+11-23 03:23:03.803  8162  8162 W HWUI    : Unknown dataspace 0
+11-23 03:23:03.826  8162  8162 D SessionLifecycleService: Service bound to new client on process 8162
+11-23 03:23:03.840  8162  8213 D SessionLifecycleService: App has not yet foregrounded. Using previously stored session: null
+11-23 03:23:03.844  8162  8213 D SessionLifecycleService: Client android.os.Messenger@2a647a2 bound at 262862. Clients: 1
+11-23 03:23:03.935  8162  8162 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-23 03:23:03.995  8162  8207 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-23 03:23:03.995  8162  8207 I EGL_emulation: Opening libGLESv2_emulation.so
+11-23 03:23:04.010  8162  8207 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-23 03:23:04.029  8162  8207 I Gralloc4: mapper 4.x is not supported
+11-23 03:23:04.298  8162  8162 D SessionLifecycleClient: Connected to SessionLifecycleService. Queue size 1
+11-23 03:23:04.356  8162  8188 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-23 03:23:04.356  8162  8213 D SessionLifecycleService: Activity foregrounding at 263392.
+11-23 03:23:04.356  8162  8213 D SessionLifecycleService: Cold start detected.
+11-23 03:23:04.362  8162  8213 D SessionLifecycleService: Generated new session f28cf27038e8439db34b9c58891b2f30
+11-23 03:23:04.362  8162  8213 D SessionLifecycleService: Broadcasting new session: SessionDetails(sessionId=f28cf27038e8439db34b9c58891b2f30, firstSessionId=f28cf27038e8439db34b9c58891b2f30, sessionIndex=0, sessionStartTimestampUs=1795404184362000)
+11-23 03:23:04.367  8162  8188 D SessionFirelogPublisher: Data Collection is enabled for at least one Subscriber
+11-23 03:23:04.378  8162  8162 I Choreographer: Skipped 31 frames!  The application may be doing too much work on its main thread.
+11-23 03:23:04.414  8162  8162 D SessionLifecycleClient: Session update received: f28cf27038e8439db34b9c58891b2f30
+11-23 03:23:04.479  8162  8162 D OrgRepo : Org set to: Greenstand
+11-23 03:23:04.479  8162  8162 D OrgRepo : Org settings: Org(id=-1, name=Greenstand, walletId=, logoPath=, captureSetupFlow=[Destination(route=user-select, features=null), Destination(route=add-org, features=null)], captureFlow=[Destination(route=capture/{profilePicUrl}, features=null), Destination(route=tree-image-review/{photoPath}, features=null)])
+11-23 03:23:04.481  8162  8188 D SessionLifecycleClient: Notified CRASHLYTICS of new session f28cf27038e8439db34b9c58891b2f30
+11-23 03:23:04.514  8162  8191 W InstallationId: Error getting authentication token.
+11-23 03:23:04.514  8162  8191 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-23 03:23:04.514  8162  8191 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-23 03:23:04.517  8162  8193 D SessionConfigFetcher: Fetching settings from server.
+11-23 03:23:04.523  8162  8196 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-23 03:23:04.532  8162  8188 W InstallationId: Error getting authentication token.
+11-23 03:23:04.532  8162  8188 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-23 03:23:04.532  8162  8188 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-23 03:23:04.535  8162  8191 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"f28cf27038e8439db34b9c58891b2f30","firstSessionId":"f28cf27038e8439db34b9c58891b2f30","sessionIndex":0,"eventTimestampUs":1795404184362000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"dTPqa3YdSKefUxgr8uAz9-","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":8162,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":8162,"importance":100,"defaultProcess":true}]}}}
+11-23 03:23:04.540  8162  8191 D SessionFirelogPublisher: Successfully logged Session Start event: f28cf27038e8439db34b9c58891b2f30
+11-23 03:23:04.684  8162  8162 D BuildVariant: build variant: debug
+11-23 03:23:04.712  8162  8186 W OrgLink : Install referrer not supported on this device
+11-23 03:23:04.724  8162  8162 D OrgLink : No org deeplink, using existing org
+11-23 03:23:04.794  8162  8230 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;->getThreadSession()Landroid/database/sqlite/SQLiteSession; (unsupported, reflection, allowed)
+11-23 03:23:04.794  8162  8230 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteSession;->beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (unsupported, reflection, allowed)
+11-23 03:23:04.860  8162  8167 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-23 03:23:05.958  8162  8207 D EGL_emulation: app_time_stats: avg=556.56ms min=103.37ms max=1154.20ms count=3
+11-23 03:23:06.765  8162  8189 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-23 03:23:06.767  8162  8213 D SessionLifecycleService: Activity backgrounding at 265802
+11-23 03:23:06.781  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@32d9b84
+11-23 03:23:06.803  8162  8188 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-23 03:23:06.805  8162  8213 D SessionLifecycleService: Activity foregrounding at 265841.
+11-23 03:23:06.814  8162  8162 D AutofillManager: Fill dialog is enabled:false, hints=[]
+11-23 03:23:08.850  8162  8162 D InsetsController: show(ime(), fromIme=false)
+11-23 03:23:08.852  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:b664b934: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:08.853  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT_BY_INSETS_API
+11-23 03:23:08.862  8162  8207 D EGL_emulation: app_time_stats: avg=285.48ms min=3.70ms max=1112.95ms count=7
+11-23 03:23:08.872  8162  8162 I AssistStructure: Flattened final assist data: 1024 bytes, containing 1 windows, 5 views
+11-23 03:23:08.894  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:8e98a6d4: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-23 03:23:08.894  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F...... 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-23 03:23:08.906  8162  8162 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-23 03:23:08.906  8162  8162 D Autofill Status: 
+11-23 03:23:08.906  8162  8162 D Autofill Status: Did you set up autofill?
+11-23 03:23:08.906  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-23 03:23:08.906  8162  8162 D Autofill Status: 2. Pick a service
+11-23 03:23:08.906  8162  8162 D Autofill Status: 
+11-23 03:23:08.906  8162  8162 D Autofill Status: Did you add an account?
+11-23 03:23:08.906  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-23 03:23:08.906  8162  8162 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-23 03:23:08.906  8162  8162 D Autofill Status: 3. Add your account
+11-23 03:23:08.910  8162  8249 D ProfileInstaller: Installing profile for org.greenstand.android.TreeTracker.debug
+11-23 03:23:08.969  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:08.971  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:08.971  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:8e98a6d4: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:08.992  8162  8162 W InteractionJankMonitor: Initializing without READ_DEVICE_CONFIG permission. enabled=true, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=org.greenstand.android.TreeTracker.debug
+11-23 03:23:09.004  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:b664b934: onShown
+11-23 03:23:09.514  8162  8162 D InsetsController: hide(ime(), fromIme=true)
+11-23 03:23:09.526  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@218458196 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@d6d3e62
+11-23 03:23:09.539  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:f5cfc7bd: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+11-23 03:23:09.541  8162  8162 I ImeTracker: com.google.android.inputmethod.latin:e59159d4: onHidden
+11-23 03:23:09.718  8162  8162 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+4m28s748ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-23 03:23:09.808  8162  8162 D InsetsController: hide(ime(), fromIme=false)
+11-23 03:23:09.808  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:4b0fa1fb: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:09.809  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:4b0fa1fb: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:10.258  8162  8162 D InsetsController: show(ime(), fromIme=false)
+11-23 03:23:10.259  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:42f1c6de: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:10.259  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT_BY_INSETS_API
+11-23 03:23:10.266  8162  8162 I AssistStructure: Flattened final assist data: 1148 bytes, containing 1 windows, 6 views
+11-23 03:23:10.270  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:1982ead7: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-23 03:23:10.270  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-23 03:23:10.271  8162  8207 D EGL_emulation: app_time_stats: avg=48.03ms min=6.86ms max=457.98ms count=29
+11-23 03:23:10.283  8162  8162 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-23 03:23:10.283  8162  8162 D Autofill Status: 
+11-23 03:23:10.283  8162  8162 D Autofill Status: Did you set up autofill?
+11-23 03:23:10.283  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-23 03:23:10.283  8162  8162 D Autofill Status: 2. Pick a service
+11-23 03:23:10.283  8162  8162 D Autofill Status: 
+11-23 03:23:10.283  8162  8162 D Autofill Status: Did you add an account?
+11-23 03:23:10.283  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-23 03:23:10.283  8162  8162 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-23 03:23:10.283  8162  8162 D Autofill Status: 3. Add your account
+11-23 03:23:10.325  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:10.340  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:10.340  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:1982ead7: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:10.354  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:42f1c6de: onShown
+11-23 03:23:10.715  8162  8162 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+4m29s748ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-23 03:23:10.954  8162  8162 I AssistStructure: Flattened final assist data: 1148 bytes, containing 1 windows, 6 views
+11-23 03:23:10.964  8162  8162 D InsetsController: show(ime(), fromIme=false)
+11-23 03:23:10.965  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:ef255991: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:10.965  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:ef255991: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:10.974  8162  8162 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-23 03:23:10.974  8162  8162 D Autofill Status: 
+11-23 03:23:10.974  8162  8162 D Autofill Status: Did you set up autofill?
+11-23 03:23:10.974  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-23 03:23:10.974  8162  8162 D Autofill Status: 2. Pick a service
+11-23 03:23:10.974  8162  8162 D Autofill Status: 
+11-23 03:23:10.974  8162  8162 D Autofill Status: Did you add an account?
+11-23 03:23:10.974  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-23 03:23:10.974  8162  8162 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-23 03:23:10.974  8162  8162 D Autofill Status: 3. Add your account
+11-23 03:23:10.975  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:5246a30f: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-23 03:23:10.975  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-23 03:23:11.001  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:11.001  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:a39d085b: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:11.011  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:11.011  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:5246a30f: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:11.448  8162  8162 D InsetsController: hide(ime(), fromIme=true)
+11-23 03:23:11.457  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@218458196 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@63b67ef
+11-23 03:23:11.461  8162  8207 D EGL_emulation: app_time_stats: avg=61.50ms min=1.65ms max=205.19ms count=18
+11-23 03:23:11.471  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:82e2334b: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+11-23 03:23:11.471  8162  8162 I ImeTracker: com.google.android.inputmethod.latin:7ca4393f: onHidden
+11-23 03:23:11.691  8162  8191 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-23 03:23:11.691  8162  8213 D SessionLifecycleService: Activity backgrounding at 270727
+11-23 03:23:11.705  8162  8193 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-23 03:23:11.705  8162  8213 D SessionLifecycleService: Activity foregrounding at 270741.
+11-23 03:23:11.711  8162  8162 D AutofillManager: Fill dialog is enabled:false, hints=[]
+11-23 03:23:11.755  8162  8162 D QuirkSettingsLoader: QuirkSettings$MetadataHolderService is not found.
+11-23 03:23:11.755  8162  8162 D CameraX : QuirkSettings from app metadata: null
+11-23 03:23:11.756  8162  8162 D CameraX : QuirkSettings by default: QuirkSettings{enabledWhenDeviceHasQuirk=true, forceEnabledQuirks=[], forceDisabledQuirks=[]}
+11-23 03:23:11.763  8162  8261 D DeviceQuirks: camera2 DeviceQuirks = CaptureSessionShouldUseMrirQuirk
+11-23 03:23:11.767  8162  8261 I CameraManagerGlobal: Connecting to camera service
+11-23 03:23:11.846  8162  8261 D Camera2CameraCoordinator: Updated concurrent camera map: {0=[1], 1=[0]}
+11-23 03:23:11.847  8162  8261 D Camera2CameraFactory: Updated available camera list: [] -> [0, 1]
+11-23 03:23:11.854  8162  8261 D CameraRepository: Added camera: 0
+11-23 03:23:11.859  8162  8261 D CameraQuirks: camera2 CameraQuirks = 
+11-23 03:23:11.868  8162  8261 I Camera2CameraInfo: Device Level: INFO_SUPPORTED_HARDWARE_LEVEL_3
+11-23 03:23:11.871  8162  8261 D CameraRepository: Added camera: 1
+11-23 03:23:11.872  8162  8261 D CameraQuirks: camera2 CameraQuirks = 
+11-23 03:23:11.872  8162  8261 I Camera2CameraInfo: Device Level: INFO_SUPPORTED_HARDWARE_LEVEL_FULL
+11-23 03:23:11.873  8162  8261 I CameraPresencePrvdr: Starting CameraPresenceProvider monitoring.
+11-23 03:23:11.873  8162  8261 I CameraPresenceSrc: First observer added. Starting monitoring.
+11-23 03:23:11.873  8162  8261 I Camera2PresenceSrc: Starting system availability monitoring.
+11-23 03:23:11.874  8162  8261 D CameraValidator: Verifying camera lens facing on emu64xa, lensFacingInteger: null
+11-23 03:23:11.875  8162  8261 D Camera2PresenceSrc: System onCameraAvailable: 0
+11-23 03:23:11.875  8162  8261 D Camera2PresenceSrc: System onCameraAvailable: 1
+11-23 03:23:11.875  8162  8261 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-23 03:23:11.875  8162  8261 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-23 03:23:11.875  8162  8261 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-23 03:23:11.962  8162  8162 D DeviceQuirks: core DeviceQuirks = SurfaceOrderQuirk
+11-23 03:23:11.966  8162  8162 D ResolvedFeatureGroup: resolveFeatureGroup: sessionConfig = androidx.camera.core.LegacySessionConfig@5c51729, lensFacing = 0
+11-23 03:23:11.967  8162  8162 D CameraUseCaseAdapter: addUseCases: appUseCasesToAdd = [ImageCapture:androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947, Preview:androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f63], featureGroup = null
+11-23 03:23:11.978  8162  8162 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = ImageCapture:androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947
+11-23 03:23:11.983  8162  8162 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = Preview:androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f63
+11-23 03:23:11.984  8162  8162 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f63 to no compatible HDR dynamic ranges.
+11-23 03:23:11.984  8162  8162 D DynamicRangeResolver: DynamicRange@feda3ba{encoding=UNSPECIFIED, bitDepth=0}
+11-23 03:23:11.984  8162  8162 D DynamicRangeResolver: ->
+11-23 03:23:11.984  8162  8162 D DynamicRangeResolver: DynamicRange@7eefce5{encoding=SDR, bitDepth=8}
+11-23 03:23:11.984  8162  8162 D SupportedSurfaceCombination: resolvedDynamicRanges = {androidx.camera.core.impl.ImageCaptureConfig@4af8aae=DynamicRange@7eefce5{encoding=SDR, bitDepth=8}, androidx.camera.core.impl.PreviewConfig@764a3dc=DynamicRange@7eefce5{encoding=SDR, bitDepth=8}}
+11-23 03:23:11.989  8162  8162 D SupportedSurfaceCombination: getSuggestedStreamSpecifications: isPreviewStabilizationOn = false, mIsPreviewStabilizationSupported = false, isFeatureComboInvocation = false
+11-23 03:23:11.990  8162  8162 D SupportedSurfaceCombination: resolveSpecsByCheckingMethod: checkingMethod = WITHOUT_FEATURE_COMBO
+11-23 03:23:11.990  8162  8162 D SupportedSurfaceCombination: resolveSpecsBySettings: featureSettings = FeatureSettings{getCameraMode=0, hasVideoCapture=false, getRequiredMaxBitDepth=8, isPreviewStabilizationOn=false, isUltraHdrOn=false, isHighSpeedOn=false, isFeatureComboInvocation=false, requiresFeatureComboQuery=false, getTargetFpsRange=[0, 0], isStrictFpsRequired=false}
+11-23 03:23:11.993  8162  8162 D CameraQuirks: camera2 CameraQuirks = 
+11-23 03:23:11.993  8162  8162 D CameraQuirks: camera2 CameraQuirks = 
+11-23 03:23:11.994  8162  8162 D SupportedSurfaceCombination: orderedSurfaceConfigListForStreamUseCase = [SurfaceConfig(configType=JPEG, configSize=MAXIMUM, streamUseCase=STILL_CAPTURE), SurfaceConfig(configType=PRIV, configSize=PREVIEW, streamUseCase=PREVIEW)]
+11-23 03:23:11.994  8162  8162 D SupportedSurfaceCombination: resolveSpecsBySettings: bestSizesAndFps = BestSizesAndMaxFpsForConfigs{bestSizes=[1440x1080, 352x288], bestSizesForStreamUseCase=[1440x1080, 352x288], maxFpsForBestSizes=30, maxFpsForStreamUseCase=30, maxFpsForAllSizes=2147483647}
+11-23 03:23:11.995  8162  8162 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = ImageCapture:androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947
+11-23 03:23:11.995  8162  8162 D ImageCapture: onSuggestedStreamSpecUpdated: primaryStreamSpec = StreamSpec{resolution=1440x1080, originalConfiguredResolution=1440x1080, dynamicRange=DynamicRange@7eefce5{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@de8e39d, zslDisabled=false}, secondaryStreamSpec null
+11-23 03:23:11.995  8162  8162 D ImageCapture: createPipeline(cameraId: 1, streamSpec: StreamSpec{resolution=1440x1080, originalConfiguredResolution=1440x1080, dynamicRange=DynamicRange@7eefce5{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@de8e39d, zslDisabled=false})
+11-23 03:23:12.002  8162  8162 D DeferrableSurface: Surface created[total_surfaces=1, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@9f0f012}
+11-23 03:23:12.012  8162  8162 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = Preview:androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f63
+11-23 03:23:12.012  8162  8162 D Preview : onSuggestedStreamSpecUpdated: primaryStreamSpec = StreamSpec{resolution=352x288, originalConfiguredResolution=352x288, dynamicRange=DynamicRange@7eefce5{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@77d61e0, zslDisabled=false}, secondaryStreamSpec null
+11-23 03:23:12.013  8162  8162 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](androidx.camera.core.processing.SurfaceEdge$SettableSurface@7751c99}
+11-23 03:23:12.013  8162  8162 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@7f1e955}
+11-23 03:23:12.015  8162  8162 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@7f1e955}
+11-23 03:23:12.015  8162  8162 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.SurfaceRequest$2@7f1e955
+11-23 03:23:12.018  8162  8162 D ImageCapture: onCameraControlReady
+11-23 03:23:12.018  8162  8162 D Camera2CameraControlImp: setFlashMode: mFlashMode = 2
+11-23 03:23:12.018  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860 ACTIVE
+11-23 03:23:12.019  8162  8261 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: surface closed,  useCount=1 closed=true androidx.camera.core.SurfaceRequest$2@7f1e955
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.processing.SurfaceEdge$SettableSurface@7751c99
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: Surface terminated[total_surfaces=2, used_surfaces=1](androidx.camera.core.processing.SurfaceEdge$SettableSurface@7751c99}
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.SurfaceRequest$2@7f1e955
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: Surface no longer in use[total_surfaces=2, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@7f1e955}
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: Surface terminated[total_surfaces=1, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@7f1e955}
+11-23 03:23:12.019  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860 ACTIVE
+11-23 03:23:12.019  8162  8261 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:12.019  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837 INACTIVE
+11-23 03:23:12.019  8162  8261 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:12.019  8162  8261 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:12.019  8162  8162 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](androidx.camera.core.processing.SurfaceEdge$SettableSurface@5498bd3}
+11-23 03:23:12.019  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use cases [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837] now ATTACHED
+11-23 03:23:12.019  8162  8261 D Camera2CameraControlImp: setActive: isActive = true
+11-23 03:23:12.020  8162  8261 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837] for camera: 1
+11-23 03:23:12.022  8162  8261 D MeteringRepeating: MeteringSession SurfaceTexture size: 352x288
+11-23 03:23:12.023  8162  8261 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@521871a}
+11-23 03:23:12.023  8162  8162 D DeferrableSurface: Surface created[total_surfaces=4, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@37403c}
+11-23 03:23:12.024  8162  8261 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.camera2.internal.MeteringRepeatingSession-e5d7e736-9c24-4460-838f-833b07742002 to no compatible HDR dynamic ranges.
+11-23 03:23:12.024  8162  8261 D DynamicRangeResolver: DynamicRange@feda3ba{encoding=UNSPECIFIED, bitDepth=0}
+11-23 03:23:12.024  8162  8261 D DynamicRangeResolver: ->
+11-23 03:23:12.024  8162  8261 D DynamicRangeResolver: DynamicRange@7eefce5{encoding=SDR, bitDepth=8}
+11-23 03:23:12.024  8162  8261 D SupportedSurfaceCombination: resolvedDynamicRanges = {androidx.camera.camera2.internal.MeteringRepeatingSession$MeteringRepeatingConfig@ea1c541=DynamicRange@7eefce5{encoding=SDR, bitDepth=8}}
+11-23 03:23:12.024  8162  8261 D SupportedSurfaceCombination: getSuggestedStreamSpecifications: isPreviewStabilizationOn = false, mIsPreviewStabilizationSupported = false, isFeatureComboInvocation = false
+11-23 03:23:12.024  8162  8261 D SupportedSurfaceCombination: resolveSpecsByCheckingMethod: checkingMethod = WITHOUT_FEATURE_COMBO
+11-23 03:23:12.024  8162  8261 D SupportedSurfaceCombination: resolveSpecsBySettings: featureSettings = FeatureSettings{getCameraMode=0, hasVideoCapture=false, getRequiredMaxBitDepth=8, isPreviewStabilizationOn=false, isUltraHdrOn=false, isHighSpeedOn=false, isFeatureComboInvocation=false, requiresFeatureComboQuery=false, getTargetFpsRange=[0, 0], isStrictFpsRequired=false}
+11-23 03:23:12.024  8162  8261 D CameraQuirks: camera2 CameraQuirks = 
+11-23 03:23:12.024  8162  8261 D SupportedSurfaceCombination: orderedSurfaceConfigListForStreamUseCase = [SurfaceConfig(configType=JPEG, configSize=MAXIMUM, streamUseCase=STILL_CAPTURE), SurfaceConfig(configType=PRIV, configSize=PREVIEW, streamUseCase=PREVIEW)]
+11-23 03:23:12.024  8162  8261 D SupportedSurfaceCombination: resolveSpecsBySettings: bestSizesAndFps = BestSizesAndMaxFpsForConfigs{bestSizes=[352x288], bestSizesForStreamUseCase=[352x288], maxFpsForBestSizes=30, maxFpsForStreamUseCase=30, maxFpsForAllSizes=2147483647}
+11-23 03:23:12.025  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Surface combination with metering repeating supported!
+11-23 03:23:12.025  8162  8261 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, MeteringRepeating167843879] for camera: 1
+11-23 03:23:12.025  8162  8162 D DeferrableSurface: New surface in use[total_surfaces=4, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@37403c}
+11-23 03:23:12.025  8162  8162 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.SurfaceRequest$2@37403c
+11-23 03:23:12.025  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Resetting Capture Session
+11-23 03:23:12.025  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Skipping Capture Session state check due to current camera state: INITIALIZED and previous session status: false
+11-23 03:23:12.025  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Releasing session in state INITIALIZED
+11-23 03:23:12.026  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Attempting to force open the camera.
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: tryOpenCamera(Camera@9d5de87[id=1]) [Available Cameras: 1, Already Open: false (Previous state: null)] --> SUCCESS
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: Recalculating open cameras:
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: Camera                                       State                 
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: Camera@9d5de87[id=1]                         OPENING               
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: Camera@1056cfa[id=0]                         UNKNOWN               
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:12.026  8162  8261 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-23 03:23:12.026  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Opening camera.
+11-23 03:23:12.026  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Transitioning camera internal state: INITIALIZED --> OPENING
+11-23 03:23:12.026  8162  8261 D CameraStateMachine: New public camera state CameraState{type=OPENING, error=null} from OPENING and null
+11-23 03:23:12.026  8162  8261 D CameraStateMachine: Publishing new public camera state CameraState{type=OPENING, error=null}
+11-23 03:23:12.026  8162  8261 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837, MeteringRepeating167843879] for camera: 1
+11-23 03:23:12.032  8162  8264 D Camera2PresenceSrc: System onCameraUnavailable: 1
+11-23 03:23:12.032  8162  8264 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-23 03:23:12.049  8162  8162 D VRI[TreeTrackerActivity]: visibilityChanged oldVisibility=true newVisibility=false
+11-23 03:23:12.064  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860 ACTIVE
+11-23 03:23:12.064  8162  8261 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, MeteringRepeating167843879] for camera: 1
+11-23 03:23:12.065  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837 INACTIVE
+11-23 03:23:12.065  8162  8261 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, MeteringRepeating167843879] for camera: 1
+11-23 03:23:12.065  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837 RESET
+11-23 03:23:12.065  8162  8261 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837, MeteringRepeating167843879] for camera: 1
+11-23 03:23:12.065  8162  8261 D MeteringRepeating: MeteringRepeating clear!
+11-23 03:23:12.065  8162  8261 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.impl.ImmediateSurface@521871a
+11-23 03:23:12.065  8162  8261 D DeferrableSurface: Surface terminated[total_surfaces=3, used_surfaces=1](androidx.camera.core.impl.ImmediateSurface@521871a}
+11-23 03:23:12.065  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Resetting Capture Session
+11-23 03:23:12.066  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Skipping Capture Session state check due to current camera state: OPENING and previous session status: false
+11-23 03:23:12.066  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Releasing session in state OPENING
+11-23 03:23:12.066  8162  8261 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860] for camera: 1
+11-23 03:23:12.066  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use case androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837 ACTIVE
+11-23 03:23:12.066  8162  8261 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837] for camera: 1
+11-23 03:23:12.066  8162  8162 D PreviewView: Surface requested by Preview.
+11-23 03:23:12.066  8162  8261 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837] for camera: 1
+11-23 03:23:12.066  8162  8162 D DeviceQuirks: view DeviceQuirks = 
+11-23 03:23:12.067  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} CameraDevice.onOpened()
+11-23 03:23:12.067  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Transitioning camera internal state: OPENING --> OPENED
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: Recalculating open cameras:
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: Camera                                       State                 
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: Camera@9d5de87[id=1]                         OPEN                  
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: Camera@1056cfa[id=0]                         UNKNOWN               
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:12.067  8162  8261 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-23 03:23:12.067  8162  8261 D CameraStateMachine: New public camera state CameraState{type=OPEN, error=null} from OPEN and null
+11-23 03:23:12.067  8162  8261 D CameraStateMachine: Publishing new public camera state CameraState{type=OPEN, error=null}
+11-23 03:23:12.067  8162  8261 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837] for camera: 1
+11-23 03:23:12.067  8162  8261 D StreamUseCaseUtil: populateSurfaceToStreamUseCaseMapping() - streamUseCaseMap = {androidx.camera.core.impl.ImmediateSurface@9f0f012=2, androidx.camera.core.SurfaceRequest$2@37403c=1}
+11-23 03:23:12.096  8162  8162 D TextureViewImpl: SurfaceTexture available. Size: 352x288
+11-23 03:23:12.096  8162  8162 D TextureViewImpl: Surface set on Preview.
+11-23 03:23:12.097  8162  8264 D SyncCaptureSessionBase: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@ec22de1] getSurface done with results: [Surface(name=android.graphics.SurfaceTexture@7ddf065 mNativeObject=139143365493136)/@0xbdc513a, Surface(name=null mNativeObject=139143365545456)/@0x4ca4b48]
+11-23 03:23:12.099  8162  8264 D CaptureSession: Opening capture session.
+11-23 03:23:12.102  8162  8264 D Camera2CaptureRequestBuilder: template type = 1
+11-23 03:23:12.107  8162  8264 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-23 03:23:12.108  8162  8264 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@ec22de1] start openCaptureSession
+11-23 03:23:12.108  8162  8264 D DeferrableSurface: use count+1, useCount=2 androidx.camera.core.SurfaceRequest$2@37403c
+11-23 03:23:12.108  8162  8264 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=2](androidx.camera.core.impl.ImmediateSurface@9f0f012}
+11-23 03:23:12.108  8162  8264 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.impl.ImmediateSurface@9f0f012
+11-23 03:23:12.129  8162  8264 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@ec22de1] Session onConfigured()
+11-23 03:23:12.129  8162  8264 D CaptureSession: Attempting to send capture request onConfigured
+11-23 03:23:12.129  8162  8264 D CaptureSession: Issuing request for session.
+11-23 03:23:12.129  8162  8264 D Camera2CaptureRequestBuilder: createCaptureRequest
+11-23 03:23:12.129  8162  8264 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-23 03:23:12.129  8162  8264 D Camera2CaptureRequestBuilder: applyVideoStabilization: mode = null
+11-23 03:23:12.143  8162  8264 D CaptureSession: CameraCaptureSession.onConfigured() mState=OPENED
+11-23 03:23:12.143  8162  8264 D CaptureSession: CameraCaptureSession.onReady() OPENED
+11-23 03:23:12.452  8162  8162 D PreviewView: Preview transformation info updated. TransformationInfo{getCropRect=Rect(0, 0 - 352, 288), getRotationDegrees=270, getTargetRotation=0, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[0.2, 0.0, -16.0][0.0, 0.2, -0.0][0.0, 0.0, 1.0]}, isMirroring=true}
+11-23 03:23:12.452  8162  8162 D PreviewTransform: Transformation info set: TransformationInfo{getCropRect=Rect(0, 0 - 352, 288), getRotationDegrees=270, getTargetRotation=0, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[0.2, 0.0, -16.0][0.0, 0.2, -0.0][0.0, 0.0, 1.0]}, isMirroring=true} 352x288 true
+11-23 03:23:12.604  8162  8162 D StreamStateObserver: Update Preview stream state to STREAMING
+11-23 03:23:12.714  8162  8162 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+4m31s748ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-23 03:23:12.939  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@b7c41c7
+11-23 03:23:12.958  8162  8168 W eeTracker.debug: Cleared Reference was only reachable from finalizer (only reported once)
+11-23 03:23:12.996  8162  8168 I eeTracker.debug: Background concurrent mark compact GC freed 20MB AllocSpace bytes, 202(8392KB) LOS objects, 49% free, 10MB/20MB, paused 1.381ms,7.936ms total 72.427ms
+11-23 03:23:13.108  8162  8207 D EGL_emulation: app_time_stats: avg=66.10ms min=7.50ms max=463.04ms count=18
+11-23 03:23:13.365  8162  8162 D ImageCapture: takePictureInternal
+11-23 03:23:13.366  8162  8162 D TakePictureManagerImpl: Issue the next TakePictureRequest.
+11-23 03:23:13.369  8162  8264 D Camera2CapturePipeline: createPipeline: captureMode = 1, flashMode = 2, flashType = 0, pipeline tasks = [androidx.camera.camera2.internal.Camera2CapturePipeline$AePreCaptureTask@fb60c8a]
+11-23 03:23:13.371  8162  8264 D Camera2CapturePipeline: isFlashRequired: flashMode = 2
+11-23 03:23:13.371  8162  8264 D Camera2CapturePipeline: isFlashRequired: flashMode = 2
+11-23 03:23:13.371  8162  8264 D Camera2CapturePipeline: applyStillCaptureTemplate: templateToModify = -1
+11-23 03:23:13.372  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Issue capture request
+11-23 03:23:13.372  8162  8264 D CaptureSession: Issuing capture request.
+11-23 03:23:13.372  8162  8264 D Camera2CaptureRequestBuilder: createCaptureRequest
+11-23 03:23:13.401  8162  8264 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-23 03:23:13.401  8162  8264 D Camera2CaptureRequestBuilder: applyVideoStabilization: mode = null
+11-23 03:23:13.643  8162  8162 D TakePictureManagerImpl: Issue the next TakePictureRequest.
+11-23 03:23:13.643  8162  8162 D TakePictureManagerImpl: No new request.
+11-23 03:23:13.706  8162  8162 D CameraXApp: Photo capture succeeded: /data/user/0/org.greenstand.android.TreeTracker.debug/app_treeImages/IMG_20261123_032313_9145349404863869712.jpg
+11-23 03:23:13.774  8162  8162 W ScreenFlashWrapper: completePendingScreenFlashClear: none pending!
+11-23 03:23:13.775  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Use cases [androidx.camera.core.ImageCapture-fd20d011-ada9-4026-b19e-dac47aaaa947213219860, androidx.camera.core.Preview-f5070b9f-1cc4-44d0-ba11-d801c1dc3f6366011837] now DETACHED for camera
+11-23 03:23:13.775  8162  8162 W ScreenFlashWrapper: completePendingScreenFlashClear: none pending!
+11-23 03:23:13.775  8162  8162 D ImageCapture: clearPipeline
+11-23 03:23:13.775  8162  8162 D DeferrableSurface: surface closed,  useCount=1 closed=true androidx.camera.core.impl.ImmediateSurface@9f0f012
+11-23 03:23:13.775  8162  8264 D UseCaseAttachState: All use case: [] for camera: 1
+11-23 03:23:13.775  8162  8162 D DeferrableSurface: surface closed,  useCount=2 closed=true androidx.camera.core.SurfaceRequest$2@37403c
+11-23 03:23:13.775  8162  8162 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.processing.SurfaceEdge$SettableSurface@5498bd3
+11-23 03:23:13.775  8162  8162 D DeferrableSurface: Surface terminated[total_surfaces=2, used_surfaces=2](androidx.camera.core.processing.SurfaceEdge$SettableSurface@5498bd3}
+11-23 03:23:13.775  8162  8162 D DeferrableSurface: use count-1,  useCount=1 closed=true androidx.camera.core.SurfaceRequest$2@37403c
+11-23 03:23:13.775  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Resetting Capture Session
+11-23 03:23:13.775  8162  8264 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@ec22de1] Session call close()
+11-23 03:23:13.776  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Releasing session in state OPENED
+11-23 03:23:13.776  8162  8264 D Camera2CameraControlImp: setActive: isActive = false
+11-23 03:23:13.776  8162  8264 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:13.776  8162  8264 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:13.776  8162  8264 D VideoUsageControl: resetDirectly: mVideoUsage reset!
+11-23 03:23:13.777  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Closing camera.
+11-23 03:23:13.777  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Transitioning camera internal state: OPENED --> CLOSING
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: Recalculating open cameras:
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: Camera                                       State                 
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: Camera@9d5de87[id=1]                         CLOSING               
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: Camera@1056cfa[id=0]                         UNKNOWN               
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:13.777  8162  8264 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-23 03:23:13.777  8162  8264 D CameraStateMachine: New public camera state CameraState{type=CLOSING, error=null} from CLOSING and null
+11-23 03:23:13.777  8162  8264 D CameraStateMachine: Publishing new public camera state CameraState{type=CLOSING, error=null}
+11-23 03:23:13.778  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Resetting Capture Session
+11-23 03:23:13.778  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Skipping Capture Session state check due to current camera state: CLOSING and previous session status: false
+11-23 03:23:13.778  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Releasing session in state CLOSING
+11-23 03:23:13.778  8162  8264 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@ec22de1] Session call super.close()
+11-23 03:23:13.782  8162  8162 W LifecycleCameraRepository: Attempt to unbind use cases from an invalid camera.
+11-23 03:23:13.782  8162  8264 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-23 03:23:13.782  8162  8264 D CaptureSession: onSessionFinished()
+11-23 03:23:13.783  8162  8264 D Camera2CameraImpl: {Camera@9d5de87[id=1]} closing camera
+11-23 03:23:13.789  8162  8162 D StreamStateObserver: Update Preview stream state to IDLE
+11-23 03:23:13.940  8162  8261 D Camera2PresenceSrc: System onCameraAvailable: 1
+11-23 03:23:13.941  8162  8261 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-23 03:23:13.941  8162  8261 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.SurfaceRequest$2@37403c
+11-23 03:23:13.941  8162  8261 D DeferrableSurface: Surface no longer in use[total_surfaces=2, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@37403c}
+11-23 03:23:13.941  8162  8261 D DeferrableSurface: Surface terminated[total_surfaces=1, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@37403c}
+11-23 03:23:13.941  8162  8261 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.impl.ImmediateSurface@9f0f012
+11-23 03:23:13.941  8162  8261 D DeferrableSurface: Surface no longer in use[total_surfaces=1, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@9f0f012}
+11-23 03:23:13.941  8162  8261 D DeferrableSurface: Surface terminated[total_surfaces=0, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@9f0f012}
+11-23 03:23:13.941  8162  8162 D TextureViewImpl: Safe to release surface.
+11-23 03:23:13.941  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} CameraDevice.onClosed()
+11-23 03:23:13.941  8162  8162 D TextureViewImpl: SurfaceTexture about to manually be destroyed
+11-23 03:23:13.941  8162  8261 D Camera2CameraImpl: {Camera@9d5de87[id=1]} Transitioning camera internal state: CLOSING --> INITIALIZED
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: Recalculating open cameras:
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: Camera                                       State                 
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: Camera@9d5de87[id=1]                         CLOSED                
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: Camera@1056cfa[id=0]                         UNKNOWN               
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: -------------------------------------------------------------------
+11-23 03:23:13.941  8162  8261 D CameraStateRegistry: Open count: 0 (Max allowed: 1)
+11-23 03:23:13.941  8162  8261 D CameraStateMachine: New public camera state CameraState{type=CLOSED, error=null} from CLOSED and null
+11-23 03:23:13.941  8162  8261 D CameraStateMachine: Publishing new public camera state CameraState{type=CLOSED, error=null}
+11-23 03:23:13.941  8162  8261 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@ec22de1] onClosed()
+11-23 03:23:14.093  8162  8191 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-23 03:23:14.093  8162  8213 D SessionLifecycleService: Activity backgrounding at 273129
+11-23 03:23:14.100  8162  8188 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-23 03:23:14.103  8162  8213 D SessionLifecycleService: Activity foregrounding at 273139.
+11-23 03:23:14.182  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@87e0f56
+11-23 03:23:14.195  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@53be0a8
+11-23 03:23:14.196  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@9c9cdf4
+11-23 03:23:14.217  8162  8162 D LocationUpdateManager: Request to stop location updates submitted
+11-23 03:23:14.218  8162  8162 D LocationUpdateManager: Request to stop location update honored
+11-23 03:23:14.280  8162  8162 D InsetsController: hide(ime(), fromIme=false)
+11-23 03:23:14.280  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:5517b745: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:14.281  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:5517b745: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:14.717  8162  8162 D nativeloader: Load /data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk!/lib/x86_64/libmaplibre.so using ns clns-7 from class loader (caller=/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk!classes21.dex): ok
+11-23 03:23:15.426  8162  8207 D EGL_emulation: app_time_stats: avg=98.23ms min=2.90ms max=340.62ms count=13
+11-23 03:23:16.041  8162  8162 W CaptureSetupScope: Scope already open, closing previous before reopening
+11-23 03:23:16.195  8162  8168 I eeTracker.debug: NativeAlloc concurrent mark compact GC freed 9219KB AllocSpace bytes, 40(1404KB) LOS objects, 49% free, 9912KB/19MB, paused 360us,3.163ms total 109.373ms
+11-23 03:23:16.198  8162  8170 W System  : A resource failed to call close. 
+11-23 03:23:16.199  8162  8170 W System  : A resource failed to call close. 
+11-23 03:23:16.477  8162  8207 D EGL_emulation: app_time_stats: avg=112.79ms min=2.88ms max=321.76ms count=9
+11-23 03:23:16.656  8162  8162 W eeTracker.debug: Accessing hidden method Landroid/view/ViewTreeObserver;->dispatchOnScrollChanged()V (unsupported, reflection, allowed)
+11-23 03:23:16.974  8162  8162 D InsetsController: show(ime(), fromIme=false)
+11-23 03:23:16.974  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:354b4d40: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:16.975  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT_BY_INSETS_API
+11-23 03:23:16.984  8162  8162 I AssistStructure: Flattened final assist data: 1316 bytes, containing 1 windows, 7 views
+11-23 03:23:16.990  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:2a95cf71: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-23 03:23:16.990  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-23 03:23:17.030  8162  8162 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-23 03:23:17.030  8162  8162 D Autofill Status: 
+11-23 03:23:17.030  8162  8162 D Autofill Status: Did you set up autofill?
+11-23 03:23:17.030  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-23 03:23:17.030  8162  8162 D Autofill Status: 2. Pick a service
+11-23 03:23:17.030  8162  8162 D Autofill Status: 
+11-23 03:23:17.030  8162  8162 D Autofill Status: Did you add an account?
+11-23 03:23:17.030  8162  8162 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-23 03:23:17.030  8162  8162 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-23 03:23:17.030  8162  8162 D Autofill Status: 3. Add your account
+11-23 03:23:17.134  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:17.140  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:17.140  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:2a95cf71: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:17.154  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:354b4d40: onShown
+11-23 03:23:17.324  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.compose.ui.window.Api33Impl$$ExternalSyntheticLambda0@3c19ca5
+11-23 03:23:17.584  8162  8207 D EGL_emulation: app_time_stats: avg=84.45ms min=3.46ms max=291.18ms count=13
+11-23 03:23:17.984  8162  8162 D InsetsController: show(ime(), fromIme=false)
+11-23 03:23:17.984  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:e46abf60: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:17.984  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:e46abf60: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:17.994  8162  8162 I AssistStructure: Flattened final assist data: 1320 bytes, containing 1 windows, 7 views
+11-23 03:23:17.996  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:e9959f83: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-23 03:23:17.996  8162  8162 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{d43958c VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-23 03:23:18.075  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:18.077  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:803b0b6d: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:18.080  8162  8162 D InsetsController: show(ime(), fromIme=true)
+11-23 03:23:18.080  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:e9959f83: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:18.274  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.compose.ui.window.Api33Impl$$ExternalSyntheticLambda0@3c6b9b2
+11-23 03:23:18.717  8162  8162 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+4m37s750ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-23 03:23:18.773  8162  8162 D InsetsController: hide(ime(), fromIme=true)
+11-23 03:23:18.795  8162  8162 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@218458196 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@4abba70
+11-23 03:23:18.797  8162  8207 D EGL_emulation: app_time_stats: avg=74.35ms min=3.47ms max=226.73ms count=16
+11-23 03:23:18.804  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:f85f709b: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+11-23 03:23:18.807  8162  8162 I ImeTracker: com.google.android.inputmethod.latin:93f6bbc: onHidden
+11-23 03:23:19.137  8162  8162 D InsetsController: hide(ime(), fromIme=false)
+11-23 03:23:19.138  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:19289be3: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_BY_INSETS_API fromUser false
+11-23 03:23:19.138  8162  8162 I ImeTracker: org.greenstand.android.TreeTracker.debug:19289be3: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-23 03:23:19.265  8162  8162 E FrameTracker: force finish cuj, time out: J<IME_INSETS_SHOW_ANIMATION::0@1@org.greenstand.android.TreeTracker.debug>
+11-23 03:23:19.633  8373  8373 I eeTracker.debug: Late-enabling -Xcheck:jni
+11-23 03:23:19.680  8373  8373 I eeTracker.debug: Using CollectorTypeCMC GC.
+11-23 03:23:19.681  8373  8373 W eeTracker.debug: Unexpected CPU variant for x86: x86_64.
+11-23 03:23:19.681  8373  8373 W eeTracker.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-23 03:23:19.694  8373  8373 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-23 03:23:19.722  8373  8373 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-23 03:23:19.722  8373  8373 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-23 03:23:19.723  8373  8373 W ziparchive: Unable to open '/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.dm': No such file or directory
+11-23 03:23:19.723  8373  8373 W ziparchive: Unable to open '/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.dm': No such file or directory
+11-23 03:23:20.210  8373  8373 D nativeloader: Configuring clns-7 for other apk /data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/lib/x86_64:/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/org.greenstand.android.TreeTracker.debug
+11-23 03:23:20.218  8373  8373 V GraphicsEnvironment: Currently set values for:
+11-23 03:23:20.218  8373  8373 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-23 03:23:20.218  8373  8373 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-23 03:23:20.218  8373  8373 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-23 03:23:20.218  8373  8373 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-23 03:23:20.223  8373  8373 I MultiDex: VM with version 2.1.0 has multidex support
+11-23 03:23:20.224  8373  8373 I MultiDex: Installing application
+11-23 03:23:20.224  8373  8373 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+11-23 03:23:20.241  8373  8373 D SessionsDependencies: Dependency to CRASHLYTICS added.
+11-23 03:23:20.247  8373  8373 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-23 03:23:20.286  8373  8373 D FirebaseSessions: Initializing Firebase Sessions SDK.
+11-23 03:23:20.288  8373  8373 I FirebaseCrashlytics: Initializing Firebase Crashlytics 18.6.3 for org.greenstand.android.TreeTracker.debug
+11-23 03:23:20.301  8373  8373 D SessionsDependencies: Subscriber CRASHLYTICS registered.
+11-23 03:23:20.310  8373  8392 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-23 03:23:20.310  8373  8392 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-23 03:23:20.317  8373  8392 I DynamiteModule: Considering local module com.google.android.gms.measurement.dynamite:105 and remote module com.google.android.gms.measurement.dynamite:115
+11-23 03:23:20.323  8373  8392 I DynamiteModule: Selected remote version of com.google.android.gms.measurement.dynamite, version >= 115
+11-23 03:23:20.323  8373  8392 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-23 03:23:20.336  8373  8395 E FirebaseCrashlytics: Settings request failed.
+11-23 03:23:20.344  8373  8373 I FirebaseInitProvider: FirebaseApp initialization successful
+11-23 03:23:20.351  8373  8373 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-23 03:23:20.368  8373  8373 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-23 03:23:20.368  8373  8373 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+11-23 03:23:20.371  8373  8392 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-23 03:23:20.371  8373  8392 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-23 03:23:20.376  8373  8373 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-23 03:23:20.377  8373  8373 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-23 03:23:20.404  8373  8373 I AWSKeyValueStore: Detected Android API Level = 35
+11-23 03:23:20.404  8373  8373 I AWSKeyValueStore: Creating the AWSKeyValueStore with key for sharedPreferencesForData = com.amazonaws.android.auth
+11-23 03:23:20.410  8373  8373 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:20.410  8373  8373 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:20.411  8373  8373 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.identityId
+11-23 03:23:20.411  8373  8373 D CognitoCachingCredentia: Loading credentials from SharedPreferences
+11-23 03:23:20.411  8373  8373 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:20.411  8373  8373 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-23 03:23:20.412  8373  8373 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.expirationDate
+11-23 03:23:20.413  8373  8394 I FirebaseCrashlytics: No version control information found
+11-23 03:23:20.427  8373  8373 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-23 03:23:20.429  8373  8373 D AmazonS3Client: initialized with endpoint = https://s3.eu-central-1.amazonaws.com
+11-23 03:23:20.439  8373  8390 W InstallationId: Error getting authentication token.
+11-23 03:23:20.439  8373  8390 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-23 03:23:20.439  8373  8390 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-23 03:23:20.442  8373  8390 D SessionConfigFetcher: Fetching settings from server.
+11-23 03:23:20.497  8373  8401 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-23 03:23:20.497  8373  8373 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-23 03:23:20.500  8373  8390 D LifecycleServiceBinder: Binding service to application.
+11-23 03:23:20.541  8373  8373 W eeTracker.debug: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-23 03:23:20.551  8373  8393 D SessionLifecycleClient: Queued message 1. Queue size 1
+11-23 03:23:20.555  8373  8373 W HWUI    : Unknown dataspace 0
+11-23 03:23:20.559  8373  8411 I FA      : App measurement initialized, version: 95014
+11-23 03:23:20.560  8373  8411 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-23 03:23:20.561  8373  8373 D SessionLifecycleService: Service bound to new client on process 8373
+11-23 03:23:20.561  8373  8411 I FA      : To enable faster debug mode event logging run:
+11-23 03:23:20.561  8373  8411 I FA      :   adb shell setprop debug.firebase.analytics.app org.greenstand.android.TreeTracker.debug
+11-23 03:23:20.563  8373  8416 D SessionLifecycleService: App has not yet foregrounded. Using previously stored session: null
+11-23 03:23:20.563  8373  8416 D SessionLifecycleService: Client android.os.Messenger@eb087b7 bound at 279597. Clients: 1
+11-23 03:23:20.651  8373  8411 I FA      : Tag Manager is not found and thus will not be used
+11-23 03:23:20.696  8373  8373 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-23 03:23:20.760  8373  8412 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-23 03:23:20.760  8373  8412 I EGL_emulation: Opening libGLESv2_emulation.so
+11-23 03:23:20.783  8373  8412 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-23 03:23:20.801  8373  8412 I Gralloc4: mapper 4.x is not supported
+11-23 03:23:21.083  8373  8373 D SessionLifecycleClient: Connected to SessionLifecycleService. Queue size 1
+11-23 03:23:21.118  8373  8397 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-23 03:23:21.118  8373  8416 D SessionLifecycleService: Activity foregrounding at 280154.
+11-23 03:23:21.119  8373  8416 D SessionLifecycleService: Cold start detected.
+11-23 03:23:21.128  8373  8373 I Choreographer: Skipped 31 frames!  The application may be doing too much work on its main thread.
+11-23 03:23:21.149  8373  8416 D SessionLifecycleService: Generated new session 847b76d02e3c4fdf91a1651c72734351
+11-23 03:23:21.149  8373  8416 D SessionLifecycleService: Broadcasting new session: SessionDetails(sessionId=847b76d02e3c4fdf91a1651c72734351, firstSessionId=847b76d02e3c4fdf91a1651c72734351, sessionIndex=0, sessionStartTimestampUs=1795404201149000)
+11-23 03:23:21.180  8373  8390 D SessionFirelogPublisher: Data Collection is enabled for at least one Subscriber
+11-23 03:23:21.220  8373  8373 D SessionLifecycleClient: Session update received: 847b76d02e3c4fdf91a1651c72734351
+11-23 03:23:21.221  8373  8396 D SessionLifecycleClient: Notified CRASHLYTICS of new session 847b76d02e3c4fdf91a1651c72734351
+11-23 03:23:21.231  8373  8373 D OrgRepo : Org set to: Greenstand
+11-23 03:23:21.231  8373  8373 D OrgRepo : Org settings: Org(id=-1, name=Greenstand, walletId=, logoPath=, captureSetupFlow=[Destination(route=user-select, features=null), Destination(route=add-org, features=null)], captureFlow=[Destination(route=capture/{profilePicUrl}, features=null), Destination(route=tree-image-review/{photoPath}, features=null)])
+11-23 03:23:21.294  8373  8390 W InstallationId: Error getting authentication token.
+11-23 03:23:21.294  8373  8390 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-23 03:23:21.294  8373  8390 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-23 03:23:21.314  8373  8390 D SessionConfigFetcher: Fetching settings from server.
+11-23 03:23:21.339  8373  8401 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-23 03:23:21.357  8373  8390 W InstallationId: Error getting authentication token.
+11-23 03:23:21.357  8373  8390 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-23 03:23:21.357  8373  8390 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-23 03:23:21.383  8373  8390 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"847b76d02e3c4fdf91a1651c72734351","firstSessionId":"847b76d02e3c4fdf91a1651c72734351","sessionIndex":0,"eventTimestampUs":1795404201149000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"dTPqa3YdSKefUxgr8uAz9-","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":8373,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":8373,"importance":100,"defaultProcess":true}]}}}
+11-23 03:23:21.383  8373  8390 D SessionFirelogPublisher: Successfully logged Session Start event: 847b76d02e3c4fdf91a1651c72734351
+11-23 03:23:21.459  8373  8373 D BuildVariant: build variant: debug
+11-23 03:23:21.496  8373  8373 D OrgLink : No org deeplink, using existing org
+11-23 03:23:21.565  8373  8377 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-23 03:23:22.677  8373  8412 D EGL_emulation: app_time_stats: avg=532.75ms min=56.48ms max=1097.98ms count=3
+11-23 03:23:22.691  8373  8436 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;->getThreadSession()Landroid/database/sqlite/SQLiteSession; (unsupported, reflection, allowed)
+11-23 03:23:22.691  8373  8436 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteSession;->beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (unsupported, reflection, allowed)
+11-23 03:23:23.441  8373  8373 D nativeloader: Load /data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk!/lib/x86_64/libmaplibre.so using ns clns-7 from class loader (caller=/data/app/~~aL68_wz5RDxo6m56OlCGWg==/org.greenstand.android.TreeTracker.debug-BijEJD9Qkkw8gA8kRSf8vQ==/base.apk!classes21.dex): ok
+11-23 03:23:23.847  8373  8412 D EGL_emulation: app_time_stats: avg=144.58ms min=4.46ms max=361.67ms count=8
+11-23 03:23:25.082  8373  8373 W CaptureSetupScope: Scope already open, closing previous before reopening
+11-23 03:23:25.133  8373  8412 D EGL_emulation: app_time_stats: avg=125.53ms min=2.96ms max=392.02ms count=10
+11-23 03:23:25.459  8373  8373 W eeTracker.debug: Accessing hidden method Landroid/view/ViewTreeObserver;->dispatchOnScrollChanged()V (unsupported, reflection, allowed)
+11-23 03:23:25.787  8373  8474 D ProfileInstaller: Installing profile for org.greenstand.android.TreeTracker.debug
