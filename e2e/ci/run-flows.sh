@@ -53,6 +53,11 @@ case "$SCREENSHOTS" in steps|end|none) ;; *) echo "SCREENSHOTS must be steps, en
 SERIAL=$2
 shift 2
 cd "$ROOT" || exit 2
+# TEMP (baseline branch only): load the runner's CPUs to imitate a slow runner.
+LOAD=$(cat e2e/ci/load.txt 2>/dev/null || echo 0)
+for ((i = 0; i < LOAD; i++)); do (yes > /dev/null &) ; done
+trap 'pkill -x yes || true' EXIT
+echo "CPU load: $LOAD busy loops on $(nproc) cores"
 
 # Selectors to flow files, in order, without repeats.
 # Tags as affected.py reads them (inline or block list, comments allowed).
