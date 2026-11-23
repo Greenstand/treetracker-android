@@ -99,9 +99,11 @@ tags: [settings, capture]
     visible: {id: TrackButton}
     timeout: 15000
 - assertVisible: {id: TreesToSyncCount, text: "1"}
-# The tree is Ada's.
+# The tree is Ada's. Relaunch so user select reads the tree counts again.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
 - tapOn: {id: TrackButton}
-- assertVisible:
-    id: "UserButton_5551230001"
-    containsDescendants:
-      - text: "1"
+- assertVisible: {id: "UserButton_5551230001", text: "Ada Admin, 5551230001, 1"}
