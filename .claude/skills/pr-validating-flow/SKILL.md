@@ -136,15 +136,23 @@ the result (the PR comment, or `bash e2e/ci/cloud-flows.sh fetch --affected <PR>
 | ❌ broken | fails on the PR's app | The fix or the flow is wrong. Read `error.txt` and `screen.txt` of the "after" run. |
 | ❔ inconclusive | a side did not run | Read the reason (base app did not build, seeding failed, recording lost) and fix or re-run. |
 
-Then finish the description:
+The description is written once, when you open the PR, and then left to CI:
 
-- One or two sentences under the block saying what each video shows ("Before: the app closes when
-  Bob is deleted offline. After: 'Account Deleted' shows and Settings comes back").
-- CI's edit of the description does not re-run the "Check for screenshot & video" check. Saving
-  the description yourself does, so make your final edit after CI has filled the block, and keep
-  the block as CI wrote it (read the current description first; don't write back a stale copy).
-- The description changes only on a push. After editing only the `validates:` line, push a commit
-  or re-run the check.
+- **Write all of it up front**, including one or two sentences under the markers saying what
+  each video will show ("Before: the app closes when Bob is deleted offline. After: 'Account
+  Deleted' shows and Settings comes back"). You know this before CI runs: it is what the flow's
+  last steps assert.
+- **Never write between the markers**, and **don't save the description again once CI has put
+  videos in it**. From a Claude Code cloud session, saving a PR description rewrites the media
+  links in it (`<img` becomes `&lt;img`, URLs get wrapped in backticks; seen on #1444), with the
+  GitHub tools and with `gh api` alike, even when you send back exactly what you read. The videos
+  are then gone until CI runs again.
+- You don't need to save it: after CI fills the block it re-runs "Check for screenshot & video"
+  itself, and that check reads the description as it is then.
+- If the description has to change after that (a wrong sentence, a new `validates:` line), make
+  the edit and then push a commit, or re-run the "Affected flows (annotated video)" check: every
+  run writes the block again from scratch, which also repairs a block that got garbled. The
+  `validates:` line is only read when that check runs.
 
 ## The proof has to be real
 
@@ -182,15 +190,18 @@ Before deciding that, try, and write down what you tried:
 
 If nothing holds up, say so in the PR and give other proof:
 
-- Under "Screen recording / video", write `No validating flow: <one sentence why>` and the list
-  of what you tried. No `validates:` line.
+- Under "Screen recording / video", write a line that starts `No validating flow: <one sentence
+  why>` (the check looks for exactly that start), then the list of what you tried. No
+  `validates:` line.
 - Add a unit, Robolectric or instrumented test that **fails without the change and passes with
   it**, name it in the description, and show the failing run (the test's failure message from a
   commit or local run without the fix) next to the passing one.
-- The template still asks for a video. A recording of an existing flow near the change only shows
-  that nothing broke; if you add one, label it as that. Whether the PR can merge without a
-  validating flow is the maintainer's call, so ask for it in the description instead of deciding
-  it yourself.
+- Don't attach a recording of some nearby flow to satisfy the template: it shows that nothing
+  broke, not that the fix works, and reads as proof when it is not.
+- Whether the PR can merge without a validating flow is the maintainer's call, so ask for it in
+  the description instead of deciding it yourself. "Check for screenshot & video" stays red on
+  such a PR, saying it waits for that decision, until a maintainer adds the
+  `no-validating-flow` label. Don't add the label yourself.
 
 ## Checklist before asking for review
 
@@ -200,7 +211,9 @@ If nothing holds up, say so in the PR and give other proof:
       if it is an org flow.
 - [ ] `validates:` line and the `e2e-videos` markers in the description.
 - [ ] Verdict is **validated**, and the "before" run failed at the step that shows the bug.
-- [ ] Both videos are in the description, with a sentence on what each shows.
+- [ ] Both videos are in the description (CI put them there; you did not edit the description
+      after that), with a sentence on what each shows.
 - [ ] No assertion weakened, no existing flow's assertions changed, nothing added to the app for
       the test but test tags.
-- [ ] Or: "No validating flow", what was tried, and a test that fails without the change.
+- [ ] Or: a `No validating flow: ...` line, what was tried, a test that fails without the change,
+      and the decision left to a maintainer (the `no-validating-flow` label is theirs to add).
