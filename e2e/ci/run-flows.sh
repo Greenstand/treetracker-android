@@ -123,6 +123,14 @@ if [[ $ONLINE != 1 ]]; then
   "$ADB" -s "$SERIAL" shell svc wifi disable
 fi
 "$ADB" -s "$SERIAL" emu geo fix 37.3 -3.5 >/dev/null || true
+# TEMP (baseline branch only): the copies in ONE tb process straight after boot, as
+# android-e2e runs its suite (e2e/run.sh). Logs land in OUT/suite, the console in OUT.
+if [[ $(cat e2e/ci/suite.txt 2>/dev/null) == 1 ]]; then
+  [[ -f e2e/ci/suite-pre.sh ]] && source e2e/ci/suite-pre.sh
+  "$TB" test e2e/flows/ -p android --device "$SERIAL" --include-tags zz \
+    --debug-output "$OUT/suite" </dev/null > "$OUT/suite-console.txt" 2>&1 || true
+  find "$OUT/suite" -name '*.png' -delete 2>/dev/null || true
+fi
 
 # CI's emulator drops its adb connection on one or two of the first `adb pull`s after it boots,
 # and then no more (docs/testing/ci-flows.md, "Lost recordings"). tb pulls its recording once and
