@@ -1,0 +1,63 @@
+▶ Logout keeps the power user on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.9s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  515ms
+    ✓ Tap on id: ArrowForwardButton  546ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  453ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  8ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  325ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.3s
+    ✓ Input text 5551230001  798ms
+    ✓ Hide keyboard  77ms
+    ✓ Tap on id: ArrowForwardButton  154ms
+    ✓ Tap on id: FirstNameField  184ms
+    ✓ Input text Ada  258ms
+    ✓ Tap on id: LastNameField  203ms
+    ✓ Input text Admin  305ms
+    ✓ Hide keyboard  103ms
+    ✓ Tap on id: ArrowForwardButton  248ms
+    ✓ Tap on id: TutorialDoneButton  1.3s
+    ✓ Tap on id: CaptureButton  579ms
+    ✓ Wait until id: ApproveButton is visible  7ms
+    ✓ Tap on id: ApproveButton  123ms
+    ✓ Wait until id: TrackButton is visible  10ms
+  ✓ Run Sign up  22.6s
+  ✓ Tap on id: SettingsButton  355ms
+  ✓ Tap on id: SettingsLogout  170ms
+  ✓ Tap on id: DialogPositiveButton  122ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  122ms
+  ✓ Tap on id: PhoneField  155ms
+  ✓ Input text 5551230002  479ms
+  ✓ Hide keyboard  64ms
+  ✓ Tap on id: ArrowForwardButton  91ms
+  ✓ Tap on id: FirstNameField  169ms
+  ✓ Input text Bob  258ms
+  ✓ Tap on id: LastNameField  191ms
+  ✓ Input text Builder  318ms
+  ✓ Hide keyboard  66ms
+  ✓ Tap on id: ArrowForwardButton  166ms
+  ✓ Tap on id: TutorialDoneButton  532ms
+  ✓ Tap on id: CaptureButton  523ms
+  ✓ Wait until id: ApproveButton is visible  6ms
+  ✓ Tap on id: ApproveButton  138ms
+  ✓ Wait until id: TrackButton is visible  23ms
+  ✓ Tap on id: SettingsButton  205ms
+  ✓ Tap on id: SettingsLogout  145ms
+  ✓ Assert that id: DialogUserButton is visible  7ms
+  ✗ Assert that "Ada Admin" is visible  17.0s
+      Assertion is false: "Ada Admin" is visible
+✗ Logout keeps the power user failed in 1m11s on sdk gphone64 x86 64
+  Assertion is false: "Ada Admin" is visible
+  screen was:
+    android 320x640 org.greenstand.android.TreeTracker.debug, 5 elements
+    @1 Text "Are you sure you want to logout?" #DialogTitle
+    @2 Text "Are you sure you want to log out from your account?" #DialogMessage
+    @3 Button "Bob Builder, 5551230002, 0" #DialogUserButton unchecked
+    row:
+      @4 Button #DialogNegativeButton
+      @5 Button #DialogPositiveButton
+  debug: build/flow-results/validate/before/flows/settings-logout-keeps-power-user/tb/Logout_keeps_the_power_user (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/settings-logout-keeps-power-user/tb/Logout_keeps_the_power_user/recording.mp4
+
+0 passed, 1 failed in 1m15s

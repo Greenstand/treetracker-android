@@ -1,0 +1,70 @@
+{
+  "beforeSha": "0303c068153932bdda3dc5aa9b866dd74b245a2f",
+  "beforeMissing": null,
+  "counts": {
+    "validated": 2,
+    "not-demonstrated": 0,
+    "broken": 0,
+    "inconclusive": 0
+  },
+  "flows": [
+    {
+      "name": "settings-logout-keeps-power-user",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 75,
+        "error": "Assertion is false: \"Ada Admin\" is visible",
+        "ran": true,
+        "video": "before/videos/settings-logout-keeps-power-user.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-logout-keeps-power-user/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 48,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-logout-keeps-power-user.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-logout-keeps-power-user/step-26-end-assertNotVisible-Bob.png"
+        ]
+      }
+    },
+    {
+      "name": "settings-logout-relaunch",
+      "verdict": "validated",
+      "why": null,
+      "before": {
+        "status": "failed",
+        "seconds": 63,
+        "error": "Assertion is false: id: PrivacyPolicyCloseButton is visible",
+        "ran": true,
+        "video": "before/videos/settings-logout-relaunch.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "before/screens/settings-logout-relaunch/failure.png"
+        ]
+      },
+      "after": {
+        "status": "passed",
+        "seconds": 47,
+        "error": null,
+        "ran": true,
+        "video": "after/videos/settings-logout-relaunch.mp4",
+        "recording": "saved",
+        "recordingError": null,
+        "screenshots": [
+          "after/screens/settings-logout-relaunch/step-21-end-extendedWaitUntil-TrackButton.png"
+        ]
+      }
+    }
+  ]
+}
