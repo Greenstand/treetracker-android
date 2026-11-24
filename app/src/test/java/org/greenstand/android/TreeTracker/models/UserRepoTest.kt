@@ -670,4 +670,128 @@ class UserRepoTest {
 
             assertEquals("", updated.captured.lastName)
         }
+
+    @Test
+    fun `WHEN updateUser renames a phone wallet user THEN keeps their phone and email`() =
+        runTest {
+            val existing =
+                createFakeUserEntity(id = 22L, wallet = "15551234567").apply {
+                    phone = "15551234567"
+                    email = null
+                }
+            coEvery { dao.getUserById(22L) } returns existing
+            val updated = slot<UserEntity>()
+            coEvery { dao.updateUser(capture(updated)) } returns Unit
+
+            userRepo.updateUser(
+                User(
+                    id = 22L,
+                    wallet = "15551234567",
+                    numberOfTrees = 0,
+                    firstName = "Renamed",
+                    lastName = "Grower",
+                    photoPath = "photo",
+                    isPowerUser = false,
+                    unreadMessagesAvailable = false,
+                ),
+            )
+
+            with(updated.captured) {
+                assertEquals("Renamed", firstName)
+                assertEquals("15551234567", phone)
+                // The upload service rejects a wallet registration whose email has no @.
+                assertEquals(null, email)
+            }
+        }
+
+    @Test
+    fun `WHEN updateUser renames an email wallet user THEN keeps their phone and email`() =
+        runTest {
+            val existing =
+                createFakeUserEntity(id = 23L, wallet = "grower@example.org").apply {
+                    phone = null
+                    email = "grower@example.org"
+                }
+            coEvery { dao.getUserById(23L) } returns existing
+            val updated = slot<UserEntity>()
+            coEvery { dao.updateUser(capture(updated)) } returns Unit
+
+            userRepo.updateUser(
+                User(
+                    id = 23L,
+                    wallet = "grower@example.org",
+                    numberOfTrees = 0,
+                    firstName = "Renamed",
+                    lastName = "Grower",
+                    photoPath = "photo",
+                    isPowerUser = false,
+                    unreadMessagesAvailable = false,
+                ),
+            )
+
+            with(updated.captured) {
+                assertEquals(null, phone)
+                assertEquals("grower@example.org", email)
+            }
+        }
+
+    @Test
+    fun `WHEN updateUser changes the photo THEN clears the photo url so the new photo uploads`() =
+        runTest {
+            val existing =
+                createFakeUserEntity(id = 24L, photoPath = "old-photo").apply {
+                    photoUrl = "https://example.org/old.jpg"
+                    uploaded = true
+                }
+            coEvery { dao.getUserById(24L) } returns existing
+            val updated = slot<UserEntity>()
+            coEvery { dao.updateUser(capture(updated)) } returns Unit
+
+            userRepo.updateUser(
+                User(
+                    id = 24L,
+                    wallet = "wallet",
+                    numberOfTrees = 0,
+                    firstName = "Jay",
+                    lastName = "Ray",
+                    photoPath = "new-photo",
+                    isPowerUser = false,
+                    unreadMessagesAvailable = false,
+                ),
+            )
+
+            with(updated.captured) {
+                assertEquals("new-photo", photoPath)
+                assertEquals(null, photoUrl)
+                assertFalse(uploaded)
+            }
+        }
+
+    @Test
+    fun `WHEN updateUser keeps the photo THEN keeps the uploaded photo url`() =
+        runTest {
+            val existing =
+                createFakeUserEntity(id = 25L, photoPath = "photo").apply {
+                    photoUrl = "https://example.org/photo.jpg"
+                    uploaded = true
+                }
+            coEvery { dao.getUserById(25L) } returns existing
+            val updated = slot<UserEntity>()
+            coEvery { dao.updateUser(capture(updated)) } returns Unit
+
+            userRepo.updateUser(
+                User(
+                    id = 25L,
+                    wallet = "wallet",
+                    numberOfTrees = 0,
+                    firstName = "New",
+                    lastName = "Name",
+                    photoPath = "photo",
+                    isPowerUser = false,
+                    unreadMessagesAvailable = false,
+                ),
+            )
+
+            assertEquals("https://example.org/photo.jpg", updated.captured.photoUrl)
+        }
 }

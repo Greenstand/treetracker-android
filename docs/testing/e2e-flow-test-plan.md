@@ -105,6 +105,7 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 | E7 | Delete non-admin user | Settings → Delete account → pick non-admin → confirm → "deleted" → back on Settings | Delete branch 1 | Partly (`settings-delete-user.yaml`, see finding 6) |
 | E8 | Delete admin | Same for the admin → ends on Signup with clean stack | Delete branch 2 | Partly (`settings-delete-admin.yaml`, see finding 6) |
 | E9 | Privacy policy | Settings → privacy dialog → close | Cheap, often broken by dialog refactors | Yes (`settings-profile-privacy.yaml`) |
+| E10 | Edit profile name | Settings → Profile → user → Edit → new first and last name → Save → relaunch, new name kept | Edits must persist to be uploaded | Yes (`settings-profile-edit.yaml`) |
 
 ### F. Messages (P2)
 
