@@ -380,5 +380,4 @@ class SettingsViewModelTest {
             coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
             coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
         }
-
 }
