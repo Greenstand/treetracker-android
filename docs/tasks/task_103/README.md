@@ -40,8 +40,8 @@ An independent review found a second way to lose the write. It was already on ma
 the bug this task fixes. `LogoutConfirmed` launches the clear in `viewModelScope`, then navigates with
 `popUpToRoot()`. That pops the Settings entry, and once its exit transition ends, the ViewModel is
 cleared and `viewModelScope` is cancelled. On a slow database, the `clearPowerUsers()`
-call can be cancelled and `power_user` stays `1`. A possible fix is to run them in
-`withContext(NonCancellable)`, or an app-scoped write. It is left for a separate issue, as is process
+call can be cancelled and `power_user` stays `1`. A possible fix is to run it in
+`withContext(NonCancellable)`, or to make it an app-scoped write. It is left for a separate issue, as is process
 death before the write commits.
 
 There is no validating e2e flow for this task (`pr-validating-flow` skill, "When no flow can show the
