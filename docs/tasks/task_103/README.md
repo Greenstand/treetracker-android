@@ -17,12 +17,12 @@ next person who opens the app as the previous power user.
 
 ## Test (lowest level that shows it)
 
-`SettingsViewModelTest`:
-`WHEN logout before the power user has loaded THEN the power-user flag is still cleared`.
-The `getPowerUser()` mock suspends on a `CompletableDeferred`, so `LogoutConfirmed` runs while
-`state.powerUser` is still `null`. The test asserts that `clearPowerUsers()` was called without
-waiting for the load. A unit test is enough because the race is in
-the ViewModel. An e2e flow can't reliably tap Logout inside the few milliseconds the Room query takes.
+`SettingsViewModelTest` had
+`WHEN logout before the power user has loaded THEN the power-user flag is still cleared`: the
+`getPowerUser()` mock suspended on a `CompletableDeferred`, so `LogoutConfirmed` ran while
+`state.powerUser` was still `null`. A unit test was enough because the race was in the ViewModel. An
+e2e flow can't reliably tap Logout inside the few milliseconds the Room query takes. The fix below
+replaced that test, because logout no longer touches the power user.
 
 ## Fix (#1436): logout no longer touches the power user
 
