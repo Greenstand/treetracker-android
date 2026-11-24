@@ -1,6 +1,7 @@
-# Logout lasts until someone signs in again. Closing and reopening the app after a logout opens
+# Logout lasts until someone signs in again. Stopping and restarting the app after a logout opens
 # Signup, not the Dashboard and not first-time setup, because logout keeps the power user and
-# remembers that the app is logged out. Signing back in reaches the Dashboard.
+# remembers that the app is logged out. Signing back in reaches the Dashboard. stopApp + launchApp is a
+# fresh start through the splash screen; killApp would restore the saved back stack (Signup) instead.
 appId: org.greenstand.android.TreeTracker.debug
 name: Logout survives a relaunch
 tags: [settings]
@@ -13,9 +14,8 @@ tags: [settings]
 - tapOn: {id: SettingsLogout}
 - tapOn: {id: DialogPositiveButton}
 - assertVisible: {id: PrivacyPolicyCloseButton}
-- pressKey: Home
-- killApp
-- launchApp: {stopApp: false}
+- stopApp
+- launchApp
 # Signup, with no language picker first.
 - extendedWaitUntil:
     visible: {id: PrivacyPolicyCloseButton}
@@ -32,9 +32,8 @@ tags: [settings]
     visible: {id: TrackButton}
     timeout: 15000
 # Signed in again: a relaunch now opens the Dashboard.
-- pressKey: Home
-- killApp
-- launchApp: {stopApp: false}
+- stopApp
+- launchApp
 - extendedWaitUntil:
     visible: {id: TrackButton}
     timeout: 30000
