@@ -385,5 +385,4 @@ class SettingsViewModelTest {
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             loaded.complete(FakeFileGenerator.fakeUsers.first())
         }
-
 }
