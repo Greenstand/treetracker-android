@@ -185,7 +185,7 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText(string(R.string.logout_dialog_message)).assertDoesNotExist()
-        coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
+        coVerify(exactly = 0) { userRepo.clearPowerUsers() }
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())
     }
 
@@ -198,7 +198,7 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
-        coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+        coVerify(exactly = 1) { userRepo.clearPowerUsers() }
         assertEquals(listOf(SignupFlowRoute), backStack.toList())
     }
 }
