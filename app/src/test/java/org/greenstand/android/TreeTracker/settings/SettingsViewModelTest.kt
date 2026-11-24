@@ -102,7 +102,7 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout THEN calls setPowerUserStatus and hides logout dialog`() =
+    fun `WHEN logout THEN clears the power-user flag and hides logout dialog`() =
         runTest {
             val powerUser = FakeFileGenerator.fakeUsers.first()
             coEvery { userRepo.getPowerUser() } returns powerUser
@@ -111,7 +111,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.Logout)
 
-            coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+            coVerify { userRepo.clearPowerUsers() }
             val state = viewModel.state.first()
             assertFalse(state.showLogoutDialog!!)
         }
@@ -209,7 +209,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.LogoutConfirmed)
 
-            coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+            coVerify { userRepo.clearPowerUsers() }
             val event = viewModel.events.first().getContentIfNotConsumed()
             assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
         }
@@ -317,7 +317,7 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout without a power user THEN only hides the logout dialog`() =
+    fun `WHEN logout without a power user THEN still clears and hides the logout dialog`() =
         runTest {
             coEvery { userRepo.getPowerUser() } returns null
             val viewModel = SettingsViewModel(userRepo)
@@ -325,7 +325,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.Logout)
 
-            coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
+            coVerify(exactly = 1) { userRepo.clearPowerUsers() }
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             assertTrue(viewModel.events.replayCache.isEmpty())
         }
@@ -341,7 +341,7 @@ class SettingsViewModelTest {
 
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             assertEquals(1, viewModel.events.replayCache.size)
-            coVerify(exactly = 1) { userRepo.setPowerUserStatus(FakeFileGenerator.fakeUsers.first().id, false) }
+            coVerify(exactly = 1) { userRepo.clearPowerUsers() }
         }
 
     @Test
@@ -374,26 +374,16 @@ class SettingsViewModelTest {
     @Test
     fun `WHEN logout before the power user has loaded THEN the power-user flag is still cleared`() =
         runTest {
-            val powerUser = FakeFileGenerator.fakeUsers.first()
             val loaded = CompletableDeferred<User?>()
             coEvery { userRepo.getPowerUser() } coAnswers { loaded.await() }
-            val cleared = mutableListOf<Pair<Long, Boolean>>()
-            coEvery { userRepo.setPowerUserStatus(any(), any()) } answers {
-                cleared.add(firstArg<Long>() to secondArg<Boolean>())
-                Unit
-            }
             val viewModel = SettingsViewModel(userRepo)
             assertNull(viewModel.state.value.powerUser, "precondition: power user must not be loaded yet")
 
             viewModel.handleAction(SettingsAction.LogoutConfirmed)
-            loaded.complete(powerUser)
 
-            assertEquals(
-                listOf(powerUser.id to false),
-                cleared,
-                "Logout before the power user loaded left the power-user flag set for user ${powerUser.id}, " +
-                    "so the next person to sign in is treated as the previous power user",
-            )
+            coVerify(exactly = 1) { userRepo.clearPowerUsers() }
             assertEquals(false, viewModel.state.value.showLogoutDialog)
+            loaded.complete(FakeFileGenerator.fakeUsers.first())
         }
+
 }

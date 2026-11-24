@@ -69,6 +69,8 @@ class UserRepo(
         }
     }
 
+    suspend fun clearPowerUsers() = dao.clearPowerUsers()
+
     suspend fun createUser(
         firstName: String,
         lastName: String,

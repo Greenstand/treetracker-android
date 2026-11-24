@@ -20,22 +20,27 @@ next person who opens the app as the previous power user.
 `SettingsViewModelTest`:
 `WHEN logout before the power user has loaded THEN the power-user flag is still cleared`.
 The `getPowerUser()` mock suspends on a `CompletableDeferred`, so `LogoutConfirmed` runs while
-`state.powerUser` is still `null`. The test then lets the load finish and asserts that
-`setPowerUserStatus(id, false)` was called. A unit test is enough because the race is in
+`state.powerUser` is still `null`. The test asserts that `clearPowerUsers()` was called without
+waiting for the load. A unit test is enough because the race is in
 the ViewModel. An e2e flow can't reliably tap Logout inside the few milliseconds the Room query takes.
 
 ## Fix (#1436)
 
-In `Logout`, read the power user from the repository when logging out instead of using the cached
-state.
+`Logout` no longer needs to know who the power user is. It clears the flag on every user in one
+query, `TreeTrackerDAO.clearPowerUsers()` (`UPDATE user SET power_user = 0 WHERE power_user = 1`),
+through `UserRepo.clearPowerUsers()`. The cached `state.powerUser` is still loaded in `init`, but only
+for the logout dialog, which shows the power user's card.
+
+A first version read the power user from the repository at logout and cleared that one user. That
+fixed the race too, but took two database calls, and it would leave a second flagged user set.
 
 ## Review follow-up: not fixed here
 
 An independent review found a second way to lose the write. It was already on master, and it is not
 the bug this task fixes. `LogoutConfirmed` launches the clear in `viewModelScope`, then navigates with
 `popUpToRoot()`. That pops the Settings entry, and once its exit transition ends, the ViewModel is
-cleared and `viewModelScope` is cancelled. On a slow database, the `getPowerUser()` /
-`setPowerUserStatus()` calls can be cancelled and `power_user` stays `1`. A possible fix is to run them in
+cleared and `viewModelScope` is cancelled. On a slow database, the `clearPowerUsers()`
+call can be cancelled and `power_user` stays `1`. A possible fix is to run them in
 `withContext(NonCancellable)`, or an app-scoped write. It is left for a separate issue, as is process
 death before the write commits.
 

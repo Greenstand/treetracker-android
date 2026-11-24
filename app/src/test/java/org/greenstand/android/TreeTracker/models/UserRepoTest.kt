@@ -473,6 +473,15 @@ class UserRepoTest {
         }
 
     @Test
+    fun `WHEN clearing power users THEN clears the flag in one query`() =
+        runTest {
+            userRepo.clearPowerUsers()
+
+            coVerify { dao.clearPowerUsers() }
+            coVerify(exactly = 0) { dao.getPowerUser() }
+        }
+
+    @Test
     fun `WHEN granting power user status and none exists THEN updates the user`() =
         runTest {
             coEvery { dao.getPowerUser() } returns null

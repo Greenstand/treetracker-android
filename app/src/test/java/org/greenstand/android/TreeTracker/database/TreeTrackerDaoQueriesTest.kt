@@ -90,6 +90,21 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
         }
 
     @Test
+    fun `clearPowerUsers clears the flag on every user`() =
+        runTest {
+            val first = dao.insertUser(DbFixtures.user(wallet = "a", powerUser = true))
+            val second = dao.insertUser(DbFixtures.user(wallet = "b", powerUser = true))
+            val regular = dao.insertUser(DbFixtures.user(wallet = "c", powerUser = false))
+
+            dao.clearPowerUsers()
+
+            assertNull(dao.getPowerUser())
+            assertFalse(dao.getUserById(first)!!.powerUser)
+            assertFalse(dao.getUserById(second)!!.powerUser)
+            assertFalse(dao.getUserById(regular)!!.powerUser)
+        }
+
+    @Test
     fun `getAllUsers flow emits again when a user is inserted`() =
         runTest {
             val user = DbFixtures.user()

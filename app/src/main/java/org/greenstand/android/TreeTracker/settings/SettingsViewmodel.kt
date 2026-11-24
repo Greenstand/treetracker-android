@@ -75,9 +75,7 @@ class SettingsViewModel(
             }
             is SettingsAction.Logout -> {
                 viewModelScope.launch {
-                    userRepo.getPowerUser()?.let {
-                        userRepo.setPowerUserStatus(it.id, false)
-                    }
+                    userRepo.clearPowerUsers()
                     handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
                 }
             }
