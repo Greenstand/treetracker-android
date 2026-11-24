@@ -26,12 +26,16 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgLink
+import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.viewmodel.Action
 import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import timber.log.Timber
 
 data class SplashState(
     val isBootstrapping: Boolean = true,
@@ -42,7 +46,8 @@ sealed class SplashAction : Action {
 }
 
 class SplashScreenViewModel(
-    private val orgJsonString: String?,
+    private val orgId: String?,
+    private val orgName: String?,
     private val userRepo: UserRepo,
     private val treesToSyncHelper: TreesToSyncHelper,
     private val sessionTracker: SessionTracker,
@@ -51,6 +56,8 @@ class SplashScreenViewModel(
     private val messagesRepo: MessagesRepo,
     private val checkForInternetUseCase: CheckForInternetUseCase,
     private val orgRepo: OrgRepo,
+    private val orgConfigProvider: OrgConfigProvider,
+    private val installReferrerOrgProvider: InstallReferrerOrgProvider,
     private val exceptionDataCollector: ExceptionDataCollector,
 ) : BaseViewModel<SplashState, SplashAction>(SplashState()) {
     override fun handleAction(action: SplashAction) {
@@ -68,7 +75,19 @@ class SplashScreenViewModel(
         // normally a no-op; ensureInitialized() (not init()) avoids a redundant
         // reload and stays correct if the gate is ever bypassed.
         orgRepo.ensureInitialized()
-        orgJsonString?.let { orgRepo.addOrgFromJsonString(it) }
+        val link = linkedOrg()
+        if (link != null) {
+            val configJson = orgConfigProvider.fetchOrgConfig(link.id)
+            if (configJson != null) {
+                Timber.tag(ORG_LINK_TAG).i("Remote Config found for org ${link.id}, applying full config")
+                orgRepo.addOrgFromRemoteConfig(link.id, link.name, configJson)
+            } else {
+                Timber.tag(ORG_LINK_TAG).i("No Remote Config for org ${link.id}, creating minimal org with defaults")
+                orgRepo.addMinimalOrg(link.id, link.name)
+            }
+        } else {
+            Timber.tag(ORG_LINK_TAG).d("No org deeplink, using existing org")
+        }
 
         if (checkForInternetUseCase.execute(Unit)) {
             messagesRepo.syncMessages()
@@ -85,13 +104,26 @@ class SplashScreenViewModel(
         }
     }
 
+    private suspend fun linkedOrg(): OrgLink? {
+        if (!orgId.isNullOrBlank()) {
+            Timber.tag(ORG_LINK_TAG).i("Deeplink received: orgId=$orgId, orgName=$orgName")
+            return OrgLink(orgId, orgName.orEmpty())
+        }
+        return installReferrerOrgProvider.consume()
+    }
+
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
+
+    companion object {
+        private const val ORG_LINK_TAG = "OrgLink"
+    }
 }
 
 class SplashScreenViewModelFactory(
-    private val orgJsonString: String?,
+    private val orgId: String?,
+    private val orgName: String?,
 ) : ViewModelProvider.Factory,
     KoinComponent {
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgJsonString, get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SplashScreenViewModel(orgId, orgName, get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) as T
 }

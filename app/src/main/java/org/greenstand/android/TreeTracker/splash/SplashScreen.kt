@@ -47,8 +47,9 @@ import timber.log.Timber
 
 @Composable
 fun SplashScreen(
-    orgJsonString: String?,
-    viewModel: SplashScreenViewModel = viewModel(factory = SplashScreenViewModelFactory(orgJsonString)),
+    orgId: String?,
+    orgName: String? = null,
+    viewModel: SplashScreenViewModel = viewModel(factory = SplashScreenViewModelFactory(orgId, orgName)),
     navController: NavHostController = LocalNavHostController.current,
 ) {
     val permissions =

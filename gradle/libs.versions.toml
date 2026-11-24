@@ -1,8 +1,8 @@
 [versions]
 # Android SDK
-compileSdk = "35"
+compileSdk = "36"
 minSdk = "23"
-targetSdk = "35"
+targetSdk = "36"
 
 # Plugins
 androidGradlePlugin = "8.11.0"
@@ -56,6 +56,9 @@ timber = "5.0.1"
 
 # Firebase
 firebaseBom = "32.8.0"
+
+# Play
+installReferrer = "2.2"
 
 # Testing
 junit = "4.13.2"
@@ -165,6 +168,10 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
 firebase-installations = { module = "com.google.firebase:firebase-installations" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
+
+# Play
+install-referrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installReferrer" }
 
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }

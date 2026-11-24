@@ -125,7 +125,7 @@ fun TreeImageReview(
                 )
             }
         },
-    ) {
+    ) { padding ->
         if (state.isDialogOpen) {
             NoteDialog(
                 state = state,
@@ -138,7 +138,7 @@ fun TreeImageReview(
             )
         }
         LocalImage(
-            modifier = Modifier.fillMaxSize().navigationBarsPadding(),
+            modifier = Modifier.fillMaxSize().padding(padding),
             imagePath = state.treeImagePath ?: "",
             contentDescription = null,
             contentScale = ContentScale.Fit,

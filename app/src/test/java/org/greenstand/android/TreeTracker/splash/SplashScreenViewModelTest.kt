@@ -32,6 +32,9 @@ import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.models.location.LocationDataCapturer
 import org.greenstand.android.TreeTracker.models.messages.MessagesRepo
+import org.greenstand.android.TreeTracker.models.organization.InstallReferrerOrgProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgConfigProvider
+import org.greenstand.android.TreeTracker.models.organization.OrgLink
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 import org.greenstand.android.TreeTracker.usecases.CheckForInternetUseCase
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
@@ -49,7 +52,8 @@ class SplashScreenViewModelTest {
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
 
-    private var orgJsonString: String? = null
+    private var orgId: String? = null
+    private var orgName: String? = null
 
     @MockK(relaxed = true)
     private lateinit var userRepo: UserRepo
@@ -76,16 +80,24 @@ class SplashScreenViewModelTest {
     private lateinit var orgRepo: OrgRepo
 
     @MockK(relaxed = true)
+    private lateinit var orgConfigProvider: OrgConfigProvider
+
+    @MockK(relaxed = true)
     private lateinit var exceptionDataCollector: ExceptionDataCollector
+
+    @MockK(relaxed = true)
+    private lateinit var installReferrerOrgProvider: InstallReferrerOrgProvider
 
     private lateinit var splashScreenViewModel: SplashScreenViewModel
 
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
+        coEvery { installReferrerOrgProvider.consume() } returns null
         splashScreenViewModel =
             SplashScreenViewModel(
-                orgJsonString = orgJsonString,
+                orgId = orgId,
+                orgName = orgName,
                 userRepo = userRepo,
                 treesToSyncHelper = treesToSyncHelper,
                 sessionTracker = sessionTracker,
@@ -94,6 +106,8 @@ class SplashScreenViewModelTest {
                 messagesRepo = messagesRepo,
                 checkForInternetUseCase = checkForInternetUseCase,
                 orgRepo = orgRepo,
+                orgConfigProvider = orgConfigProvider,
+                installReferrerOrgProvider = installReferrerOrgProvider,
                 exceptionDataCollector = exceptionDataCollector,
             )
     }
@@ -102,7 +116,6 @@ class SplashScreenViewModelTest {
     fun `WHEN every condition in a function is true THEN entire body of the function is executed`() =
         runTest {
             val user = FakeFileGenerator.emptyUser
-            orgJsonString = "json string"
             coEvery { checkForInternetUseCase.execute(Unit) } returns true
             coEvery { userRepo.getPowerUser() } returns user
             every { sessionTracker.wasSessionInterrupted() } returns true
@@ -112,7 +125,6 @@ class SplashScreenViewModelTest {
 
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
             coVerify(exactly = 1) { orgRepo.ensureInitialized() }
-            coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some string") }
             coVerify(exactly = 1) { messagesRepo.syncMessages() }
             coVerify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
             coVerify(exactly = 1) { treesToSyncHelper.refreshTreeCountToSync() }
@@ -121,8 +133,6 @@ class SplashScreenViewModelTest {
     @Test
     fun `functions are not executed where condition is false`() =
         runTest {
-            val user = FakeFileGenerator.emptyUser
-            orgJsonString = null
             coEvery { checkForInternetUseCase.execute(Unit) } returns false
             coEvery { userRepo.getPowerUser() } returns null
             every { sessionTracker.wasSessionInterrupted() } returns false
@@ -132,9 +142,9 @@ class SplashScreenViewModelTest {
 
             coVerify(exactly = 1) { deviceConfigUpdater.saveLatestConfig() }
             coVerify(exactly = 1) { orgRepo.ensureInitialized() }
-            coVerify(exactly = 0) { orgRepo.addOrgFromJsonString(orgJsonString ?: "some stirng") }
+            coVerify(exactly = 0) { orgRepo.addOrgFromRemoteConfig(any(), any(), any()) }
+            coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
             coVerify(exactly = 0) { messagesRepo.syncMessages() }
-            coVerify(exactly = 0) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, user.wallet) }
             coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
         }
 
@@ -164,5 +174,113 @@ class SplashScreenViewModelTest {
         runTest {
             splashScreenViewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
             verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
+        }
+
+    // --- Deeplink org config path tests ---
+
+    private fun createViewModelWithOrg(
+        id: String?,
+        name: String? = null,
+    ) = SplashScreenViewModel(
+        orgId = id,
+        orgName = name,
+        userRepo = userRepo,
+        treesToSyncHelper = treesToSyncHelper,
+        sessionTracker = sessionTracker,
+        deviceConfigUpdater = deviceConfigUpdater,
+        locationDataCapturer = locationDataCapturer,
+        messagesRepo = messagesRepo,
+        checkForInternetUseCase = checkForInternetUseCase,
+        orgRepo = orgRepo,
+        orgConfigProvider = orgConfigProvider,
+        installReferrerOrgProvider = installReferrerOrgProvider,
+        exceptionDataCollector = exceptionDataCollector,
+    )
+
+    @Test
+    fun `WHEN deeplink has orgId and Remote Config returns config THEN calls addOrgFromRemoteConfig`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "123", name = "TestOrg")
+            val configJson = """{"version":"1"}"""
+            coEvery { orgConfigProvider.fetchOrgConfig("123") } returns configJson
+            coEvery { orgRepo.addOrgFromRemoteConfig("123", "TestOrg", configJson) } returns true
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgConfigProvider.fetchOrgConfig("123") }
+            coVerify(exactly = 1) { orgRepo.addOrgFromRemoteConfig("123", "TestOrg", configJson) }
+            coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN deeplink has orgId but Remote Config returns null THEN calls addMinimalOrg`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "456", name = "FallbackOrg")
+            coEvery { orgConfigProvider.fetchOrgConfig("456") } returns null
+            coEvery { orgRepo.addMinimalOrg("456", "FallbackOrg") } returns true
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgConfigProvider.fetchOrgConfig("456") }
+            coVerify(exactly = 0) { orgRepo.addOrgFromRemoteConfig(any(), any(), any()) }
+            coVerify(exactly = 1) { orgRepo.addMinimalOrg("456", "FallbackOrg") }
+        }
+
+    @Test
+    fun `WHEN deeplink has orgId but null orgName THEN passes empty string as name`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "789", name = null)
+            coEvery { orgConfigProvider.fetchOrgConfig("789") } returns null
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgRepo.addMinimalOrg("789", "") }
+        }
+
+    @Test
+    fun `WHEN deeplink has blank orgId THEN skips org config entirely`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "  ", name = "Blank")
+
+            vm.bootstrap()
+
+            coVerify(exactly = 0) { orgConfigProvider.fetchOrgConfig(any()) }
+            coVerify(exactly = 0) { orgRepo.addOrgFromRemoteConfig(any(), any(), any()) }
+            coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN no deeplink THEN skips org config entirely`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = null, name = null)
+
+            vm.bootstrap()
+
+            coVerify(exactly = 0) { orgConfigProvider.fetchOrgConfig(any()) }
+            coVerify(exactly = 0) { orgRepo.addOrgFromRemoteConfig(any(), any(), any()) }
+            coVerify(exactly = 0) { orgRepo.addMinimalOrg(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN no deeplink but install referrer has an org THEN binds that org`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = null, name = null)
+            coEvery { installReferrerOrgProvider.consume() } returns OrgLink("42", "Acme")
+            coEvery { orgConfigProvider.fetchOrgConfig("42") } returns null
+
+            vm.bootstrap()
+
+            coVerify(exactly = 1) { orgRepo.addMinimalOrg("42", "Acme") }
+        }
+
+    @Test
+    fun `WHEN the deeplink carries an org THEN the install referrer is not read`() =
+        runTest {
+            val vm = createViewModelWithOrg(id = "123", name = "TestOrg")
+            coEvery { orgConfigProvider.fetchOrgConfig("123") } returns null
+
+            vm.bootstrap()
+
+            coVerify(exactly = 0) { installReferrerOrgProvider.consume() }
         }
 }

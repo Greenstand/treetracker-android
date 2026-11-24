@@ -15,10 +15,10 @@
  */
 package org.greenstand.android.TreeTracker.camera
 
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -83,18 +83,19 @@ fun SelfieScreen() {
             )
         },
     ) { padding ->
-        Camera(
-            isSelfieMode = true,
-            cameraControl = cameraControl,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(padding)
-                    .aspectRatio(1.0f),
-            onImageCaptured = {
-                navController.navigate(ImageReviewRoute(photoPath = it.path))
-            },
-        )
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            Camera(
+                isSelfieMode = true,
+                cameraControl = cameraControl,
+                modifier = Modifier.size(minOf(maxWidth, maxHeight)),
+                onImageCaptured = {
+                    navController.navigate(ImageReviewRoute(photoPath = it.path))
+                },
+            )
+        }
         Box(
             modifier =
                 Modifier

@@ -27,7 +27,7 @@ import org.greenstand.android.TreeTracker.preferences.PrefKey
 import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
-import java.util.*
+import java.util.UUID
 
 class SessionTracker(
     private val dao: TreeTrackerDAO,
@@ -56,7 +56,7 @@ class SessionTracker(
                     destinationWallet = userEntity.wallet ?: orgRepo.currentOrg().walletId,
                     startTime = timeProvider.currentTime(),
                     isUploaded = false,
-                    organization = captureSetupData.organizationName,
+                    organization = captureSetupData.organizationName ?: orgRepo.currentOrg().name,
                     deviceConfigId = dao.getLatestDeviceConfig()!!.id,
                     note = captureSetupData.sessionNote,
                 )
