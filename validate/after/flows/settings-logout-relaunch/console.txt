@@ -1,0 +1,49 @@
+▶ Logout survives a relaunch on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2.1s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  294ms
+    ✓ Tap on id: ArrowForwardButton  212ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  170ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  1ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  150ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  514ms
+    ✓ Hide keyboard  77ms
+    ✓ Tap on id: ArrowForwardButton  106ms
+    ✓ Tap on id: FirstNameField  152ms
+    ✓ Input text Ada  259ms
+    ✓ Tap on id: LastNameField  173ms
+    ✓ Input text Admin  302ms
+    ✓ Hide keyboard  56ms
+    ✓ Tap on id: ArrowForwardButton  154ms
+    ✓ Tap on id: TutorialDoneButton  480ms
+    ✓ Tap on id: CaptureButton  529ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  119ms
+    ✓ Wait until id: TrackButton is visible  11ms
+  ✓ Run Sign up  20.4s
+  ✓ Tap on id: SettingsButton  270ms
+  ✓ Tap on id: SettingsLogout  127ms
+  ✓ Tap on id: DialogPositiveButton  159ms
+  ✓ Assert that id: PrivacyPolicyCloseButton is visible  9ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  298ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.6s
+  ✓ Wait until id: PrivacyPolicyCloseButton is visible  2.0s
+  ✓ Assert that id: LanguageOption_ENGLISH is not visible  194ms
+  ✓ Assert that id: TrackButton is not visible  13ms
+  ✓ Tap on id: PrivacyPolicyCloseButton  117ms
+  ✓ Tap on id: PhoneField  269ms
+  ✓ Input text 5551230001  564ms
+  ✓ Hide keyboard  66ms
+  ✓ Tap on id: ArrowForwardButton  88ms
+  ✓ Tap on id: ExistingUserButton  226ms
+  ✓ Wait until id: TrackButton is visible  10ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  208ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.5s
+  ✓ Wait until id: TrackButton is visible  1.9s
+  ✓ Take screenshot step-21-end-extendedWaitUntil-TrackButton  158ms
+✓ Logout survives a relaunch passed in 43.9s
+  video: build/flow-results/validate/after/flows/settings-logout-relaunch/tb/Logout_survives_a_relaunch/recording.mp4
+
+1 passed in 45.3s

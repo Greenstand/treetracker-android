@@ -1,0 +1,39 @@
+▶ Logout survives a relaunch on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  4.5s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  2.9s
+    ✓ Tap on id: LanguageOption_ENGLISH  372ms
+    ✓ Tap on id: ArrowForwardButton  500ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  265ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  4ms
+      ✓ Tap on id: PhoneCredentialButton  1.2s
+      ✓ Tap on id: PhoneField  176ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.3s
+    ✓ Input text 5551230001  614ms
+    ✓ Hide keyboard  121ms
+    ✓ Tap on id: ArrowForwardButton  109ms
+    ✓ Tap on id: FirstNameField  199ms
+    ✓ Input text Ada  274ms
+    ✓ Tap on id: LastNameField  245ms
+    ✓ Input text Admin  308ms
+    ✓ Hide keyboard  64ms
+    ✓ Tap on id: ArrowForwardButton  174ms
+    ✓ Tap on id: TutorialDoneButton  1.0s
+    ✓ Tap on id: CaptureButton  604ms
+    ✓ Wait until id: ApproveButton is visible  8ms
+    ✓ Tap on id: ApproveButton  128ms
+    ✓ Wait until id: TrackButton is visible  101ms
+  ✓ Run Sign up  22.4s
+  ✓ Tap on id: SettingsButton  208ms
+  ✓ Tap on id: SettingsLogout  129ms
+  ✓ Tap on id: DialogPositiveButton  117ms
+  ✓ Assert that id: PrivacyPolicyCloseButton is visible  9ms
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  362ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.6s
+  ✗ Wait until id: PrivacyPolicyCloseButton is visible  30.0s
+      Assertion is false: id: PrivacyPolicyCloseButton is visible
+✗ Logout survives a relaunch failed in 1m5s on sdk gphone64 x86 64
+  Assertion is false: id: PrivacyPolicyCloseButton is visible
+  debug: build/flow-results/validate/before/flows/settings-logout-relaunch/tb/Logout_survives_a_relaunch (log.txt: what tb did, step by step)
+  video: build/flow-results/validate/before/flows/settings-logout-relaunch/tb/Logout_survives_a_relaunch/recording.mp4
+
+0 passed, 1 failed in 1m8s
