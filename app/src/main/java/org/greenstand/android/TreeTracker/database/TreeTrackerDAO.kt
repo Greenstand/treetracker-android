@@ -82,9 +82,6 @@ interface TreeTrackerDAO {
         isPowerUser: Boolean,
     )
 
-    @Query("UPDATE user SET power_user = 0 WHERE power_user = 1")
-    suspend fun clearPowerUsers()
-
     @Update
     suspend fun updatePlanterInfo(planterInfoEntity: PlanterInfoEntity)
 

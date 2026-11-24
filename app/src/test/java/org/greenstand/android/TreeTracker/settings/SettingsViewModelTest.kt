@@ -20,14 +20,12 @@ import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.models.UserRepo
-import org.greenstand.android.TreeTracker.models.user.User
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.DeleteProfileRoute
 import org.greenstand.android.TreeTracker.navigation.MapRoute
@@ -102,7 +100,7 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout THEN clears the power-user flag and hides logout dialog`() =
+    fun `WHEN logout THEN marks the app logged out and hides logout dialog`() =
         runTest {
             val powerUser = FakeFileGenerator.fakeUsers.first()
             coEvery { userRepo.getPowerUser() } returns powerUser
@@ -111,7 +109,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.Logout)
 
-            coVerify { userRepo.clearPowerUsers() }
+            coVerify { userRepo.setLoggedOut(true) }
             val state = viewModel.state.first()
             assertFalse(state.showLogoutDialog!!)
         }
@@ -209,7 +207,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.LogoutConfirmed)
 
-            coVerify { userRepo.clearPowerUsers() }
+            coVerify { userRepo.setLoggedOut(true) }
             val event = viewModel.events.first().getContentIfNotConsumed()
             assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
         }
@@ -317,7 +315,7 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout without a power user THEN still clears and hides the logout dialog`() =
+    fun `WHEN logout without a power user THEN still logs out and hides the logout dialog`() =
         runTest {
             coEvery { userRepo.getPowerUser() } returns null
             val viewModel = SettingsViewModel(userRepo)
@@ -325,7 +323,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.Logout)
 
-            coVerify(exactly = 1) { userRepo.clearPowerUsers() }
+            coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             assertTrue(viewModel.events.replayCache.isEmpty())
         }
@@ -341,7 +339,7 @@ class SettingsViewModelTest {
 
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             assertEquals(1, viewModel.events.replayCache.size)
-            coVerify(exactly = 1) { userRepo.clearPowerUsers() }
+            coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
         }
 
     @Test
@@ -372,17 +370,15 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout before the power user has loaded THEN the power-user flag is still cleared`() =
+    fun `WHEN logout THEN the power user is left unchanged`() =
         runTest {
-            val loaded = CompletableDeferred<User?>()
-            coEvery { userRepo.getPowerUser() } coAnswers { loaded.await() }
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.fakeUsers.first()
             val viewModel = SettingsViewModel(userRepo)
-            assertNull(viewModel.state.value.powerUser, "precondition: power user must not be loaded yet")
 
             viewModel.handleAction(SettingsAction.LogoutConfirmed)
 
-            coVerify(exactly = 1) { userRepo.clearPowerUsers() }
-            assertEquals(false, viewModel.state.value.showLogoutDialog)
-            loaded.complete(FakeFileGenerator.fakeUsers.first())
+            coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
+            coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
         }
+
 }

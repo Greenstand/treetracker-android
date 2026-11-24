@@ -24,40 +24,43 @@ The `getPowerUser()` mock suspends on a `CompletableDeferred`, so `LogoutConfirm
 waiting for the load. A unit test is enough because the race is in
 the ViewModel. An e2e flow can't reliably tap Logout inside the few milliseconds the Room query takes.
 
-## Fix (#1436)
+## Fix (#1436): logout no longer touches the power user
 
-`Logout` no longer needs to know who the power user is. It clears the flag on every user in one
-query, `TreeTrackerDAO.clearPowerUsers()` (`UPDATE user SET power_user = 0 WHERE power_user = 1`),
-through `UserRepo.clearPowerUsers()`. The cached `state.powerUser` is still loaded in `init`, but only
-for the logout dialog, which shows the power user's card.
+The maintainer decided that a device's power user is permanent: once set, nobody else can take it
+over, whoever signs in after a logout. So logout no longer clears the power-user flag at all, and the
+race above can't happen, because there is nothing to clear.
 
-A first version read the power user from the repository at logout and cleared that one user. That
-fixed the race too, but took two database calls, and it would leave a second flagged user set.
+Logout instead sets a "logged out" flag, `UserRepo.LOGGED_OUT` (`greenstand/system-settings/logged-out`
+in `Preferences`), written with `commit()` so it survives the app being killed right after:
 
-## Review follow-up: not fixed here
+- `SettingsViewModel` `Logout` calls `userRepo.setLoggedOut(true)` and closes the dialog. No coroutine,
+  so leaving Settings can't cancel it.
+- The splash screen opens Signup when the device has a power user and is logged out
+  (`SplashScreenViewModel.isLoggedOut()`), instead of the Dashboard.
+- On Signup after a logout (`SignUpState.isLoggedOut`), signing in as an existing user or signing up
+  a new one sends `SignupAction.LogBackIn` (clears the flag) and opens the Dashboard. The new user is a
+  regular user, because `createUser` only makes someone power user when there is none.
+- With no power user (a fresh install), sign-up still makes the first person the power user, as before.
 
-An independent review found a second way to lose the write. It was already on master, and it is not
-the bug this task fixes. `LogoutConfirmed` launches the clear in `viewModelScope`, then navigates with
-`popUpToRoot()`. That pops the Settings entry, and once its exit transition ends, the ViewModel is
-cleared and `viewModelScope` is cancelled. On a slow database, the `clearPowerUsers()`
-call can be cancelled and `power_user` stays `1`. A possible fix is to run it in
-`withContext(NonCancellable)`, or to make it an app-scoped write. It is left for a separate issue, as is process
-death before the write commits.
+The logout dialog still shows the power user's card from `state.powerUser`.
 
-There is no validating e2e flow for this task (`pr-validating-flow` skill, "When no flow can show the
-change"). What was tried:
+History: logout came from #1143 (issue #1130), which cleared the flag on purpose so the next person to
+sign in became the power user. This replaces that behaviour.
 
-1. A consequence a user can see: yes. With the flag left set, a relaunch after logout opens the
-   Dashboard as the previous power user (`SplashScreenViewModel.isInitialSetupRequired()` is
-   `getPowerUser() == null`) instead of the language picker.
-2. Reachable offline: yes, sign-up and logout need no server.
-3. Hit reliably by a driven UI: no. Logout used to clear the flag only through the cached `state.powerUser`, so the bug needs
-   Logout to be confirmed (two taps: Logout, then the dialog's OK) before the `getPowerUser()` Room
-   query that starts when Settings opens returns, which takes milliseconds. Nothing reachable from
-   Settings changes who the power user is, so the cache can't go stale any other way.
-4. Candidate flow "Logout then relaunch opens setup" (sign up, Settings, Logout, OK, kill, relaunch,
-   expect the language picker), run with the Flow runner on the app at 4edc726 (before) and at
-   7580725 (after): passed on both, verdict "does not demonstrate the change"
-   (https://github.com/Greenstand/treetracker-android/actions/runs/45073108272).
+## Proof
 
-The proof is the unit test, which fails without the fix and passes with it.
+- Validating flow `e2e/flows/settings-logout-keeps-power-user.yaml`: Ada signs up, logs out, Bob signs
+  up, and the logout dialog must still show Ada. Before this change Bob became the power user.
+- `e2e/flows/settings-logout-relaunch.yaml`: after logout, a relaunch opens Signup (before: the
+  language picker, because the device had no power user); after signing back in, a relaunch opens the
+  Dashboard.
+- Unit tests: `SettingsViewModelTest` (logout sets the flag and never calls `setPowerUserStatus`),
+  `UserRepoTest` (the flag is read and committed), `SignupViewModelTest` (`LogBackIn`),
+  `SplashScreenViewModelTest` (`isLoggedOut`).
+- Existing flows `settings-logout.yaml` (E6) and `settings-logout-back.yaml` are unchanged and must
+  keep passing: signing back in as Ada after a logout still reaches the Dashboard.
+
+## Not changed
+
+Deleting the power user's account (Settings, Delete account) still removes that row, which leaves the
+device with no power user. Whether that should be allowed is a separate question.

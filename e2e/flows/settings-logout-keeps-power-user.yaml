@@ -1,0 +1,43 @@
+# Logout never changes the device's power user. Ada signs up first and is the power user. After she
+# logs out, Bob signs up as a new user: that logs the app back in and opens the Dashboard, but Ada
+# stays the power user, so the logout dialog still shows her card. Before this change logout cleared
+# the power-user flag and Bob took it over.
+appId: org.greenstand.android.TreeTracker.debug
+name: Logout keeps the power user
+tags: [settings]
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "5551230001", FIRST_NAME: Ada, LAST_NAME: Admin}
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsLogout}
+- tapOn: {id: DialogPositiveButton}
+- tapOn: {id: PrivacyPolicyCloseButton}
+# A new person signs up on the logged-out device.
+- tapOn: {id: PhoneField}
+- inputText: "5551230002"
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+- tapOn: {id: FirstNameField}
+- inputText: Bob
+- tapOn: {id: LastNameField}
+- inputText: Builder
+- hideKeyboard
+- tapOn: {id: ArrowForwardButton}
+# The selfie tutorial only shows while the device has no power user.
+- tapOn: {id: TutorialDoneButton, optional: true, timeout: 1000}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: ApproveButton}
+    timeout: 15000
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 15000
+# The logout dialog shows the power user: still Ada, not Bob.
+- tapOn: {id: SettingsButton}
+- tapOn: {id: SettingsLogout}
+- assertVisible: {id: DialogUserButton}
+- assertVisible: "Ada Admin"
+- assertNotVisible: "Bob Builder"
