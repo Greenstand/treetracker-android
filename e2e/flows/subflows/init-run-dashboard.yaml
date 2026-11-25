@@ -1,0 +1,61 @@
+# First run to dashboard: Fresh install → grant permissions → pick Language → dismiss privacy dialog →
+# identifier → first/last name → selfie → accept → Dashboard shows 0 trees
+appId: org.greenstand.android.TreeTracker.debug
+name: First run to dashboard
+---
+- extendedWaitUntil:
+    visible: ${LANGUAGE}
+    timeout: 30000
+- tapOn: ${LANGUAGE}
+- tapOn:
+    id: "ArrowForwardButton"
+- tapOn:
+    id: "PrivacyPolicyCloseButton"
+- runFlow:
+    when:
+      true: ${IDENTIFIER_TYPE == 'Phone'}
+    commands:
+      - tapOn: "PHONE"
+      #    id: "PhoneCredentialButton"
+      - tapOn: "Phone"
+      #    id: "PhoneField"
+- runFlow:
+    when:
+      true: ${IDENTIFIER_TYPE == 'Email'}
+    commands:
+      - tapOn: "EMAIL"
+      #    id: "EmailCredentialButton"
+      - tapOn: "Email"
+      #    id: "EmailField"
+- runFlow:
+    when:
+      true: ${IDENTIFIER_TYPE != 'Phone' && IDENTIFIER_TYPE != 'Email'}
+    commands:
+      - assertVisible: "INENTIONAL_ERROR_UNSUPPORTED_IDENTIFIER_TYPE_FOR_SIGNUP"
+- inputText: ${IDENTIFIER_CONTENT}
+- hideKeyboard
+- tapOn:
+    id: "ArrowForwardButton"
+- tapOn: "First Name"
+#    id: "FirstNameField"
+- inputText: ${FIRST_NAME}
+- tapOn: "Last Name"
+#    id: "LastNameField"
+- inputText: ${LAST_NAME}
+- hideKeyboard
+- tapOn:
+    id: "ArrowForwardButton"
+- tapOn:
+    id: "TutorialDoneButton"
+- tapOn:
+    id: "CaptureButton"
+- extendedWaitUntil:
+    visible:
+      id: "ApproveButton"
+    timeout: 15000
+- tapOn:
+    id: "ApproveButton"
+- extendedWaitUntil:
+    visible:
+      id: "TrackButton"
+    timeout: 15000

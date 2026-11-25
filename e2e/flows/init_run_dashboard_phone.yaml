@@ -1,0 +1,17 @@
+# First run to dashboard (phone): Fresh install → grant permissions → pick English → dismiss privacy dialog →
+# phone → first/last name → selfie → accept → Dashboard shows 0 trees
+appId: org.greenstand.android.TreeTracker.debug
+name: First run to dashboard (phone)
+---
+- launchApp:
+    clearState: true
+    permissions:
+      all: allow
+- runFlow:
+    file: subflows/init-run-dashboard.yaml
+    env:
+      LANGUAGE: "ENGLISH"
+      IDENTIFIER_TYPE: "Phone"
+      IDENTIFIER_CONTENT: "5551230001"
+      FIRST_NAME: "Ada"
+      LAST_NAME: "Admin"
