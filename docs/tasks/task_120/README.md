@@ -23,17 +23,22 @@ on master checks that an upload really reaches the backend.
   `[aria-label="Capture details"]`, wait up to 10 s for the fingerprint. A final `assertVisible`
   fails the flow when it never showed. The detail drawer shows the note as text (seen in the
   source branch's video `feature-02-03-admin-panel.mp4`), so a text match is enough.
-- `.github/workflows/admin-panel-e2e.yml`, `workflow_dispatch` only. Inputs: `environment`
-  (`dev` default, `production`), `confirm_production` (must be `upload a real tree` for
-  production), `verify_timeout_seconds` (default 360 on dev, 900 on production, as in the
-  source README), `check_unknown_note`. It builds the dev (or prerelease) app with the real keys
-  from repository secrets, builds tb at the pinned `TESTBUDDY_REF`, lints the two flows, runs the
-  app flow on an API 35 emulator (online, GPS fix, emulated cameras, recorded with
-  `--record --annotate`), then the admin flow in headless Chrome (recorded). The fingerprint is
-  `e2e-gh-<run id>-<attempt>-<epoch>`, passed to both flows with `-e`.
+- `.github/workflows/admin-panel-e2e.yml`, dev only (the maintainer's choice for now): the dev
+  app (`assembleDev`, `org.greenstand.android.TreeTracker.dev`) and https://dev-admin.treetracker.org.
+  It starts by hand (`workflow_dispatch`, inputs `verify_timeout_seconds`, default 360 as in
+  `admin.ts`, and `check_unknown_note`) or when a PR gets the label `run-admin-e2e`
+  (`pull_request: labeled`, with a job-level `if` on the label name). GitHub only dispatches a
+  workflow whose file is on the default branch, so the label is how it runs from a PR before it
+  is merged. The first step fails, naming them, when `ADMIN_PANEL_DEV_LOGIN`,
+  `ADMIN_PANEL_DEV_PASSWORD` or `S3_DEV_IDENTITY_POOL_ID` is missing (a fork's PR gets no
+  secrets). It builds the dev app with the real keys, builds tb at the pinned `TESTBUDDY_REF`,
+  lints the two flows, runs the app flow on an API 35 emulator (online, GPS fix, emulated
+  cameras, recorded with `--record --annotate`), then the admin flow in headless Chrome
+  (recorded). The fingerprint is `e2e-gh-<run id>-<attempt>-<epoch>`, passed to both flows
+  with `-e`.
 - Separate steps make the failure say what failed: "The app uploaded the tree" (capture, counts,
   upload) and "The admin panel shows the capture".
-- `check_unknown_note`: runs the admin flow with a note nobody uploaded and a 60 s poll, and fails
+- `check_unknown_note` (always on for a label run): runs the admin flow with a note nobody uploaded and a 60 s poll, and fails
   the job unless that run fails.
 - The dev build reads `dev_treetracker_client_id/secret`, which the shared
   `setup-property-file` action does not write; this workflow writes them from
@@ -42,9 +47,6 @@ on master checks that an upload really reaches the backend.
   every result file (and deletes any image or video that would contain it) before the artifact
   is uploaded. The admin flow is not recorded with `--annotate`, whose caption band would show
   the typed text.
-- The admin credentials are checked before anything is built for production (so no real tree is
-  uploaded without them), and right before the admin step for dev (so the app half can be
-  proven without them).
 - WebdriverIO, Appium and the Node project are not brought over.
 
 ## Differences from the source

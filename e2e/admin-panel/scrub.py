@@ -3,7 +3,7 @@ import sys
 
 
 def secrets():
-    return [v.encode() for k in ("DEV_ADMIN_PASSWORD", "PROD_ADMIN_PASSWORD") if (v := os.environ.get(k))]
+    return [v.encode() for k in ("ADMIN_PASSWORD",) if (v := os.environ.get(k))]
 
 
 def main(root):
