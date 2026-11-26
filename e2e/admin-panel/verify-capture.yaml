@@ -1,0 +1,32 @@
+url: ${ADMIN_URL || 'https://dev-admin.treetracker.org'}
+name: The admin panel shows the uploaded capture
+env:
+  ADMIN_URL: ${ADMIN_URL || 'https://dev-admin.treetracker.org'}
+  VERIFY_TIMEOUT_SECONDS: ${VERIFY_TIMEOUT_SECONDS || '360'}
+---
+- evalScript: ${output.deadline = Date.now() + Number(VERIFY_TIMEOUT_SECONDS) * 1000}
+- launchApp
+- tapOn: {css: 'input[name="userName"], input[name="username"], input[type="text"]'}
+- inputText: ${ADMIN_USER}
+- tapOn: {css: 'input[type="password"]'}
+- inputText: ${ADMIN_PASSWORD}
+- tapOn: {css: 'button[type="submit"], input[type="submit"]'}
+- extendedWaitUntil:
+    notVisible: {css: 'input[type="password"]'}
+    timeout: 30000
+- repeat:
+    while:
+      notVisible: {text: ".*${FINGERPRINT}.*"}
+      true: ${Date.now() < output.deadline}
+    commands:
+      - openLink: ${ADMIN_URL}/verify
+      - tapOn:
+          css: '[aria-label="Capture details"]'
+          index: 0
+          timeout: 60000
+          optional: true
+      - extendedWaitUntil:
+          visible: {text: ".*${FINGERPRINT}.*"}
+          timeout: 10000
+          optional: true
+- assertVisible: {text: ".*${FINGERPRINT}.*"}
