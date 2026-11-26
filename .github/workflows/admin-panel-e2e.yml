@@ -1,6 +1,8 @@
 name: Admin panel end-to-end
 
 on:
+  push:
+    branches: [e2e/admin-panel-upload-tb]
   workflow_dispatch:
     inputs:
       environment:
@@ -26,7 +28,7 @@ on:
         default: false
 
 concurrency:
-  group: admin-panel-e2e-${{ inputs.environment }}
+  group: admin-panel-e2e-${{ inputs.environment || 'dev' }}
   cancel-in-progress: false
 
 permissions:
@@ -45,7 +47,7 @@ jobs:
       - name: Settings for the environment
         id: cfg
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
           CONFIRM: ${{ inputs.confirm_production }}
           TIMEOUT: ${{ inputs.verify_timeout_seconds }}
         run: |
@@ -75,7 +77,7 @@ jobs:
       - name: Admin panel credentials are set (production, before a real tree is uploaded)
         if: inputs.environment == 'production'
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
           DEV_ADMIN_USER: ${{ secrets.ADMIN_USER }}
           DEV_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           PROD_ADMIN_USER: ${{ secrets.ADMIN_USER_PROD }}
@@ -235,7 +237,7 @@ jobs:
 
       - name: Admin panel credentials are set
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
           DEV_ADMIN_USER: ${{ secrets.ADMIN_USER }}
           DEV_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           PROD_ADMIN_USER: ${{ secrets.ADMIN_USER_PROD }}
@@ -250,7 +252,7 @@ jobs:
 
       - name: The admin panel shows the capture
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
           DEV_ADMIN_USER: ${{ secrets.ADMIN_USER }}
           DEV_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           PROD_ADMIN_USER: ${{ secrets.ADMIN_USER_PROD }}
@@ -266,9 +268,9 @@ jobs:
             --format junit --output "$OUT/admin.xml" --debug-output "$OUT/admin"
 
       - name: The admin check fails for a note that was never uploaded
-        if: inputs.check_unknown_note
+        if: inputs.check_unknown_note || github.event_name == 'push'
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
           DEV_ADMIN_USER: ${{ secrets.ADMIN_USER }}
           DEV_ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           PROD_ADMIN_USER: ${{ secrets.ADMIN_USER_PROD }}
@@ -302,7 +304,7 @@ jobs:
       - name: Summary
         if: always()
         env:
-          ENVIRONMENT: ${{ inputs.environment }}
+          ENVIRONMENT: ${{ inputs.environment || 'dev' }}
           ADMIN_URL: ${{ steps.cfg.outputs.admin_url }}
           FINGERPRINT: ${{ steps.cfg.outputs.fingerprint }}
           APP_ID: ${{ steps.cfg.outputs.app_id }}
