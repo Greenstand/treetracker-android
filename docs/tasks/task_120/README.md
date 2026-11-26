@@ -57,4 +57,14 @@ on master checks that an upload really reaches the backend.
 
 ## What was checked
 
-See the PR for the runs.
+- Run 45864549522 (temporary `push` trigger on this branch, earlier version of the workflow, same
+  flows): tb built at the pinned ref, `tb check --lint` passed for both flows, the dev app built
+  with the real keys, and `capture-upload.yaml` passed on the API 35 emulator in 1 m 25 s against
+  the dev backend: 1 to upload and 0 uploaded before Upload, 0 to upload and 1 uploaded 2.4 s
+  after it, with the note `e2e-gh-45864549522-1-1795712684`. The job then failed, as designed,
+  at the admin credentials check: the admin secrets did not exist yet.
+- Not yet run: `verify-capture.yaml` against the dev admin panel and the unknown-note check.
+  They need `ADMIN_PANEL_DEV_LOGIN` / `ADMIN_PANEL_DEV_PASSWORD`; after those are added, the
+  `run-admin-e2e` label on the PR runs both. This session cannot reach the admin panel, run an
+  emulator or build tb, so nothing of the admin half was run here.
+- The temporary `push` trigger is gone; the workflow runs only by hand or from the label.
