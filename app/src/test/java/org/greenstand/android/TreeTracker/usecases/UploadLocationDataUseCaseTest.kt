@@ -16,22 +16,27 @@
 package org.greenstand.android.TreeTracker.usecases
 
 import com.amazonaws.AmazonClientException
+import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.Ordering
+import io.mockk.coVerifyOrder
 import io.mockk.every
-import io.mockk.mockk
+import io.mockk.impl.annotations.MockK
 import io.mockk.mockkObject
 import io.mockk.slot
 import io.mockk.unmockkAll
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.double
+import kotlinx.serialization.json.float
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import org.greenstand.android.TreeTracker.MainCoroutineRule
 import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.database.TreeTrackerDAO
 import org.greenstand.android.TreeTracker.database.entity.LocationEntity
@@ -41,30 +46,41 @@ import org.greenstand.android.TreeTracker.models.LocationData
 import org.greenstand.android.TreeTracker.utilities.DeviceUtils
 import org.greenstand.android.TreeTracker.utilities.md5
 import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
+@ExperimentalCoroutinesApi
 class UploadLocationDataUseCaseTest {
+    @get:Rule
+    var mainCoroutineRule = MainCoroutineRule()
+
+    @MockK(relaxed = true)
+    private lateinit var dao: TreeTrackerDAO
+
+    @MockK(relaxed = true)
+    private lateinit var storageClient: ObjectStorageClient
+
     private val json =
         Json {
             explicitNulls = true
             ignoreUnknownKeys = true
             encodeDefaults = true
         }
-    private val dao: TreeTrackerDAO = mockk(relaxed = true)
-    private val storageClient: ObjectStorageClient = mockk(relaxed = true)
-    private lateinit var useCase: UploadLocationDataUseCase
+
+    private lateinit var uploadLocationDataUseCase: UploadLocationDataUseCase
 
     @Before
     fun setUp() {
+        MockKAnnotations.init(this)
+        mockkObject(DeviceUtils)
+        every { DeviceUtils.deviceId } returns "test-device-id"
         mockkObject(ObjectStorageClient.Companion)
         every { ObjectStorageClient.instance() } returns storageClient
-        mockkObject(DeviceUtils)
-        every { DeviceUtils.deviceId } returns "device-id"
-        useCase = UploadLocationDataUseCase(dao, json)
+        uploadLocationDataUseCase = UploadLocationDataUseCase(dao = dao, json = json)
     }
 
     @After
@@ -72,150 +88,200 @@ class UploadLocationDataUseCaseTest {
         unmockkAll()
     }
 
-    private fun locationJson(
-        lat: Double,
-        capturedAt: String = "2024-03-01T10:15:30Z",
-    ) = json.encodeToString(
-        LocationData(
-            planterCheckInId = null,
-            latitude = lat,
-            longitude = lat + 1,
-            accuracy = 3.5f,
-            treeUuid = null,
-            convergenceStatus = ConvergenceStatus.CONVERGED,
-            capturedAt = capturedAt,
-        ),
-    )
-
-    private fun location(
-        id: Long,
-        sessionId: Long,
-        lat: Double,
-    ) = LocationEntity(locationDataJson = locationJson(lat), sessionId = sessionId).also { it.id = id }
-
-    private fun session(
-        id: Long,
-        uuid: String,
-    ) = SessionEntity(
-        uuid = uuid,
-        originUserId = "user",
-        originWallet = "wallet",
-        destinationWallet = "wallet",
-        startTime = Instant.parse("2024-03-01T10:00:00Z"),
-        organization = null,
-        isUploaded = false,
-    ).also { it.id = id }
-
     @Test
-    fun `groups locations into one track per session using the session uuid`() =
+    fun `WHEN locations exist THEN uploads tracks grouped by session and returns true`() =
         runTest {
-            coEvery { dao.getLocationData() } returns
-                listOf(location(1, 10, 1.0), location(2, 20, 2.0), location(3, 10, 3.0))
-            coEvery { dao.getSessionById(10) } returns session(10, "uuid-10")
-            coEvery { dao.getSessionById(20) } returns session(20, "uuid-20")
-            val bundle = slot<String>()
-            every { storageClient.uploadBundle(capture(bundle), any()) } returns Unit
+            stubTwoSessionsWithLocations()
+            val bundleSlot = slot<String>()
+            every { storageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
 
-            assertTrue(useCase.execute(Unit))
+            val result = uploadLocationDataUseCase.execute(Unit)
 
-            val root = json.parseToJsonElement(bundle.captured).jsonObject
-            assertEquals("2", root["pack_format_version"]!!.jsonPrimitive.content)
-            assertEquals("device-id", root["device_id"]!!.jsonPrimitive.content)
-            val tracks = root["tracks"]!!.jsonArray.map { it.jsonObject }
-            assertEquals(listOf("uuid-10", "uuid-20"), tracks.map { it["sessionId"]!!.jsonPrimitive.content })
-            val firstTrackLats =
-                tracks[0]["locations"]!!.jsonArray.map {
-                    it.jsonObject["latitude"]!!
-                        .jsonPrimitive.content
-                        .toDouble()
-                }
-            assertEquals(listOf(1.0, 3.0), firstTrackLats)
-            val loc = tracks[1]["locations"]!!.jsonArray.single().jsonObject
-            assertEquals(3.0, loc["longitude"]!!.jsonPrimitive.content.toDouble(), 0.0)
-            assertEquals(3.5, loc["accuracy"]!!.jsonPrimitive.content.toDouble(), 0.0)
-            assertEquals("2024-03-01T10:15:30Z", loc["capturedAt"]!!.jsonPrimitive.content)
+            assertTrue(result)
+            val bundle = json.parseToJsonElement(bundleSlot.captured).jsonObject
+            assertEquals("2", bundle["pack_format_version"]!!.jsonPrimitive.content)
+            assertEquals("test-device-id", bundle["device_id"]!!.jsonPrimitive.content)
+            val tracks = bundle["tracks"]!!.jsonArray
+            assertEquals(2, tracks.size)
+            assertEquals("session-uuid-1", tracks[0].jsonObject["sessionId"]!!.jsonPrimitive.content)
+            assertEquals(2, tracks[0].jsonObject["locations"]!!.jsonArray.size)
+            assertEquals("session-uuid-2", tracks[1].jsonObject["sessionId"]!!.jsonPrimitive.content)
+            assertEquals(1, tracks[1].jsonObject["locations"]!!.jsonArray.size)
         }
 
     @Test
-    fun `names the bundle after the md5 of its contents with a tracks suffix`() =
+    fun `WHEN locations exist THEN maps location data fields into location requests`() =
         runTest {
-            coEvery { dao.getLocationData() } returns listOf(location(1, 10, 1.0))
-            coEvery { dao.getSessionById(10) } returns session(10, "uuid-10")
-            val bundle = slot<String>()
-            val bundleId = slot<String>()
-            every { storageClient.uploadBundle(capture(bundle), capture(bundleId)) } returns Unit
+            stubTwoSessionsWithLocations()
+            val bundleSlot = slot<String>()
+            every { storageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
 
-            useCase.execute(Unit)
+            uploadLocationDataUseCase.execute(Unit)
 
-            assertEquals("${bundle.captured.md5()}_tracks", bundleId.captured)
+            val location =
+                json
+                    .parseToJsonElement(bundleSlot.captured)
+                    .jsonObject["tracks"]!!
+                    .jsonArray[0]
+                    .jsonObject["locations"]!!
+                    .jsonArray[0]
+                    .jsonObject
+            assertEquals(3.5f, location["accuracy"]!!.jsonPrimitive.float)
+            assertEquals("2023-01-01T00:00:01Z", location["capturedAt"]!!.jsonPrimitive.content)
+            assertEquals(-1.29, location["latitude"]!!.jsonPrimitive.double)
+            assertEquals(36.82, location["longitude"]!!.jsonPrimitive.double)
         }
 
     @Test
-    fun `marks the uploaded locations and purges them after a successful upload`() =
+    fun `WHEN bundle uploaded THEN bundle id is the md5 of the bundle with tracks suffix`() =
         runTest {
-            coEvery { dao.getLocationData() } returns listOf(location(1, 10, 1.0), location(2, 10, 2.0))
-            coEvery { dao.getSessionById(10) } returns session(10, "uuid-10")
+            stubTwoSessionsWithLocations()
+            val bundleSlot = slot<String>()
+            val bundleIdSlot = slot<String>()
+            every { storageClient.uploadBundle(capture(bundleSlot), capture(bundleIdSlot)) } returns Unit
 
-            assertTrue(useCase.execute(Unit))
+            uploadLocationDataUseCase.execute(Unit)
 
-            coVerify(ordering = Ordering.ORDERED) {
+            assertEquals("${bundleSlot.captured.md5()}_tracks", bundleIdSlot.captured)
+        }
+
+    @Test
+    fun `WHEN upload succeeds THEN marks locations uploaded and purges them after uploading`() =
+        runTest {
+            stubTwoSessionsWithLocations()
+
+            uploadLocationDataUseCase.execute(Unit)
+
+            coVerifyOrder {
                 storageClient.uploadBundle(any(), any())
-                dao.updateLocationDataUploadStatus(listOf(1L, 2L), true)
+                dao.updateLocationDataUploadStatus(listOf(1L, 2L, 3L), true)
                 dao.purgeUploadedLocations()
             }
+            coVerify(exactly = 1) { dao.getSessionById(1L) }
+            coVerify(exactly = 1) { dao.getSessionById(2L) }
         }
 
     @Test
-    fun `returns false and keeps locations pending when S3 is unreachable`() =
+    fun `WHEN storage client throws AmazonClientException THEN returns false and keeps locations`() =
         runTest {
-            coEvery { dao.getLocationData() } returns listOf(location(1, 10, 1.0))
-            coEvery { dao.getSessionById(10) } returns session(10, "uuid-10")
+            stubTwoSessionsWithLocations()
             every { storageClient.uploadBundle(any(), any()) } throws AmazonClientException("offline")
 
-            assertFalse(useCase.execute(Unit))
+            val result = uploadLocationDataUseCase.execute(Unit)
 
+            assertFalse(result)
             coVerify(exactly = 0) { dao.updateLocationDataUploadStatus(any(), any()) }
             coVerify(exactly = 0) { dao.purgeUploadedLocations() }
         }
 
     @Test
-    fun `returns false when a location row holds unreadable json`() =
+    fun `WHEN stored location json is malformed THEN returns false without uploading`() =
         runTest {
             coEvery { dao.getLocationData() } returns
-                listOf(LocationEntity(locationDataJson = "not json", sessionId = 10).also { it.id = 1 })
+                listOf(LocationEntity(locationDataJson = "not json", sessionId = 1L).apply { id = 1L })
 
-            assertFalse(useCase.execute(Unit))
+            val result = uploadLocationDataUseCase.execute(Unit)
 
+            assertFalse(result)
             verify(exactly = 0) { storageClient.uploadBundle(any(), any()) }
             coVerify(exactly = 0) { dao.updateLocationDataUploadStatus(any(), any()) }
         }
 
     @Test
-    fun `returns false when a database call fails`() =
+    fun `WHEN session of a location cannot be resolved THEN returns false without uploading`() =
         runTest {
-            coEvery { dao.getLocationData() } throws IllegalStateException("db closed")
+            coEvery { dao.getLocationData() } returns
+                listOf(LocationEntity(locationDataJson = locationJson(1.0, 2.0), sessionId = 1L).apply { id = 1L })
+            coEvery { dao.getSessionById(1L) } returns session(id = 99L, uuid = "other-session")
 
-            assertFalse(useCase.execute(Unit))
+            val result = uploadLocationDataUseCase.execute(Unit)
 
+            assertFalse(result)
             verify(exactly = 0) { storageClient.uploadBundle(any(), any()) }
         }
 
     @Test
-    fun `uploads an empty tracks bundle when there are no pending locations`() =
+    fun `WHEN reading locations fails THEN returns false`() =
+        runTest {
+            coEvery { dao.getLocationData() } throws IllegalStateException("db closed")
+
+            val result = uploadLocationDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            verify(exactly = 0) { storageClient.uploadBundle(any(), any()) }
+        }
+
+    @Test
+    fun `WHEN marking locations uploaded fails THEN returns false and does not purge`() =
+        runTest {
+            stubTwoSessionsWithLocations()
+            coEvery { dao.updateLocationDataUploadStatus(any(), any()) } throws IllegalStateException("db closed")
+
+            val result = uploadLocationDataUseCase.execute(Unit)
+
+            assertFalse(result)
+            coVerify(exactly = 0) { dao.purgeUploadedLocations() }
+        }
+
+    @Test
+    fun `WHEN there are no locations THEN still uploads a bundle with empty tracks`() =
         runTest {
             coEvery { dao.getLocationData() } returns emptyList()
-            val bundle = slot<String>()
-            every { storageClient.uploadBundle(capture(bundle), any()) } returns Unit
+            val bundleSlot = slot<String>()
+            every { storageClient.uploadBundle(capture(bundleSlot), any()) } returns Unit
 
-            assertTrue(useCase.execute(Unit))
+            val result = uploadLocationDataUseCase.execute(Unit)
 
+            assertTrue(result)
             assertTrue(
                 json
-                    .parseToJsonElement(bundle.captured)
+                    .parseToJsonElement(bundleSlot.captured)
                     .jsonObject["tracks"]!!
                     .jsonArray
                     .isEmpty(),
             )
             coVerify { dao.updateLocationDataUploadStatus(emptyList(), true) }
         }
+
+    private fun stubTwoSessionsWithLocations() {
+        coEvery { dao.getLocationData() } returns
+            listOf(
+                LocationEntity(locationDataJson = locationJson(-1.29, 36.82, accuracy = 3.5f), sessionId = 1L).apply { id = 1L },
+                LocationEntity(locationDataJson = locationJson(-1.30, 36.83), sessionId = 2L).apply { id = 2L },
+                LocationEntity(locationDataJson = locationJson(-1.31, 36.84), sessionId = 1L).apply { id = 3L },
+            )
+        coEvery { dao.getSessionById(1L) } returns session(id = 1L, uuid = "session-uuid-1")
+        coEvery { dao.getSessionById(2L) } returns session(id = 2L, uuid = "session-uuid-2")
+    }
+
+    private fun locationJson(
+        latitude: Double,
+        longitude: Double,
+        accuracy: Float = 5f,
+    ): String =
+        json.encodeToString(
+            LocationData(
+                planterCheckInId = null,
+                latitude = latitude,
+                longitude = longitude,
+                accuracy = accuracy,
+                treeUuid = null,
+                convergenceStatus = ConvergenceStatus.CONVERGED,
+                capturedAt = "2023-01-01T00:00:01Z",
+            ),
+        )
+
+    private fun session(
+        id: Long,
+        uuid: String,
+    ): SessionEntity =
+        SessionEntity(
+            uuid = uuid,
+            originUserId = "user-uuid",
+            originWallet = "wallet",
+            destinationWallet = "dest-wallet",
+            startTime = Instant.parse("2023-01-01T00:00:00Z"),
+            organization = "org",
+            isUploaded = false,
+        ).apply { this.id = id }
 }
