@@ -254,8 +254,12 @@ jobs:
     if: >-
       !cancelled() && needs.select.result == 'success' && needs.select.outputs.run == 'true'
     runs-on: ubuntu-latest
+    # actions: write and checks: read, to re-run "Check for screenshot & video" once the videos
+    # are in the description.
     permissions:
       pull-requests: write
+      actions: write
+      checks: read
     steps:
       - uses: actions/download-artifact@v4
         if: needs.annotated.outputs.artifact != '' || needs.annotated-fork.outputs.artifact != ''
@@ -437,4 +441,21 @@ jobs:
               } else if (next !== old) {
                 await github.rest.pulls.update({ ...context.repo, pull_number: issue_number, body: next });
               }
+            }
+
+            // "Check for screenshot & video" read the description before the videos were in it,
+            // and an edit by this token starts no workflow. So run that check again when it is
+            // not green: it reads the description afresh. Nobody has to save the description by
+            // hand (from a Claude Code cloud session that save would garble the media links).
+            try {
+              const { data: checks } = await github.rest.checks.listForRef({
+                ...context.repo, ref: env.SHA, check_name: 'Check for screenshot & video', filter: 'latest',
+              });
+              const stale = checks.check_runs.find(c => c.status === 'completed' && c.conclusion !== 'success');
+              const run = stale && /\/actions\/runs\/(\d+)/.exec(stale.details_url || '');
+              if (run) {
+                await github.rest.actions.reRunWorkflow({ ...context.repo, run_id: Number(run[1]) });
+              }
+            } catch (e) {
+              core.warning('Could not re-run "Check for screenshot & video": ' + e.message);
             }

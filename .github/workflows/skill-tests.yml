@@ -2,7 +2,7 @@ name: Skill and flow-proof tests
 
 # Fast, pure-code tests of what the pr-validating-flow skill relies on: that SKILL.md still names
 # files, options and markers that exist, the eval's grader, the before/after block CI writes into
-# a PR description, and cloud-flows.sh's before/after run. No emulator, no model, no secrets.
+# a PR description, the "Check for screenshot & video" script, and cloud-flows.sh's before/after run. No emulator, no model, no secrets.
 on:
   pull_request:
     branches: [ master, release* ]
@@ -35,4 +35,4 @@ jobs:
       - name: The description block and the before/after run
         run: |
           cd e2e/ci
-          python3 -m unittest -v test_description_block test_cloud_flows test_validation
+          python3 -m unittest -v test_description_block test_require_pr_media test_cloud_flows test_validation
