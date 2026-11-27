@@ -1,0 +1,212 @@
+   0.000s tb 0.6.3: "C4 Wallet select" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-org-wallet-select.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.162s recording the screen to recording.mp4
+   0.162s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-wallet-select.yaml:7)
+   2.086s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1924 ms
+   2.087s ▶ Run Org capture setup  (.ci-org-wallet-select.yaml:8)
+   2.087s   ▶ Wait until id: TrackButton is visible  (org-capture-setup.yaml:7)
+   2.376s     snapshot history: screen context changed; discarding 1 snapshots
+   4.110s     snapshot history: screen context changed; discarding 1 snapshots
+   4.110s     found id: TrackButton: View #TrackButton [20,473][300,606], after 2023 ms and 4 reads
+   4.110s   ✓ Wait until id: TrackButton is visible  2023 ms
+   4.110s   ▶ Tap on id: TrackButton  (org-capture-setup.yaml:10)
+   4.125s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   4.218s     waited 92 ms for a still screen
+   4.274s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   4.476s     tap at (160, 539): the screen changed (sent in 25 ms, waited 130 ms)
+   4.476s   ✓ Tap on id: TrackButton  365 ms
+   4.476s     --annotate: holding the screen 800ms for the recording
+   5.274s   ▶ Wait until id: UserButton_5551230001 is visible  (org-capture-setup.yaml:11)
+   5.288s     snapshot history: screen context changed; discarding 1 snapshots
+   5.288s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.288s   ✓ Wait until id: UserButton_5551230001 is visible  14 ms
+   5.288s   ▶ Tap on id: UserButton_5551230001  (org-capture-setup.yaml:14)
+   5.289s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.343s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.396s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.528s     tap at (84, 177): the screen changed (sent in 12 ms, waited 118 ms)
+   5.528s   ✓ Tap on id: UserButton_5551230001  240 ms
+   5.528s     --annotate: holding the screen 870ms for the recording
+   6.396s   ▶ Tap on id: ArrowForwardButton  (org-capture-setup.yaml:15)
+   6.408s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.458s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.507s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.626s     tap at (264, 572): the screen changed (sent in 5 ms, waited 111 ms)
+   6.626s   ✓ Tap on id: ArrowForwardButton  230 ms
+   6.626s     --annotate: holding the screen 880ms for the recording
+   7.508s ✓ Run Org capture setup  5421 ms
+   7.508s ▶ Assert that id: OrangeAddButton is visible  (.ci-org-wallet-select.yaml:10)
+   7.518s   snapshot history: screen context changed; discarding 2 snapshots
+   7.518s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+   7.518s ✓ Assert that id: OrangeAddButton is visible  9 ms
+   7.518s ▶ Tap on id: UserButton_5551230001  (.ci-org-wallet-select.yaml:11)
+   7.518s   found id: UserButton_5551230001: View #UserButton_5551230001 [179,130][302,400]
+   7.569s   found id: UserButton_5551230001: View #UserButton_5551230001 [179,130][302,400]
+   7.618s   found id: UserButton_5551230001: View #UserButton_5551230001 [179,130][302,400]
+   7.683s   tap at (240, 265): the screen changed (sent in 5 ms, waited 58 ms)
+   7.683s ✓ Tap on id: UserButton_5551230001  165 ms
+   7.683s   --annotate: holding the screen 930ms for the recording
+   8.618s ▶ Tap on id: ArrowForwardButton  (.ci-org-wallet-select.yaml:12)
+   8.632s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.682s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.731s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.807s   tap at (264, 572): the screen changed (sent in 4 ms, waited 68 ms)
+   8.807s ✓ Tap on id: ArrowForwardButton  188 ms
+   8.807s   --annotate: holding the screen 920ms for the recording
+   9.731s ▶ Wait until id: CaptureButton is visible  (.ci-org-wallet-select.yaml:13)
+   9.912s   snapshot history: screen context changed; discarding 2 snapshots
+   9.912s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+   9.912s ✓ Wait until id: CaptureButton is visible  180 ms
+   9.912s ▶ Tap on id: CaptureButton  (.ci-org-wallet-select.yaml:16)
+   9.912s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+   9.967s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  10.035s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  10.073s   tap at (160, 572): the screen changed (sent in 9 ms, waited 26 ms)
+  10.074s ✓ Tap on id: CaptureButton  161 ms
+  10.074s   --annotate: holding the screen 960ms for the recording
+  11.035s ▶ Wait until id: ApproveButton is visible  (.ci-org-wallet-select.yaml:17)
+  11.053s   snapshot history: screen context changed; discarding 1 snapshots
+  12.553s   no change reported by the device for 1.5s while looking for id: ApproveButton: reading the screen again
+  15.268s   no change reported by the device for 1.5s while looking for id: ApproveButton: reading the screen again
+  18.327s   snapshot history: screen context changed; discarding 2 snapshots
+  18.327s   found id: ApproveButton: View #ApproveButton [130,544][190,604], after 7291 ms and 5 reads
+  18.327s ✓ Wait until id: ApproveButton is visible  7291 ms
+  18.327s ▶ Tap on id: ApproveButton  (.ci-org-wallet-select.yaml:20)
+  18.328s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  18.375s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  18.422s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  18.473s   tap at (160, 574): the screen changed (sent in 7 ms, waited 41 ms)
+  18.473s ✓ Tap on id: ApproveButton  145 ms
+  18.473s   --annotate: holding the screen 950ms for the recording
+  19.422s ▶ Wait until id: CaptureButton is visible  (.ci-org-wallet-select.yaml:21)
+  19.446s   snapshot history: screen context changed; discarding 1 snapshots
+  19.446s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.446s ✓ Wait until id: CaptureButton is visible  24 ms
+  19.446s ▶ Tap on id: ArrowBackButton  (.ci-org-wallet-select.yaml:24)
+  19.951s   waited 504 ms for the last action's change to settle
+  19.951s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  20.018s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  20.085s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  20.110s   tap at (56, 572): the screen changed (sent in 9 ms, waited 12 ms)
+  20.110s ✓ Tap on id: ArrowBackButton  663 ms
+  20.110s   --annotate: holding the screen 980ms for the recording
+  21.086s ▶ Wait until id: TrackButton is visible  (.ci-org-wallet-select.yaml:25)
+  21.095s   snapshot history: screen context changed; discarding 1 snapshots
+  21.095s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  21.095s ✓ Wait until id: TrackButton is visible  9 ms
+  21.095s ▶ Assert that "3", id: TreesToSyncCount is visible  (.ci-org-wallet-select.yaml:28)
+  21.101s   found "3", id: TreesToSyncCount: TextView "3" #TreesToSyncCount [82,233][91,300]
+  21.101s ✓ Assert that "3", id: TreesToSyncCount is visible  5 ms
+  21.101s ▶ Run Org capture setup  (.ci-org-wallet-select.yaml:30)
+  21.102s   ▶ Wait until id: TrackButton is visible  (org-capture-setup.yaml:7)
+  21.107s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  21.107s   ✓ Wait until id: TrackButton is visible  5 ms
+  21.107s   ▶ Tap on id: TrackButton  (org-capture-setup.yaml:10)
+  21.107s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  21.155s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  21.238s     tap at (160, 539): the screen changed (sent in 4 ms, waited 34 ms)
+  21.238s   ✓ Tap on id: TrackButton  130 ms
+  21.238s     --annotate: holding the screen 920ms for the recording
+  22.155s   ▶ Wait until id: UserButton_5551230001 is visible  (org-capture-setup.yaml:11)
+  22.164s     snapshot history: screen context changed; discarding 1 snapshots
+  22.164s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  22.164s   ✓ Wait until id: UserButton_5551230001 is visible  8 ms
+  22.164s   ▶ Tap on id: UserButton_5551230001  (org-capture-setup.yaml:14)
+  22.164s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  22.212s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  22.259s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  22.325s     tap at (84, 177): the screen changed (sent in 6 ms, waited 16 ms)
+  22.325s   ✓ Tap on id: UserButton_5551230001  160 ms
+  22.325s     --annotate: holding the screen 930ms for the recording
+  23.259s   ▶ Tap on id: ArrowForwardButton  (org-capture-setup.yaml:15)
+  23.268s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  23.315s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  23.364s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  23.431s     tap at (264, 572): the screen changed (sent in 4 ms, waited 57 ms)
+  23.431s   ✓ Tap on id: ArrowForwardButton  171 ms
+  23.431s     --annotate: holding the screen 930ms for the recording
+  24.365s ✓ Run Org capture setup  3263 ms
+  24.365s ▶ Tap on id: OrangeAddButton  (.ci-org-wallet-select.yaml:32)
+  24.375s   snapshot history: screen context changed; discarding 2 snapshots
+  24.375s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  24.423s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  24.471s   found id: OrangeAddButton: View #OrangeAddButton [125,537][195,607]
+  24.583s   tap at (160, 572): the screen changed (sent in 4 ms, waited 105 ms)
+  24.583s ✓ Tap on id: OrangeAddButton  218 ms
+  24.583s   --annotate: holding the screen 890ms for the recording
+  25.472s ▶ Tap on id: WalletNameField  (.ci-org-wallet-select.yaml:33)
+  25.482s   snapshot history: screen context changed; discarding 1 snapshots
+  25.482s   found id: WalletNameField: EditText #WalletNameField [12,132][308,516]
+  25.531s   found id: WalletNameField: EditText #WalletNameField [12,132][308,516]
+  25.579s   found id: WalletNameField: EditText #WalletNameField [12,132][308,516]
+  25.643s   tap at (160, 324): the screen changed (sent in 16 ms, waited 45 ms)
+  25.643s ✓ Tap on id: WalletNameField  170 ms
+  25.643s   --annotate: holding the screen 940ms for the recording
+  26.579s ▶ Input text Tree Fund  (.ci-org-wallet-select.yaml:34)
+  26.580s   typing 9 characters
+  27.122s   typed with device verification: the screen changed (sent in 401 ms, waited 138 ms)
+  27.122s ✓ Input text Tree Fund  542 ms
+  27.122s   --annotate: holding the screen 460ms for the recording
+  27.580s ▶ Assert that "Tree Fund", id: WalletNameField is visible  (.ci-org-wallet-select.yaml:35)
+  27.614s   snapshot history: screen context changed; discarding 1 snapshots
+  27.614s   found "Tree Fund", id: WalletNameField: EditText "Tree Fund" #WalletNameField [12,132][308,516]
+  27.614s ✓ Assert that "Tree Fund", id: WalletNameField is visible  33 ms
+  27.614s ▶ Hide keyboard  (.ci-org-wallet-select.yaml:36)
+  27.713s   snapshot history: screen context changed; discarding 1 snapshots
+  27.713s ✓ Hide keyboard  99 ms
+  27.713s   --annotate: holding the screen 900ms for the recording
+  28.614s ▶ Tap on id: ArrowForwardButton  (.ci-org-wallet-select.yaml:37)
+  28.614s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  28.662s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  28.703s   tap at (264, 572): the screen changed (sent in 2 ms, waited 36 ms)
+  28.703s ✓ Tap on id: ArrowForwardButton  88 ms
+  28.703s   --annotate: holding the screen 960ms for the recording
+  29.664s ▶ Wait until id: CaptureButton is visible  (.ci-org-wallet-select.yaml:38)
+  29.704s   snapshot history: screen context changed; discarding 1 snapshots
+  29.704s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  29.704s ✓ Wait until id: CaptureButton is visible  40 ms
+  29.704s ▶ Tap on id: CaptureButton  (.ci-org-wallet-select.yaml:41)
+  29.705s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  29.768s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  29.828s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  29.900s   tap at (160, 572): the screen changed (sent in 4 ms, waited 19 ms)
+  29.900s ✓ Tap on id: CaptureButton  195 ms
+  29.900s   --annotate: holding the screen 930ms for the recording
+  30.828s ▶ Wait until id: ApproveButton is visible  (.ci-org-wallet-select.yaml:42)
+  30.846s   snapshot history: screen context changed; discarding 1 snapshots
+  32.347s   no change reported by the device for 1.5s while looking for id: ApproveButton: reading the screen again
+  34.963s   no change reported by the device for 1.5s while looking for id: ApproveButton: reading the screen again
+  37.110s   snapshot history: screen context changed; discarding 2 snapshots
+  37.110s   found id: ApproveButton: View #ApproveButton [130,544][190,604], after 6281 ms and 5 reads
+  37.110s ✓ Wait until id: ApproveButton is visible  6281 ms
+  37.110s ▶ Tap on id: ApproveButton  (.ci-org-wallet-select.yaml:45)
+  37.111s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  37.163s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  37.210s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  37.251s   tap at (160, 574): the screen changed (sent in 3 ms, waited 34 ms)
+  37.251s ✓ Tap on id: ApproveButton  141 ms
+  37.251s   --annotate: holding the screen 960ms for the recording
+  38.212s ▶ Wait until id: CaptureButton is visible  (.ci-org-wallet-select.yaml:46)
+  38.229s   snapshot history: screen context changed; discarding 1 snapshots
+  38.229s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  38.229s ✓ Wait until id: CaptureButton is visible  17 ms
+  38.229s ▶ Tap on id: ArrowBackButton  (.ci-org-wallet-select.yaml:49)
+  38.774s   waited 544 ms for the last action's change to settle
+  38.774s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  38.835s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  38.895s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  38.921s   tap at (56, 572): the screen changed (sent in 3 ms, waited 20 ms)
+  38.921s ✓ Tap on id: ArrowBackButton  692 ms
+  38.921s   --annotate: holding the screen 970ms for the recording
+  39.896s ▶ Wait until id: TrackButton is visible  (.ci-org-wallet-select.yaml:50)
+  39.905s   snapshot history: screen context changed; discarding 1 snapshots
+  39.906s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  39.906s ✓ Wait until id: TrackButton is visible  9 ms
+  39.906s ▶ Assert that "4", id: TreesToSyncCount is visible  (.ci-org-wallet-select.yaml:53)
+  39.913s   found "4", id: TreesToSyncCount: TextView "4" #TreesToSyncCount [82,233][91,300]
+  39.913s ✓ Assert that "4", id: TreesToSyncCount is visible  7 ms
+  39.913s ▶ Take screenshot step-28-end-assertVisible-TreesToSyncCount  (.ci-org-wallet-select.yaml:54)
+  40.044s ✓ Take screenshot step-28-end-assertVisible-TreesToSyncCount  130 ms
+  40.462s --annotate: recording.mp4 is in sync (its frame times say so, within -25 ms)
+  42.261s --annotate: drew 37 captions and 17 touches on recording.mp4 in 1798 ms
+  42.261s PASSED in 42.261s

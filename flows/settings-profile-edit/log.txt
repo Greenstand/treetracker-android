@@ -1,0 +1,311 @@
+   0.000s tb 0.6.3: "E10 Edit profile name" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-settings-profile-edit.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.141s recording the screen to recording.mp4
+   0.141s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-settings-profile-edit.yaml:9)
+   2.237s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  2096 ms
+   2.237s ▶ Run Sign up  (.ci-settings-profile-edit.yaml:10)
+   2.237s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   2.593s     snapshot history: screen context changed; discarding 1 snapshots
+   4.041s     snapshot history: screen context changed; discarding 1 snapshots
+   4.041s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 1803 ms and 4 reads
+   4.041s   ✓ Wait until id: LanguageOption_ENGLISH is visible  1804 ms
+   4.041s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   4.056s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.222s     waited 166 ms for a still screen
+   4.238s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.299s     tap at (160, 264): the screen changed (sent in 17 ms, waited 41 ms)
+   4.299s   ✓ Tap on id: LanguageOption_ENGLISH  257 ms
+   4.299s     --annotate: holding the screen 940ms for the recording
+   5.239s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   5.254s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.307s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.361s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.465s     tap at (264, 572): the screen changed (sent in 14 ms, waited 86 ms)
+   5.465s   ✓ Tap on id: ArrowForwardButton  225 ms
+   5.465s     --annotate: holding the screen 900ms for the recording
+   6.362s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   6.375s     snapshot history: screen context changed; discarding 2 snapshots
+   6.376s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.426s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.477s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.512s     tap at (160, 571): the screen changed (sent in 9 ms, waited 23 ms)
+   6.512s   ✓ Tap on id: PrivacyPolicyCloseButton  150 ms
+   6.512s     --annotate: holding the screen 960ms for the recording
+   7.477s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+   7.479s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+   7.479s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2 ms
+   7.479s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+   7.479s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+   7.489s       snapshot history: screen context changed; discarding 1 snapshots
+   7.489s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   7.540s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   8.547s       tap at (88, 244): nothing changed (sent in 4 ms, waited 1000 ms)
+   8.547s     ✓ Tap on id: PhoneCredentialButton  1067 ms
+   8.547s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+   8.556s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   8.606s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   8.708s       tap at (160, 313): the screen changed (sent in 21 ms, waited 77 ms)
+   8.709s     ✓ Tap on id: PhoneField  161 ms
+   8.709s       --annotate: holding the screen 900ms for the recording
+   9.606s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2126 ms
+   9.606s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+   9.607s     typing 10 characters
+  10.120s     typed with device verification: the screen changed (sent in 359 ms, waited 151 ms)
+  10.120s   ✓ Input text 5551230001  513 ms
+  10.120s     --annotate: holding the screen 490ms for the recording
+  10.606s   ▶ Hide keyboard  (signup.yaml:23)
+  10.686s     snapshot history: screen context changed; discarding 1 snapshots
+  10.686s   ✓ Hide keyboard  79 ms
+  10.686s     --annotate: holding the screen 920ms for the recording
+  11.607s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  11.607s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.659s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.730s     tap at (264, 572): the screen changed (sent in 6 ms, waited 61 ms)
+  11.730s   ✓ Tap on id: ArrowForwardButton  123 ms
+  11.730s     --annotate: holding the screen 930ms for the recording
+  12.659s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  12.670s     snapshot history: screen context changed; discarding 1 snapshots
+  12.671s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.719s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.767s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.808s     tap at (160, 227): the screen changed (sent in 11 ms, waited 27 ms)
+  12.808s   ✓ Tap on id: FirstNameField  148 ms
+  12.808s     --annotate: holding the screen 960ms for the recording
+  13.768s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  13.769s     typing 3 characters
+  14.036s     typed with device verification: the screen changed (sent in 78 ms, waited 187 ms)
+  14.036s   ✓ Input text Ada  268 ms
+  14.036s     --annotate: holding the screen 730ms for the recording
+  14.768s   ▶ Assert that "${FIRST_NAME}", id: FirstNameField is visible  (signup.yaml:27)
+  14.807s     snapshot history: screen context changed; discarding 1 snapshots
+  14.808s     found "Ada", id: FirstNameField: EditText "Ada" #FirstNameField [12,199][308,255]
+  14.808s   ✓ Assert that "Ada", id: FirstNameField is visible  39 ms
+  14.808s   ▶ Tap on id: LastNameField  (signup.yaml:28)
+  14.839s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.921s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.921s     it was moving: at rest after 81 ms at [12,287][308,343]
+  14.973s     tap at (160, 315): the screen changed (sent in 10 ms, waited 38 ms)
+  14.973s   ✓ Tap on id: LastNameField  165 ms
+  14.973s     --annotate: holding the screen 950ms for the recording
+  15.921s   ▶ Input text ${LAST_NAME}  (signup.yaml:29)
+  15.972s     typing 5 characters
+  16.255s     typed with device verification: the screen changed (sent in 98 ms, waited 182 ms)
+  16.255s   ✓ Input text Admin  333 ms
+  16.255s     --annotate: holding the screen 670ms for the recording
+  16.922s   ▶ Assert that "${LAST_NAME}", id: LastNameField is visible  (signup.yaml:30)
+  16.958s     snapshot history: screen context changed; discarding 2 snapshots
+  16.958s     found "Admin", id: LastNameField: EditText "Admin" #LastNameField [12,287][308,343]
+  16.958s   ✓ Assert that "Admin", id: LastNameField is visible  36 ms
+  16.958s   ▶ Hide keyboard  (signup.yaml:31)
+  17.056s     snapshot history: screen context changed; discarding 1 snapshots
+  17.056s   ✓ Hide keyboard  97 ms
+  17.056s     --annotate: holding the screen 900ms for the recording
+  17.959s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:32)
+  17.959s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.009s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.122s     tap at (264, 572): the screen changed (sent in 16 ms, waited 92 ms)
+  18.122s   ✓ Tap on id: ArrowForwardButton  162 ms
+  18.122s     --annotate: holding the screen 890ms for the recording
+  19.010s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:33)
+  19.479s     snapshot history: screen context changed; discarding 1 snapshots
+  19.480s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.586s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.725s     tap at (160, 474): the screen changed (sent in 19 ms, waited 74 ms)
+  19.725s     the device's window list had no readable app window (1 windows without a root); a read past the accessibility cache found app window 42
+  19.726s   ✓ Tap on id: TutorialDoneButton  715 ms
+  19.726s     --annotate: holding the screen 860ms for the recording
+  20.586s   ▶ Tap on id: CaptureButton  (signup.yaml:34)
+  20.605s     snapshot history: screen context changed; discarding 1 snapshots
+  20.605s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.671s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.735s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  21.133s     tap at (160, 572): the screen changed (sent in 14 ms, waited 380 ms)
+  21.133s   ✓ Tap on id: CaptureButton  547 ms
+  21.133s     --annotate: holding the screen 600ms for the recording
+  21.736s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:35)
+  21.743s     snapshot history: screen context changed; discarding 1 snapshots
+  21.743s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.743s   ✓ Wait until id: ApproveButton is visible  7 ms
+  21.743s   ▶ Tap on id: ApproveButton  (signup.yaml:38)
+  21.744s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.792s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.838s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.869s     tap at (202, 574): the screen changed (sent in 5 ms, waited 23 ms)
+  21.869s   ✓ Tap on id: ApproveButton  125 ms
+  21.869s     --annotate: holding the screen 970ms for the recording
+  22.839s   ▶ Wait until id: TrackButton is visible  (signup.yaml:39)
+  22.848s     snapshot history: screen context changed; discarding 1 snapshots
+  22.848s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  22.848s   ✓ Wait until id: TrackButton is visible  9 ms
+  22.848s ✓ Run Sign up  20610 ms
+  22.848s ▶ Tap on id: SettingsButton  (.ci-settings-profile-edit.yaml:13)
+  22.849s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  22.900s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  22.950s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  23.083s   tap at (39, 68): the screen changed (sent in 5 ms, waited 124 ms)
+  23.083s ✓ Tap on id: SettingsButton  234 ms
+  23.083s   --annotate: holding the screen 870ms for the recording
+  23.950s ▶ Tap on id: SettingsProfile  (.ci-settings-profile-edit.yaml:14)
+  23.959s   snapshot history: screen context changed; discarding 1 snapshots
+  23.959s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  24.015s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  24.066s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  24.114s   tap at (160, 156): the screen changed (sent in 3 ms, waited 41 ms)
+  24.114s ✓ Tap on id: SettingsProfile  164 ms
+  24.115s   --annotate: holding the screen 950ms for the recording
+  25.067s ▶ Tap on id: UserButton_5551230001  (.ci-settings-profile-edit.yaml:15)
+  25.075s   snapshot history: screen context changed; discarding 1 snapshots
+  25.076s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  25.123s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  25.171s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  25.206s   tap at (84, 177): the screen changed (sent in 5 ms, waited 27 ms)
+  25.206s ✓ Tap on id: UserButton_5551230001  139 ms
+  25.206s   --annotate: holding the screen 960ms for the recording
+  26.171s ▶ Tap on id: ArrowForwardButton  (.ci-settings-profile-edit.yaml:16)
+  26.179s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  26.226s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  26.274s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  26.332s   tap at (264, 572): the screen changed (sent in 2 ms, waited 50 ms)
+  26.333s ✓ Tap on id: ArrowForwardButton  161 ms
+  26.333s   --annotate: holding the screen 940ms for the recording
+  27.274s ▶ Assert that "Ada", id: ProfileFirstName is visible  (.ci-settings-profile-edit.yaml:17)
+  27.281s   snapshot history: screen context changed; discarding 2 snapshots
+  27.281s   found "Ada", id: ProfileFirstName: TextView "Ada" #ProfileFirstName [16,513][63,528]
+  27.281s ✓ Assert that "Ada", id: ProfileFirstName is visible  6 ms
+  27.281s ▶ Tap on id: EditProfileButton  (.ci-settings-profile-edit.yaml:18)
+  27.281s   found id: EditProfileButton: View #EditProfileButton [82,392][238,472]
+  27.330s   found id: EditProfileButton: View #EditProfileButton [82,392][238,472]
+  27.376s   found id: EditProfileButton: View #EditProfileButton [82,392][238,472]
+  27.415s   tap at (160, 432): the screen changed (sent in 4 ms, waited 31 ms)
+  27.416s ✓ Tap on id: EditProfileButton  134 ms
+  27.416s   --annotate: holding the screen 960ms for the recording
+  28.376s ▶ Scroll DOWN until id: ProfileFirstName is visible  (.ci-settings-profile-edit.yaml:20)
+  28.455s   drag 1: (160, 487) -> (160, 174); target not on screen yet, 2 texts seen
+  28.566s   in view after 1 swipes, 189 ms: EditText "Ada" #ProfileFirstName [24,224][296,280]
+  28.566s ✓ Scroll DOWN until id: ProfileFirstName is visible  189 ms
+  28.566s   --annotate: holding the screen 820ms for the recording
+  29.385s ▶ Tap on id: ProfileFirstName  (.ci-settings-profile-edit.yaml:22)
+  29.392s   found id: ProfileFirstName: EditText "Ada" #ProfileFirstName [24,224][296,280]
+  29.439s   found id: ProfileFirstName: EditText "Ada" #ProfileFirstName [24,224][296,280]
+  29.520s   tap at (160, 252): the screen changed (sent in 6 ms, waited 32 ms)
+  29.520s ✓ Tap on id: ProfileFirstName  135 ms
+  29.520s   --annotate: holding the screen 920ms for the recording
+  30.440s ▶ Erase 50 characters  (.ci-settings-profile-edit.yaml:23)
+  30.692s   erased up to 50 characters: the screen changed (sent in 96 ms, waited 152 ms)
+  30.692s ✓ Erase 50 characters  251 ms
+  30.692s   --annotate: holding the screen 750ms for the recording
+  31.440s ▶ Input text Grace  (.ci-settings-profile-edit.yaml:24)
+  31.441s   typing 5 characters
+  31.702s   typed with device verification: the screen changed (sent in 95 ms, waited 164 ms)
+  31.702s ✓ Input text Grace  261 ms
+  31.702s   --annotate: holding the screen 740ms for the recording
+  32.441s ▶ Assert that "Grace", id: ProfileFirstName is visible  (.ci-settings-profile-edit.yaml:25)
+  32.470s   snapshot history: screen context changed; discarding 3 snapshots
+  32.470s   found "Grace", id: ProfileFirstName: EditText "Grace" #ProfileFirstName [24,224][296,280]
+  32.470s ✓ Assert that "Grace", id: ProfileFirstName is visible  29 ms
+  32.470s ▶ Scroll DOWN until id: ProfileLastName is visible  (.ci-settings-profile-edit.yaml:26)
+  32.498s ✓ Scroll DOWN until id: ProfileLastName is visible  27 ms
+  32.498s   --annotate: holding the screen 970ms for the recording
+  33.471s ▶ Tap on id: ProfileLastName  (.ci-settings-profile-edit.yaml:28)
+  33.500s   found id: ProfileLastName: EditText "Admin" #ProfileLastName [24,343][296,399]
+  33.580s   found id: ProfileLastName: EditText "Admin" #ProfileLastName [24,343][296,399]
+  33.652s   tap at (160, 371): the screen changed (sent in 7 ms, waited 61 ms)
+  33.652s ✓ Tap on id: ProfileLastName  181 ms
+  33.652s   --annotate: holding the screen 930ms for the recording
+  34.580s ▶ Erase 50 characters  (.ci-settings-profile-edit.yaml:29)
+  34.789s   erased up to 50 characters: the screen changed (sent in 121 ms, waited 85 ms)
+  34.789s ✓ Erase 50 characters  209 ms
+  34.789s   --annotate: holding the screen 790ms for the recording
+  35.580s ▶ Input text Hopper  (.ci-settings-profile-edit.yaml:30)
+  35.580s   typing 6 characters
+  35.824s   typed with device verification: the screen changed (sent in 88 ms, waited 153 ms)
+  35.824s ✓ Input text Hopper  243 ms
+  35.824s   --annotate: holding the screen 760ms for the recording
+  36.580s ▶ Assert that "Hopper", id: ProfileLastName is visible  (.ci-settings-profile-edit.yaml:31)
+  36.612s   found "Hopper", id: ProfileLastName: EditText "Hopper" #ProfileLastName [24,343][296,399]
+  36.612s ✓ Assert that "Hopper", id: ProfileLastName is visible  31 ms
+  36.612s ▶ Hide keyboard  (.ci-settings-profile-edit.yaml:32)
+  36.675s   snapshot history: screen context changed; discarding 2 snapshots
+  36.675s ✓ Hide keyboard  62 ms
+  36.675s   --annotate: holding the screen 940ms for the recording
+  37.612s ▶ Scroll DOWN until id: SaveProfileButton is visible  (.ci-settings-profile-edit.yaml:33)
+  37.688s   drag 1: (160, 487) -> (160, 173); target not on screen yet, 7 texts seen
+  37.798s   in view after 1 swipes, 186 ms: View #SaveProfileButton [85,452][235,512]
+  37.798s ✓ Scroll DOWN until id: SaveProfileButton is visible  186 ms
+  37.798s   --annotate: holding the screen 820ms for the recording
+  38.620s ▶ Tap on id: SaveProfileButton  (.ci-settings-profile-edit.yaml:35)
+  38.628s   found id: SaveProfileButton: View #SaveProfileButton [85,452][235,512]
+  38.676s   found id: SaveProfileButton: View #SaveProfileButton [85,452][235,512]
+  38.703s   tap at (160, 482): the screen changed (sent in 3 ms, waited 22 ms)
+  38.703s ✓ Tap on id: SaveProfileButton  83 ms
+  38.703s   --annotate: holding the screen 970ms for the recording
+  39.676s ▶ Assert that id: SaveProfileButton is not visible  (.ci-settings-profile-edit.yaml:36)
+  39.688s   gone: id: SaveProfileButton (checked on a settled screen, 11 ms)
+  39.688s ✓ Assert that id: SaveProfileButton is not visible  11 ms
+  39.688s ▶ Scroll UP until "Grace", id: ProfileFirstName is visible  (.ci-settings-profile-edit.yaml:37)
+  39.694s ✓ Scroll UP until "Grace", id: ProfileFirstName is visible  5 ms
+  39.694s   --annotate: holding the screen 990ms for the recording
+  40.688s ▶ Stop app "org.greenstand.android.TreeTracker.debug"  (.ci-settings-profile-edit.yaml:41)
+  40.891s ✓ Stop app "org.greenstand.android.TreeTracker.debug"  202 ms
+  40.891s   --annotate: holding the screen 800ms for the recording
+  41.688s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-settings-profile-edit.yaml:42)
+  43.396s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1707 ms
+  43.396s ▶ Wait until id: TrackButton is visible  (.ci-settings-profile-edit.yaml:43)
+  43.885s   snapshot history: screen context changed; discarding 1 snapshots
+  45.287s   snapshot history: screen context changed; discarding 1 snapshots
+  45.287s   found id: TrackButton: View #TrackButton [20,473][300,606], after 1890 ms and 3 reads
+  45.287s ✓ Wait until id: TrackButton is visible  1890 ms
+  45.287s ▶ Tap on id: SettingsButton  (.ci-settings-profile-edit.yaml:46)
+  45.301s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  45.367s   waited 65 ms for a still screen
+  45.421s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  45.447s   tap at (39, 68): the screen changed (sent in 16 ms, waited 7 ms)
+  45.447s ✓ Tap on id: SettingsButton  160 ms
+  45.447s   --annotate: holding the screen 970ms for the recording
+  46.421s ▶ Tap on id: SettingsProfile  (.ci-settings-profile-edit.yaml:47)
+  46.437s   snapshot history: screen context changed; discarding 1 snapshots
+  46.437s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  46.493s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  46.551s   found id: SettingsProfile: View #SettingsProfile [20,120][300,192]
+  46.691s   tap at (160, 156): the screen changed (sent in 11 ms, waited 126 ms)
+  46.692s ✓ Tap on id: SettingsProfile  270 ms
+  46.692s   --annotate: holding the screen 860ms for the recording
+  47.552s ▶ Tap on id: UserButton_5551230001  (.ci-settings-profile-edit.yaml:48)
+  47.565s   snapshot history: screen context changed; discarding 1 snapshots
+  47.565s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  47.616s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  47.665s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  47.847s   tap at (84, 177): the screen changed (sent in 9 ms, waited 127 ms)
+  47.847s ✓ Tap on id: UserButton_5551230001  294 ms
+  47.847s   --annotate: holding the screen 820ms for the recording
+  48.665s ▶ Tap on id: ArrowForwardButton  (.ci-settings-profile-edit.yaml:49)
+  48.674s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.727s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.777s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.849s   tap at (264, 572): the screen changed (sent in 6 ms, waited 63 ms)
+  48.849s ✓ Tap on id: ArrowForwardButton  184 ms
+  48.849s   --annotate: holding the screen 930ms for the recording
+  49.777s ▶ Scroll DOWN until "Grace", id: ProfileFirstName is visible  (.ci-settings-profile-edit.yaml:50)
+  49.785s   snapshot history: screen context changed; discarding 2 snapshots
+  49.785s   it sits flush with the edge of its list: it may be cut off there; bringing it in
+  49.857s   drag 1: (160, 320) -> (160, 120); target listed but 100% visible
+  49.929s   in view after 1 swipes, 151 ms: TextView "Grace" #ProfileFirstName [16,349][83,378]
+  49.929s ✓ Scroll DOWN until "Grace", id: ProfileFirstName is visible  151 ms
+  49.929s   --annotate: holding the screen 860ms for the recording
+  50.785s ▶ Scroll DOWN until id: ProfileLastName is visible  (.ci-settings-profile-edit.yaml:52)
+  50.792s ✓ Scroll DOWN until id: ProfileLastName is visible  7 ms
+  50.792s   --annotate: holding the screen 990ms for the recording
+  51.786s ▶ Assert that "Hopper", id: ProfileLastName is visible  (.ci-settings-profile-edit.yaml:54)
+  51.797s   found "Hopper", id: ProfileLastName: TextView "Hopper" #ProfileLastName [16,417][105,446]
+  51.797s ✓ Assert that "Hopper", id: ProfileLastName is visible  11 ms
+  51.797s ▶ Scroll DOWN until id: ProfileWallet is visible  (.ci-settings-profile-edit.yaml:55)
+  51.803s ✓ Scroll DOWN until id: ProfileWallet is visible  6 ms
+  51.803s   --annotate: holding the screen 990ms for the recording
+  52.798s ▶ Assert that "5551230001", id: ProfileWallet is visible  (.ci-settings-profile-edit.yaml:57)
+  52.807s   found "5551230001", id: ProfileWallet: TextView "5551230001" #ProfileWallet [16,477][158,506]
+  52.807s ✓ Assert that "5551230001", id: ProfileWallet is visible  9 ms
+  52.807s ▶ Take screenshot step-35-end-assertVisible-ProfileWallet  (.ci-settings-profile-edit.yaml:58)
+  52.972s ✓ Take screenshot step-35-end-assertVisible-ProfileWallet  165 ms
+  53.260s --annotate: recording.mp4 is in sync (its frame times say so, within -44 ms)
+  56.085s --annotate: drew 57 captions and 27 touches on recording.mp4 in 2825 ms
+  56.085s PASSED in 56.085s

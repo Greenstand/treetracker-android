@@ -1,0 +1,96 @@
+1
+00:00:00,000 --> 00:00:01,778
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+2
+00:00:01,778 --> 00:00:03,822
+Wait until id: TrackButton is visible
+
+3
+00:00:03,822 --> 00:00:04,984
+Tap on id: TrackButton
+
+4
+00:00:04,984 --> 00:00:05,000
+Wait until id: UserButton_5551230001 is visible
+
+5
+00:00:05,000 --> 00:00:06,110
+Tap on id: UserButton_5551230001
+
+6
+00:00:06,110 --> 00:00:07,243
+Tap on id: ArrowForwardButton
+
+7
+00:00:14,266 --> 00:00:14,294
+Wait until id: CaptureButton is visible
+
+8
+00:00:14,294 --> 00:00:15,366
+Tap on id: CaptureButton
+
+9
+00:00:15,366 --> 00:00:20,739
+Wait until id: ApproveButton is visible
+
+10
+00:00:20,739 --> 00:00:21,838
+Tap on id: ApproveButton
+
+11
+00:00:21,838 --> 00:00:21,846
+Wait until id: DialogTextField is visible
+
+12
+00:00:21,846 --> 00:00:22,940
+Tap on id: DialogTextField
+
+13
+00:00:22,940 --> 00:00:23,941
+Input text Planted beside the river
+
+14
+00:00:23,941 --> 00:00:23,968
+Assert that "Planted beside the river", id: DialogTextField is visible
+
+15
+00:00:23,968 --> 00:00:24,969
+Hide keyboard
+
+16
+00:00:24,969 --> 00:00:26,018
+Tap on id: DialogPositiveButton
+
+17
+00:00:26,018 --> 00:00:26,026
+Assert that id: DialogTextField is not visible
+
+18
+00:00:26,026 --> 00:00:26,033
+Assert that id: ApproveButton is visible
+
+19
+00:00:26,033 --> 00:00:27,130
+Tap on id: ApproveButton
+
+20
+00:00:27,130 --> 00:00:27,190
+Wait until id: CaptureButton is visible
+
+21
+00:00:27,190 --> 00:00:28,327
+Tap on id: ArrowBackButton
+
+22
+00:00:28,327 --> 00:00:28,335
+Wait until id: TrackButton is visible
+
+23
+00:00:28,335 --> 00:00:28,342
+Assert that "3", id: TreesToSyncCount is visible
+
+24
+00:00:28,342 --> 00:00:28,483
+Take screenshot step-20-end-assertVisible-TreesToSyncCount
+

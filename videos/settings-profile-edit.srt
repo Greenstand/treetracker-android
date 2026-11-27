@@ -1,0 +1,228 @@
+1
+00:00:00,000 --> 00:00:02,096
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+2
+00:00:02,096 --> 00:00:03,900
+Wait until id: LanguageOption_ENGLISH is visible
+
+3
+00:00:03,900 --> 00:00:05,097
+Tap on id: LanguageOption_ENGLISH
+
+4
+00:00:05,097 --> 00:00:06,220
+Tap on id: ArrowForwardButton
+
+5
+00:00:06,220 --> 00:00:07,338
+Tap on id: PrivacyPolicyCloseButton
+
+6
+00:00:07,338 --> 00:00:08,406
+Tap on id: PhoneCredentialButton
+
+7
+00:00:08,406 --> 00:00:09,464
+Tap on id: PhoneField
+
+8
+00:00:09,464 --> 00:00:10,465
+Input text 5551230001
+
+9
+00:00:10,465 --> 00:00:11,466
+Hide keyboard
+
+10
+00:00:11,466 --> 00:00:12,518
+Tap on id: ArrowForwardButton
+
+11
+00:00:12,518 --> 00:00:13,626
+Tap on id: FirstNameField
+
+12
+00:00:13,626 --> 00:00:14,626
+Input text Ada
+
+13
+00:00:14,626 --> 00:00:14,666
+Assert that "Ada", id: FirstNameField is visible
+
+14
+00:00:14,666 --> 00:00:15,780
+Tap on id: LastNameField
+
+15
+00:00:15,780 --> 00:00:16,781
+Input text Admin
+
+16
+00:00:16,781 --> 00:00:16,817
+Assert that "Admin", id: LastNameField is visible
+
+17
+00:00:16,817 --> 00:00:17,817
+Hide keyboard
+
+18
+00:00:17,817 --> 00:00:18,869
+Tap on id: ArrowForwardButton
+
+19
+00:00:18,869 --> 00:00:20,444
+Tap on id: TutorialDoneButton
+
+20
+00:00:20,444 --> 00:00:21,594
+Tap on id: CaptureButton
+
+21
+00:00:21,594 --> 00:00:21,602
+Wait until id: ApproveButton is visible
+
+22
+00:00:21,602 --> 00:00:22,697
+Tap on id: ApproveButton
+
+23
+00:00:22,697 --> 00:00:22,707
+Wait until id: TrackButton is visible
+
+24
+00:00:22,707 --> 00:00:23,809
+Tap on id: SettingsButton
+
+25
+00:00:23,809 --> 00:00:24,925
+Tap on id: SettingsProfile
+
+26
+00:00:24,925 --> 00:00:26,029
+Tap on id: UserButton_5551230001
+
+27
+00:00:26,029 --> 00:00:27,132
+Tap on id: ArrowForwardButton
+
+28
+00:00:27,132 --> 00:00:27,139
+Assert that "Ada", id: ProfileFirstName is visible
+
+29
+00:00:27,139 --> 00:00:28,235
+Tap on id: EditProfileButton
+
+30
+00:00:28,235 --> 00:00:29,243
+Scroll DOWN until id: ProfileFirstName is visible
+
+31
+00:00:29,243 --> 00:00:30,299
+Tap on id: ProfileFirstName
+
+32
+00:00:30,299 --> 00:00:31,299
+Erase 50 characters
+
+33
+00:00:31,299 --> 00:00:32,300
+Input text Grace
+
+34
+00:00:32,300 --> 00:00:32,329
+Assert that "Grace", id: ProfileFirstName is visible
+
+35
+00:00:32,329 --> 00:00:33,329
+Scroll DOWN until id: ProfileLastName is visible
+
+36
+00:00:33,329 --> 00:00:34,438
+Tap on id: ProfileLastName
+
+37
+00:00:34,438 --> 00:00:35,439
+Erase 50 characters
+
+38
+00:00:35,439 --> 00:00:36,439
+Input text Hopper
+
+39
+00:00:36,439 --> 00:00:36,470
+Assert that "Hopper", id: ProfileLastName is visible
+
+40
+00:00:36,470 --> 00:00:37,470
+Hide keyboard
+
+41
+00:00:37,470 --> 00:00:38,478
+Scroll DOWN until id: SaveProfileButton is visible
+
+42
+00:00:38,478 --> 00:00:39,534
+Tap on id: SaveProfileButton
+
+43
+00:00:39,534 --> 00:00:39,546
+Assert that id: SaveProfileButton is not visible
+
+44
+00:00:39,546 --> 00:00:40,547
+Scroll UP until "Grace", id: ProfileFirstName is visible
+
+45
+00:00:40,547 --> 00:00:41,547
+Stop app "org.greenstand.android.TreeTracker.debug"
+
+46
+00:00:41,547 --> 00:00:43,255
+Launch app "org.greenstand.android.TreeTracker.debug"
+
+47
+00:00:43,255 --> 00:00:45,146
+Wait until id: TrackButton is visible
+
+48
+00:00:45,146 --> 00:00:46,280
+Tap on id: SettingsButton
+
+49
+00:00:46,280 --> 00:00:47,411
+Tap on id: SettingsProfile
+
+50
+00:00:47,411 --> 00:00:48,523
+Tap on id: UserButton_5551230001
+
+51
+00:00:48,523 --> 00:00:49,635
+Tap on id: ArrowForwardButton
+
+52
+00:00:49,635 --> 00:00:50,644
+Scroll DOWN until "Grace", id: ProfileFirstName is visible
+
+53
+00:00:50,644 --> 00:00:51,644
+Scroll DOWN until id: ProfileLastName is visible
+
+54
+00:00:51,644 --> 00:00:51,656
+Assert that "Hopper", id: ProfileLastName is visible
+
+55
+00:00:51,656 --> 00:00:52,656
+Scroll DOWN until id: ProfileWallet is visible
+
+56
+00:00:52,656 --> 00:00:52,665
+Assert that "5551230001", id: ProfileWallet is visible
+
+57
+00:00:52,665 --> 00:00:52,830
+Take screenshot step-35-end-assertVisible-ProfileWallet
+

@@ -1,0 +1,122 @@
+   0.000s tb 0.6.3: "C1 Session note setup step" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-org-session-note.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.261s recording the screen to recording.mp4
+   0.261s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-org-session-note.yaml:6)
+   2.124s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1862 ms
+   2.124s ▶ Run Org capture setup  (.ci-org-session-note.yaml:7)
+   2.124s   ▶ Wait until id: TrackButton is visible  (org-capture-setup.yaml:7)
+   2.591s     snapshot history: screen context changed; discarding 1 snapshots
+   4.271s     snapshot history: screen context changed; discarding 1 snapshots
+   4.271s     found id: TrackButton: View #TrackButton [20,473][300,606], after 2146 ms and 3 reads
+   4.271s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 19
+   4.271s   ✓ Wait until id: TrackButton is visible  2146 ms
+   4.271s   ▶ Tap on id: TrackButton  (org-capture-setup.yaml:10)
+   4.325s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   4.419s     waited 94 ms for a still screen
+   4.474s     found id: TrackButton: View #TrackButton [20,473][300,606]
+   4.668s     tap at (160, 539): the screen changed (sent in 27 ms, waited 121 ms)
+   4.668s   ✓ Tap on id: TrackButton  397 ms
+   4.668s     --annotate: holding the screen 810ms for the recording
+   5.474s   ▶ Wait until id: UserButton_5551230001 is visible  (org-capture-setup.yaml:11)
+   5.488s     snapshot history: screen context changed; discarding 1 snapshots
+   5.488s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.488s   ✓ Wait until id: UserButton_5551230001 is visible  13 ms
+   5.488s   ▶ Tap on id: UserButton_5551230001  (org-capture-setup.yaml:14)
+   5.489s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.542s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.593s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+   5.776s     tap at (84, 177): the screen changed (sent in 11 ms, waited 129 ms)
+   5.776s   ✓ Tap on id: UserButton_5551230001  288 ms
+   5.776s     --annotate: holding the screen 820ms for the recording
+   6.594s   ▶ Tap on id: ArrowForwardButton  (org-capture-setup.yaml:15)
+   6.610s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.664s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.712s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   6.850s     tap at (264, 572): the screen changed (sent in 5 ms, waited 130 ms)
+   6.851s   ✓ Tap on id: ArrowForwardButton  256 ms
+   6.851s     --annotate: holding the screen 860ms for the recording
+   7.713s ✓ Run Org capture setup  5589 ms
+   7.713s ▶ Assert that id: SessionNoteField is visible  (.ci-org-session-note.yaml:9)
+   7.721s   snapshot history: screen context changed; discarding 2 snapshots
+   7.721s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+   7.721s ✓ Assert that id: SessionNoteField is visible  8 ms
+   7.721s ▶ Tap on id: SessionNoteField  (.ci-org-session-note.yaml:10)
+   7.722s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+   7.771s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+   7.820s   found id: SessionNoteField: EditText #SessionNoteField [12,132][308,516]
+   7.971s   tap at (160, 324): the screen changed (sent in 37 ms, waited 110 ms)
+   7.971s ✓ Tap on id: SessionNoteField  249 ms
+   7.971s   --annotate: holding the screen 850ms for the recording
+   8.821s ▶ Input text Planting day at the school  (.ci-org-session-note.yaml:11)
+   8.865s   typing 26 characters
+   9.939s   typed with device verification: the screen changed (sent in 1067 ms, waited 0 ms)
+   9.939s ✓ Input text Planting day at the school  1118 ms
+   9.939s ▶ Assert that "Planting day at the school", id: SessionNoteField is visible  (.ci-org-session-note.yaml:12)
+  10.045s   snapshot history: screen context changed; discarding 1 snapshots
+  10.046s   found "Planting day at the school", id: SessionNoteField: EditText "Planting day at the school" #SessionNoteField [12,132][308,516]
+  10.046s ✓ Assert that "Planting day at the school", id: SessionNoteField is visible  106 ms
+  10.046s ▶ Hide keyboard  (.ci-org-session-note.yaml:13)
+  10.152s   snapshot history: screen context changed; discarding 1 snapshots
+  10.152s ✓ Hide keyboard  106 ms
+  10.152s   --annotate: holding the screen 890ms for the recording
+  11.046s ▶ Tap on id: ArrowForwardButton  (.ci-org-session-note.yaml:14)
+  11.046s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.100s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.240s   tap at (264, 572): the screen changed (sent in 8 ms, waited 88 ms)
+  11.240s ✓ Tap on id: ArrowForwardButton  194 ms
+  11.240s   --annotate: holding the screen 860ms for the recording
+  12.101s ▶ Run flow when id: TutorialDoneButton is visible  (.ci-org-session-note.yaml:15)
+  12.911s   snapshot history: screen context changed; discarding 1 snapshots
+  14.411s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  17.916s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  19.101s   deadline reached 1.153s after the last read: reading the screen once more
+  19.135s   not found: id: TutorialDoneButton, after 7032 ms and 6 reads (screen: org.greenstand.android.TreeTracker.debug, 64 elements, allowed 6.998s)
+  19.135s   condition not met (id: TutorialDoneButton is visible): skipped
+  19.135s ○ Run flow when id: TutorialDoneButton is visible  7034 ms
+  19.135s ▶ Wait until id: CaptureButton is visible  (.ci-org-session-note.yaml:19)
+  19.182s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.182s ✓ Wait until id: CaptureButton is visible  47 ms
+  19.182s ▶ Tap on id: CaptureButton  (.ci-org-session-note.yaml:22)
+  19.182s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.238s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  19.283s   tap at (160, 572): the screen changed (sent in 13 ms, waited 29 ms)
+  19.283s ✓ Tap on id: CaptureButton  100 ms
+  19.283s   --annotate: holding the screen 950ms for the recording
+  20.239s ▶ Wait until id: ApproveButton is visible  (.ci-org-session-note.yaml:23)
+  20.271s   snapshot history: screen context changed; discarding 2 snapshots
+  21.771s   no change reported by the device for 1.5s while looking for id: ApproveButton: reading the screen again
+  24.801s   no change reported by the device for 3s while looking for id: ApproveButton: reading the screen again
+  26.607s   snapshot history: screen context changed; discarding 1 snapshots
+  26.607s   found id: ApproveButton: View #ApproveButton [130,544][190,604], after 6368 ms and 4 reads
+  26.607s ✓ Wait until id: ApproveButton is visible  6368 ms
+  26.607s ▶ Tap on id: ApproveButton  (.ci-org-session-note.yaml:26)
+  26.608s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  26.660s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  26.708s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  26.766s   tap at (160, 574): the screen changed (sent in 6 ms, waited 49 ms)
+  26.766s ✓ Tap on id: ApproveButton  158 ms
+  26.766s   --annotate: holding the screen 940ms for the recording
+  27.708s ▶ Wait until id: CaptureButton is visible  (.ci-org-session-note.yaml:27)
+  27.737s   snapshot history: screen context changed; discarding 1 snapshots
+  27.737s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  27.737s ✓ Wait until id: CaptureButton is visible  28 ms
+  27.737s ▶ Tap on id: ArrowBackButton  (.ci-org-session-note.yaml:30)
+  28.281s   waited 543 ms for the last action's change to settle
+  28.281s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  28.340s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  28.402s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  28.471s   tap at (56, 572): the screen changed (sent in 4 ms, waited 61 ms)
+  28.471s ✓ Tap on id: ArrowBackButton  734 ms
+  28.471s   --annotate: holding the screen 930ms for the recording
+  29.402s ▶ Wait until id: TrackButton is visible  (.ci-org-session-note.yaml:31)
+  29.411s   snapshot history: screen context changed; discarding 1 snapshots
+  29.411s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  29.411s ✓ Wait until id: TrackButton is visible  9 ms
+  29.411s ▶ Assert that "3", id: TreesToSyncCount is visible  (.ci-org-session-note.yaml:34)
+  29.420s   found "3", id: TreesToSyncCount: TextView "3" #TreesToSyncCount [82,233][91,300]
+  29.420s ✓ Assert that "3", id: TreesToSyncCount is visible  8 ms
+  29.420s ▶ Take screenshot step-17-end-assertVisible-TreesToSyncCount  (.ci-org-session-note.yaml:35)
+  29.562s ✓ Take screenshot step-17-end-assertVisible-TreesToSyncCount  142 ms
+  29.947s --annotate: recording.mp4 is in sync (its frame times say so, within -63 ms)
+  32.463s --annotate: drew 21 captions and 8 touches on recording.mp4 in 2515 ms
+  32.463s PASSED in 32.462s

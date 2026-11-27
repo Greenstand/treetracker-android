@@ -1,0 +1,9 @@
+### Flow run: 3 passed, 0 failed
+
+App at `f2e3edae5b`, API 35.
+
+| Flow | Result | Time | Screenshots | Video |
+|---|---|---|---|---|
+| `capture-note` | ✅ passed | 56s | 1 | 🎬 saved |
+| `org-force-note` | ✅ passed | 31s | 1 | 🎬 saved |
+| `org-process-death-session-note` | ✅ passed | 26s | 1 | 🎬 saved |
