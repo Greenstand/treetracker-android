@@ -29,7 +29,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** Tests for the [TreeDAO] queries on the legacy `tree_capture` and `tree_attribute` tables. */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class TreeDaoLegacyCaptureTest : InMemoryDatabaseTest() {

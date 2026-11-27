@@ -64,13 +64,10 @@ fun AddWalletScreen(
         AddWallet(
             state = state,
             onHandleAction = { action ->
-                // Until a restored add wallet has its user back, leaving it would continue setup without one.
                 val canLeave = !state.restoring && !state.setupLost
                 when (action) {
                     is AddWalletAction.NavigateBack -> if (canLeave) CaptureSetupScopeManager.nav.navBackward(navigator)
                     is AddWalletAction.NavigateNext -> {
-                        // Like every setup screen's Next, this one sits where the previous screen's
-                        // Next was. Drop the second tap of a double tap that opened it (#1442).
                         if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                             scope.launch { CaptureSetupScopeManager.nav.navForward(navigator) }
                         }

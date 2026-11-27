@@ -31,7 +31,6 @@ import org.greenstand.android.TreeTracker.walletselect.addwallet.AddWalletState
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for the stateless [AddWallet] screen. */
 class AddWalletUiTest : ComposeUiTest() {
     private val actions = mutableListOf<AddWalletAction>()
 

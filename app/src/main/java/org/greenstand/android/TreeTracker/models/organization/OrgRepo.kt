@@ -28,9 +28,6 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import timber.log.Timber
 
-// TEST DEEPLINK: app://mobile.treetracker.org/org?id=109288091&name=Kasiki%20Hai
-// TEST DEEPLINK: app://mobile.treetracker.org/org?params={"id":"109288091","version":"1","name":"Kasiki Hai","walletId":"klasdlk1-a0a23lmnzcln9o3","captureSetupFlow":[{"route":"user-select"},{"route":"session-note"}],"captureFlow":[{"route":"capture/{profilePicUrl}"},{"route":"tree-image-review/{photoPath}"},{"route":"tree-height-selection"}]}
-
 class OrgRepo(
     private val dao: TreeTrackerDAO,
     private val prefs: Preferences,
@@ -51,15 +48,6 @@ class OrgRepo(
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
-    /**
-     * Re-hydrate [currentOrg] from persisted state if it is missing.
-     *
-     * [currentOrg] lives only in memory, so it is lost on process death. When the OS
-     * restores the app into a deep screen (e.g. mid capture-setup flow) the splash
-     * screen — and therefore [init] — is bypassed, leaving [currentOrg] null. Calling
-     * this before the capture-setup flow is used reloads the org from the DB/prefs so
-     * [currentOrg] does not throw. No-op when already initialized.
-     */
     suspend fun ensureInitialized() {
         if (currentOrg == null) {
             init()
@@ -76,7 +64,6 @@ class OrgRepo(
                 json.encodeToString(
                     listOf(
                         Destination(RouteRegistry.ROUTE_USER_SELECT),
-//              Destination(RouteRegistry.ROUTE_WALLET_SELECT),
                         Destination(RouteRegistry.ROUTE_ADD_ORG),
                     ),
                 ),
@@ -84,11 +71,7 @@ class OrgRepo(
                 json.encodeToString(
                     listOf(
                         Destination(RouteRegistry.ROUTE_TREE_CAPTURE),
-                        // Uncomment this to test out forcing the note taking feature
-//              Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW, listOf(OrgFeature.FORCE_NOTE.key)),
                         Destination(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW),
-                        // For Kasiki Hai
-//              Destination(RouteRegistry.ROUTE_TREE_HEIGHT),
                     ),
                 ),
         )
@@ -106,16 +89,11 @@ class OrgRepo(
         Timber.tag("OrgRepo").d("Org settings: $currentOrg")
     }
 
-    /**
-     * The current org with any dev options overrides (debug builds only) applied on top.
-     * Everything that runs the org's flows, features or wallet reads it through here.
-     */
     fun currentOrg(): Org {
         val org = baseCurrentOrg()
         return overrideStore?.active?.applyTo(org) ?: org
     }
 
-    /** The current org exactly as its org link (or the default org) configured it. */
     fun baseCurrentOrg(): Org =
         currentOrg ?: error(
             "OrgRepo not initialized. Call init() before accessing currentOrg().",

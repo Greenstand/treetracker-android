@@ -23,14 +23,6 @@ import timber.log.Timber
 class OrgConfigProvider(
     private val remoteConfig: FirebaseRemoteConfig,
 ) {
-    /**
-     * Attempts to fetch org configuration from Firebase Remote Config.
-     * Returns the JSON string if found, or null if:
-     * - Device is offline
-     * - Fetch times out
-     * - Key does not exist in Remote Config
-     * - Any error occurs
-     */
     suspend fun fetchOrgConfig(orgId: String): String? {
         val key = "$KEY_PREFIX$orgId"
         Timber.tag(TAG).d("Fetching Remote Config for key: $key")

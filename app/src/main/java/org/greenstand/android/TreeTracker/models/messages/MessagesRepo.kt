@@ -36,9 +36,6 @@ import org.greenstand.android.TreeTracker.utils.runInParallel
 import timber.log.Timber
 import java.util.*
 
-/**
- * For test data, use 'handle2@test', 'handle3@test', or 'handle4@test' as a wallet (email)
- */
 class MessagesRepo(
     private val apiService: MessagesApiService,
     private val userRepo: UserRepo,
@@ -86,7 +83,6 @@ class MessagesRepo(
         surveyResponse: List<String>,
     ) {
         val surveyMessage = messagesDao.getMessage(messageId)!!
-        // make messages point to surveys to have survey and response point to same survey
         messagesDao.insertMessage(
             MessageEntity(
                 id = UUID.randomUUID().toString(),
@@ -133,9 +129,6 @@ class MessagesRepo(
 
     suspend fun getSurveyMessage(id: String): SurveyMessage = convertMessageEntityToMessage(messagesDao.getMessage(id)!!) as SurveyMessage
 
-    /**
-     * When uploading trees, messages will be synced locally by this method
-     */
     suspend fun syncMessages() =
         withContext(Dispatchers.IO) {
             for (wallet in userRepo.getUserList().map { it.wallet }) {
@@ -143,11 +136,9 @@ class MessagesRepo(
                     ensureActive()
                     fetchMessagesForWallet(wallet)
                 } catch (e: CancellationException) {
-                    // rethrow cancellation exception
                     throw e
                 } catch (e: Exception) {
                     if (e.localizedMessage == Constants.LOCAL_MSG_ERROR_HTTP404) {
-                        // 404 indicates the user has never had messages before
                         continue
                     } else {
                         Timber.e(e)
@@ -182,12 +173,11 @@ class MessagesRepo(
                 ensureActive()
                 offset += limit
 
-                // store this offset value in-case it gets changed in the next iteration.
                 val _offset = offset
 
                 asyncExecutions +=
                     async {
-                        fetchMessagesFromServerAndSaveInDb(_offset, limit, wallet, lastSyncTime) // pass _offset instead of offset.
+                        fetchMessagesFromServerAndSaveInDb(_offset, limit, wallet, lastSyncTime)
                     }
             }
 
@@ -248,10 +238,8 @@ class MessagesRepo(
                 }
             messagesDao.insertMessage(messageEntity)
 
-            // If there is no survey, don't continue on
             message.survey ?: return@withContext
 
-            // If survey exists, we'll reuse it
             if (messagesDao.getSurvey(message.survey.id) != null) {
                 return@withContext
             }

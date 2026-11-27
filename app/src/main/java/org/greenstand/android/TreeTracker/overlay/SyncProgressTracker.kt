@@ -131,7 +131,6 @@ open class SyncProgressTracker {
     }
 }
 
-/** No-op implementation for release builds to avoid unnecessary StateFlow churn. */
 class NoOpSyncProgressTracker : SyncProgressTracker() {
     override fun startSync() {}
 

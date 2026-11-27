@@ -29,9 +29,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertEquals
 
-/**
- * Runs [TreesToSyncHelper] against real [Preferences] backed by Robolectric shared preferences.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class TreesToSyncHelperPreferencesTest {

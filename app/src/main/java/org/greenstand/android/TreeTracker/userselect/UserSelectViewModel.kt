@@ -101,16 +101,6 @@ class UserSelectViewModel(
         }
     }
 
-    /**
-     * Starts capture setup again if capture ended it while this ViewModel stayed alive.
-     *
-     * Leaving capture for user select (`CaptureFlowNavigationController.goToUserSelect`) closes
-     * the setup scope and replaces the back stack with `UserSelectRoute` in one step. That
-     * route's entry never leaves the back stack, so Navigation 3 keeps its ViewModel and `init`
-     * doesn't run again. The capture setup user select screen calls this each time it is shown:
-     * it reopens the setup scope and clears the selection, which belonged to the ended session.
-     * While the scope is still open (e.g. Back from a later setup screen) it changes nothing.
-     */
     fun resumeSetup() {
         if (CaptureSetupScopeManager.isOpen) return
         startSetup()
@@ -156,8 +146,6 @@ class UserSelectViewModel(
                     to = "admin",
                     body = "Hi admin, I would like to delete my account with the wallet ${currentState.selectedUser?.wallet} I understand that all my data will be lost.",
                 )
-                // The user is already deleted locally and the message is queued, so a failed sync
-                // (for example offline) must not crash the app; the next sync uploads it.
                 try {
                     messageRepo.syncMessages()
                 } catch (e: CancellationException) {

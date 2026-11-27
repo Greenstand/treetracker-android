@@ -31,7 +31,6 @@ import org.greenstand.android.TreeTracker.capture.TreeCaptureState
 import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.junit.Test
 
-/** Tests for the [CaptureCustomLoading] GPS convergence panel, alone and inside [TreeCapture]. */
 class CaptureCustomLoadingUiTest : ComposeUiTest() {
     @Test
     fun `nothing is drawn while not loading`() {

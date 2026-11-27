@@ -36,7 +36,6 @@ import org.greenstand.android.TreeTracker.view.ARROW_FORWARD_BUTTON_TAG
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for a single [TreeButton] and the states of [TreeList] its grid moves through. */
 class TreeButtonUiTest : ComposeUiTest() {
     private fun tree(
         id: Long,

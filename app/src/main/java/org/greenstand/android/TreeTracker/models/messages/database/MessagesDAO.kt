@@ -26,10 +26,6 @@ import org.greenstand.android.TreeTracker.models.messages.database.entities.Surv
 
 @Dao
 interface MessagesDAO {
-    /**
-     * Messages
-     */
-
     @Query("DELETE FROM messages WHERE id = :id")
     suspend fun deleteMessage(id: String)
 
@@ -84,10 +80,6 @@ interface MessagesDAO {
     @Query("SELECT COUNT(*) FROM messages WHERE wallet = (:wallet) AND is_read = 0")
     suspend fun getUnreadMessageCountForWallet(wallet: String): Int
 
-    /**
-     * Surveys
-     */
-
     @Query("DELETE FROM surveys WHERE id = :id")
     suspend fun deleteSurvey(id: String)
 
@@ -96,10 +88,6 @@ interface MessagesDAO {
 
     @Query("SELECT * FROM surveys WHERE id = :id")
     suspend fun getSurvey(id: String?): SurveyEntity?
-
-    /**
-     * Questions
-     */
 
     @Query("DELETE FROM questions WHERE _id IN (:ids)")
     suspend fun deleteQuestions(ids: List<Long>)

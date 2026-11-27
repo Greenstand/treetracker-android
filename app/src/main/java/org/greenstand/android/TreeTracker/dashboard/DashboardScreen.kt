@@ -320,26 +320,6 @@ fun DashboardTopBar(
                             }.testTag(TestTags.SETTINGS_BUTTON),
                 )
             }
-//            Move Logic to settings screen for org feature
-           /* if (!state.isOrgButtonEnabled) {
-                return@ActionBar
-            }
-            TreeTrackerButton(
-                colors = AppButtonColors.ProgressGreen,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(width = 100.dp, 60.dp),
-                onClick = onOrgClicked,
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "Organization",
-                    fontWeight = FontWeight.Bold,
-                    color = CustomTheme.textColors.darkText,
-                    style = CustomTheme.typography.regular
-                )
-            }
-            */
         },
         centerAction = { TopBarTitle() },
         rightAction = { LanguageButton() },
@@ -371,7 +351,6 @@ fun DashboardUploadProgressBar(
         val diameterOffset = stroke.width / 2
         val arcDimension = size.width - 2 * diameterOffset
 
-        // Function to draw a default styled arc.
         fun drawProgress(
             color: Color,
             sweepAngle: Float,
@@ -385,8 +364,8 @@ fun DashboardUploadProgressBar(
             style = stroke,
         )
 
-        drawProgress(AppColors.MediumGray, 180f) // Background progress.
-        drawProgress(AppColors.Orange, animatedProgress * 180f) // Foreground progress.
+        drawProgress(AppColors.MediumGray, 180f)
+        drawProgress(AppColors.Orange, animatedProgress * 180f)
     }
 }
 

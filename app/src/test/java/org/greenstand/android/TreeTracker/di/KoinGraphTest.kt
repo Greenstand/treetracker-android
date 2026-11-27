@@ -82,18 +82,10 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-/**
- * Starts the real app Koin graph (appModule, roomModule, networkModule) the way
- * TreeTrackerApplication does, with only the Firebase, WorkManager and S3 entry points
- * replaced, and checks that every definition can be created. A missing binding otherwise
- * only shows up as a crash when the screen that needs it is first opened.
- */
 @OptIn(ExperimentalCoroutinesApi::class, KoinInternalApi::class)
 @RunWith(RobolectricTestRunner::class)
 @Config(application = Application::class, sdk = [35])
 class KoinGraphTest {
-    // View model init blocks launch on Main; a StandardTestDispatcher keeps them from running,
-    // since this test is only about construction.
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule(StandardTestDispatcher())
 
@@ -111,11 +103,9 @@ class KoinGraphTest {
     @Before
     fun setUp() {
         stopKoin()
-        // DeviceUtils reads the Android ID through the application's static context.
         val context = ApplicationProvider.getApplicationContext<Application>()
         TreeTrackerApplication.appContext = context
         Settings.Secure.putString(context.contentResolver, Settings.Secure.ANDROID_ID, "test-device-id")
-        // UploadLocationDataUseCase reads the static instance rather than the Koin binding.
         ObjectStorageClient.init(context)
         koin =
             startKoin {
@@ -123,7 +113,6 @@ class KoinGraphTest {
                 androidContext(context)
                 modules(appModule, roomModule, networkModule, externalServices)
             }.koin
-        // The splash screen does this at startup; capture flow classes read the current org.
         runBlocking { koin.get<OrgRepo>().init() }
     }
 
@@ -136,7 +125,6 @@ class KoinGraphTest {
 
     @Test
     fun `every root definition in the app graph can be created`() {
-        // TreeCapturer at the root is a bridge into the open capture flow scope.
         CaptureFlowScopeManager.open()
 
         val rootDefinitions =
@@ -171,9 +159,6 @@ class KoinGraphTest {
         CaptureFlowScopeManager.open()
         val factory = koin.get<TreeTrackerViewModelFactory>()
 
-        // Left out: IndividualMessageListViewModel (its branch cannot supply the user id, see
-        // VIEW_MODELS_WITH_ROUTE_ARGS) and SplashScreenViewModel (no Koin definition). Both
-        // screens build their view model with their own factory, so those branches are unused.
         listOf(
             UserSelectViewModel::class,
             DashboardViewModel::class,
@@ -239,7 +224,6 @@ class KoinGraphTest {
 
     @Test
     fun `image review view model reopens the capture flow when restored after process death`() {
-        // Nav3 restores image review with no capture flow scope open (#1419).
         assertFalse(CaptureFlowScopeManager.isOpen)
 
         assertTrue(koin.get<TreeImageReviewViewModel>() is TreeImageReviewViewModel)
@@ -275,11 +259,6 @@ class KoinGraphTest {
     }
 
     private companion object {
-        /**
-         * These take a user id / message id as their first constructor argument. Their screens
-         * build them with dedicated ViewModelProvider factories, so the Koin definitions only work
-         * when the caller passes those arguments with parametersOf.
-         */
         val VIEW_MODELS_WITH_ROUTE_ARGS =
             setOf(
                 ChatViewModel::class,

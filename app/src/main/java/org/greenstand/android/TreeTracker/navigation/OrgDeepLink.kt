@@ -21,12 +21,6 @@ private const val ORG_LINK_SCHEME = "app"
 private const val ORG_LINK_HOST = "mobile.treetracker.org"
 private const val ORG_LINK_PATH_PREFIX = "/org"
 
-/**
- * Parses the org deep link (`app://mobile.treetracker.org/org?id={orgId}&name={orgName}`)
- * from the launching intent into the start route. Navigation 3 has no built-in deep link
- * support, so this replaces the Nav2 `navDeepLink` on the splash destination. Handled at
- * cold start only, matching the pre-migration behavior.
- */
 fun parseStartRoute(intent: Intent?): SplashRoute {
     val uri = intent?.data ?: return SplashRoute()
     val isOrgLink =

@@ -50,11 +50,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Runs the session, device config and GPS track uploaders against a real in-memory Room database,
- * with only the S3 client faked. Checks what each one sends and what it leaves in the database,
- * so the DAO queries and the uploaders are tested together rather than against mocks.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class UploadPipelineIntegrationTest : InMemoryDatabaseTest() {
@@ -65,7 +60,6 @@ class UploadPipelineIntegrationTest : InMemoryDatabaseTest() {
             encodeDefaults = true
         }
 
-    /** Every bundle handed to S3, in order, as (bundleId, json). */
     private val uploadedBundles = mutableListOf<Pair<String, String>>()
     private var s3Offline = false
     private val storageClient: ObjectStorageClient = mockk()
@@ -115,8 +109,6 @@ class UploadPipelineIntegrationTest : InMemoryDatabaseTest() {
             DbFixtures.session(uuid = uuid, isUploaded = uploaded, deviceConfigId = configId, organization = organization),
         )
     }
-
-    // region SessionUploader
 
     @Test
     fun `session upload sends only pending sessions with their device config uuid`() =
@@ -169,10 +161,6 @@ class UploadPipelineIntegrationTest : InMemoryDatabaseTest() {
             assertEquals(1, uploadedBundles.size)
         }
 
-    // endregion
-
-    // region DeviceConfigUploader
-
     @Test
     fun `device config upload sends pending configs with the instance id and marks them uploaded`() =
         runTest {
@@ -215,10 +203,6 @@ class UploadPipelineIntegrationTest : InMemoryDatabaseTest() {
             assertFalse(stored.isUploaded)
             assertTrue(stored.bundleId!!.endsWith("_deviceConfigs"))
         }
-
-    // endregion
-
-    // region UploadLocationDataUseCase
 
     @Test
     fun `track upload groups pending locations by session and deletes them afterwards`() =
@@ -276,8 +260,6 @@ class UploadPipelineIntegrationTest : InMemoryDatabaseTest() {
             assertTrue(uploadedBundles.isEmpty())
             assertEquals(2, countRows("location"))
         }
-
-    // endregion
 
     @Test
     fun `sync order of device configs then sessions then tracks leaves nothing pending`() =

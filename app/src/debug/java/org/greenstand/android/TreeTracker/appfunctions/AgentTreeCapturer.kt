@@ -37,17 +37,6 @@ import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import org.greenstand.android.TreeTracker.utils.LocationUtils
 import java.util.UUID
 
-/**
- * Saves trees with the bundled test image, skipping the camera, GPS convergence and review
- * screens.
- *
- * With no capture session running, it saves the trees in a new session for the account and ends
- * it, as if the planter had tracked them and left the capture flow. That session never becomes
- * the app's current one, so a capture flow started meanwhile is unaffected. If a session is
- * already running (the app is in the capture flow), the trees are added to it and it is left open.
- *
- * Bad input throws [IllegalArgumentException] with a message meant for the calling agent.
- */
 class AgentTreeCapturer(
     private val context: Context,
     private val dao: TreeTrackerDAO,
@@ -91,11 +80,9 @@ class AgentTreeCapturer(
                 requireNotNull(userRepo.getPowerUser()) { "No account exists yet. Call createAccount first." }
             }
 
-        // The splash screen does both of these, but the app may never have been opened
         deviceConfigUpdater.saveLatestConfig()
         orgRepo.ensureInitialized()
 
-        // NonCancellable: if the call were cancelled mid-insert, the saved session would have no id to close
         val sessionId =
             withContext(NonCancellable) {
                 sessionTracker.createSession(userId = user.id, organizationName = null, sessionNote = null).id
@@ -104,7 +91,6 @@ class AgentTreeCapturer(
             try {
                 saveTrees(sessionId, count, center, note)
             } finally {
-                // Close the session even when the call is cancelled, or it stays open for good
                 withContext(NonCancellable) {
                     sessionTracker.closeSession(sessionId)
                     treesToSyncHelper.refreshTreeCountToSync()
@@ -136,13 +122,11 @@ class AgentTreeCapturer(
             tree.treeUuid.toString()
         }
 
-    /** A random point near [center], kept in range near a pole or the antimeridian. */
     private fun spreadAround(center: Pair<Double, Double>): Pair<Double, Double> {
         val (latitude, longitude) = LocationUtils.generateRandomLocationInRadius(center.first, center.second, TREE_SPREAD_MILES)
         return AgentInput.normalizeCoordinates(latitude, longitude)
     }
 
-    /** The device's latitude and longitude, or null when it has none the app can see. */
     private fun deviceLocation(): Pair<Double, Double>? {
         val location = locationUpdateManager.currentLocation ?: lastKnownLocation()
         return location?.let { it.latitude to it.longitude }
@@ -161,7 +145,6 @@ class AgentTreeCapturer(
     }
 
     companion object {
-        // Trees land at random points within this radius of the center, so they don't stack on the map
         private const val TREE_SPREAD_MILES = 0.05
     }
 }

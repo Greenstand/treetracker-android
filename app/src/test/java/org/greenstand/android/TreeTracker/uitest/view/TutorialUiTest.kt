@@ -61,7 +61,6 @@ class TutorialUiTest : ComposeUiTest() {
     fun `the example capture button in the tutorial is hidden from accessibility`() {
         setContent { SelfieTutorial(onCompleteClick = { completions++ }) }
 
-        // Only a picture of the button, so tools reading the screen do not mistake it for the real one.
         composeTestRule.onNodeWithTag(CAPTURE_BUTTON_TAG).assertDoesNotExist()
     }
 
@@ -111,8 +110,6 @@ class TutorialUiTest : ComposeUiTest() {
     fun `the example buttons in the review tutorial are hidden from accessibility`() {
         setContent { TreeCaptureReviewTutorial(onCompleteClick = { completions++ }) }
 
-        // Only pictures of the note, save and recapture buttons, so tools reading the screen do not
-        // mistake them for the real ones under the dialog.
         composeTestRule.onNodeWithText(string(R.string.note)).assertDoesNotExist()
         composeTestRule.onNodeWithTag(APPROVE_BUTTON_TAG).assertDoesNotExist()
         composeTestRule.onNodeWithTag(DECLINE_BUTTON_TAG).assertDoesNotExist()

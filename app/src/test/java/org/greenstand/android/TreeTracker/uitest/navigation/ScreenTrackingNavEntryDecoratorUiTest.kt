@@ -60,7 +60,6 @@ class ScreenTrackingNavEntryDecoratorUiTest : ComposeUiTest() {
         stopKoin()
     }
 
-    /** A screen that shows its content key and double-fires a throttled navigation on click. */
     @Composable
     private fun ProbeScreen(name: String) {
         val navigator = LocalNavigator.current

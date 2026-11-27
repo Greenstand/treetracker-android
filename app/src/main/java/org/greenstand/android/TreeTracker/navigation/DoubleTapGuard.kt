@@ -25,22 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 
-/**
- * Tells a tap meant for a screen from the second tap of a double tap on the button that opened
- * it. On small screens the next screen's button can sit where the previous screen's button was
- * (Track -> user select's add-user, user select's Next -> Add org's Next), and the origin throttle
- * in [Navigator] lets a first tap from a new screen through.
- *
- * Put [modifier] on the screen's root so it sees every finger down, then check
- * [isSecondTapOfDoubleTap] before acting on a click.
- */
 class DoubleTapGuard(
     private val uptimeMillis: () -> Long = SystemClock::uptimeMillis,
     private val doubleTapTimeoutMs: () -> Long = { ViewConfiguration.getDoubleTapTimeout().toLong() },
 ) {
     private var lastPressUptimeMs: Long? = null
 
-    /** Records the event time of each finger down inside it, without consuming anything. */
     val modifier: Modifier =
         Modifier.pointerInput(this) {
             awaitEachGesture {
@@ -52,11 +42,6 @@ class DoubleTapGuard(
         lastPressUptimeMs = uptimeMs
     }
 
-    /**
-     * Whether the latest press is the second half of a double tap that navigated to this screen.
-     * Each check uses up the recorded press, so an action with no press of its own (the keyboard's
-     * Go) is judged as happening now rather than by an older tap on the screen.
-     */
     fun isSecondTapOfDoubleTap(navigator: Navigator): Boolean {
         val millisSincePress = lastPressUptimeMs?.let { uptimeMillis() - it } ?: 0L
         lastPressUptimeMs = null
@@ -67,13 +52,6 @@ class DoubleTapGuard(
 @Composable
 fun rememberDoubleTapGuard(): DoubleTapGuard = remember { DoubleTapGuard() }
 
-/**
- * Whether a press that went down [millisSincePress] ago, on a screen whose navigator last changed
- * the stack [millisSinceLastNavigation] ago, is the second half of a double tap on the button
- * that navigated here: it went down within the system double-tap timeout of that navigation (or
- * before it). Uses the press's own event time, so a double tap that reaches the app late (a busy
- * device) is still caught.
- */
 internal fun isSecondTapOfDoubleTap(
     millisSinceLastNavigation: Long,
     millisSincePress: Long,

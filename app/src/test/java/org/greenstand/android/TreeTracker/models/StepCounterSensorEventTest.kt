@@ -31,9 +31,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Feeds step counter sensor events into a [StepCounter] backed by real preferences.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class StepCounterSensorEventTest {

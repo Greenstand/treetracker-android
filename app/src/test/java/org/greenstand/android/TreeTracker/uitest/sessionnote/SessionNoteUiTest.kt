@@ -33,7 +33,6 @@ import org.junit.Test
 
 internal const val SESSION_NOTE = "Planted along the river bank"
 
-/** Tests for the stateless [SessionNote] screen. */
 class SessionNoteUiTest : ComposeUiTest() {
     private val actions = mutableListOf<SessionNoteAction>()
 

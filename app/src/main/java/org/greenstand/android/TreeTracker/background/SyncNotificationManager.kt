@@ -38,7 +38,6 @@ class SyncNotificationManager(
     ): ForegroundInfo {
         this.applicationContext = applicationContext
 
-        // Create a Notification channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
         }
@@ -62,8 +61,6 @@ class SyncNotificationManager(
         }
     }
 
-    // Foreground service notifications are exempt from POST_NOTIFICATIONS permission,
-    // so the MissingPermission lint warning is a false positive here.
     @SuppressLint("MissingPermission")
     fun updateProgress(
         progress: Int,
@@ -86,8 +83,6 @@ class SyncNotificationManager(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
         val importance = NotificationManager.IMPORTANCE_DEFAULT
         val channel =
             NotificationChannel(NotificationConstants.SYNC_CHANNEL_ID, NotificationConstants.SYNC_CHANNEL_NAME, importance).apply {

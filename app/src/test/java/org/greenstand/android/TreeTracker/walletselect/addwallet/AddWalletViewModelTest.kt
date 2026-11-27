@@ -161,8 +161,6 @@ class AddWalletViewModelTest {
             verify(exactly = 1) { captureSetupData.destinationWallet = any() }
         }
 
-    // --- Restored after process death ---
-
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
     private val restoreUserRepo = mockk<UserRepo>(relaxed = true)
 

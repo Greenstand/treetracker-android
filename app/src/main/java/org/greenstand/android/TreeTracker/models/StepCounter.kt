@@ -51,9 +51,6 @@ class StepCounter(
                 .putInt(ABS_STEP_COUNT_ON_TREE_CAPTURE, value ?: 0)
                 .apply()
 
-    // Delta step count is the difference between the absolute count at the time of capturing
-    // a tree minus the last absolute step count recorded when capturing a previous tree. This
-    // is the indicator for the number of steps taken between two trees.
     val deltaSteps: Int
         get() = (absoluteStepCount ?: 0) - (absoluteStepCountOnTreeCapture ?: 0)
 
@@ -94,7 +91,6 @@ class StepCounter(
             sensor: Sensor?,
             accuracy: Int,
         ) {
-            // Ignore
         }
 
         override fun onSensorChanged(event: SensorEvent?) {

@@ -35,7 +35,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
 class MessagesSerializationTest {
-    // Same configuration as the app's Json instance (see AppModule)
     private val json =
         Json {
             explicitNulls = true

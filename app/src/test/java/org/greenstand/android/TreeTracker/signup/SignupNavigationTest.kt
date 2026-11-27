@@ -35,7 +35,6 @@ class SignupNavigationTest {
 
     @Test
     fun `signup after logout leaves only the Dashboard on the stack`() {
-        // Logout clears the stack down to Signup, so LanguageRoute is not on it.
         val navigator = fakeNavigator(SignupFlowRoute)
 
         navigateToDashboardAfterSignup(navigator)
@@ -45,7 +44,6 @@ class SignupNavigationTest {
 
     @Test
     fun `signup after deleting the admin leaves only the Dashboard on the stack`() {
-        // Deleting the admin also clears the stack down to Signup.
         val navigator = fakeNavigator(SignupFlowRoute)
 
         navigateToDashboardAfterSignup(navigator)
@@ -55,8 +53,6 @@ class SignupNavigationTest {
 
     @Test
     fun `a power user created from user select replaces the whole stack with the Dashboard`() {
-        // Only reachable when no power user exists; the old Dashboard below is dropped on purpose
-        // so the new power user's Dashboard is the single root.
         val navigator = fakeNavigator(DashboardRoute, UserSelectRoute, SignupFlowRoute)
 
         navigateToDashboardAfterSignup(navigator)

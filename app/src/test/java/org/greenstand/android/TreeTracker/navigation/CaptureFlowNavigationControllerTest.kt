@@ -84,7 +84,6 @@ class CaptureFlowNavigationControllerTest {
                 },
             )
         }
-        // Setup leaves its scope open while capture runs, since capture can pop back onto it.
         CaptureSetupScopeManager.open()
         CaptureFlowScopeManager.open()
 
@@ -111,7 +110,6 @@ class CaptureFlowNavigationControllerTest {
             deviceOrientation = deviceOrientation,
         )
 
-    /** Moves the fake clock past the unscoped throttle window so the next throttled call goes through. */
     private fun settle() = clock.advance(THROTTLE_WINDOW_MS)
 
     private fun verifySessionEnded() {
@@ -124,8 +122,6 @@ class CaptureFlowNavigationControllerTest {
             locationDataCapturer.turnOffTreeCaptureMode()
         }
     }
-
-    // --- navForward through the flow ---
 
     @Test
     fun `navForward from capture opens image review with the current tree photo`() =
@@ -229,8 +225,6 @@ class CaptureFlowNavigationControllerTest {
             assertEquals(listOf(DashboardRoute, capture), navigator.backStack)
         }
 
-    // --- end of capture flow ---
-
     @Test
     fun `navForward past the last step saves the tree and pops back to capture`() =
         runTest {
@@ -307,7 +301,6 @@ class CaptureFlowNavigationControllerTest {
             settle()
             controller.navForward(navigator)
 
-            // No settle(): the loop back uses the non-throttled popBackStackTo.
             controller.navForward(navigator)
 
             assertEquals(listOf(DashboardRoute, capture), navigator.backStack)
@@ -360,8 +353,6 @@ class CaptureFlowNavigationControllerTest {
             assertEquals(listOf(DashboardRoute, capture), navigator.backStack)
         }
 
-    // --- navBackward ---
-
     @Test
     fun `navBackward from the middle pops to the previous step`() =
         runTest {
@@ -411,8 +402,6 @@ class CaptureFlowNavigationControllerTest {
         assertFalse(CaptureFlowScopeManager.isOpen)
         verifySessionEnded()
     }
-
-    // --- resumeAt (process death) ---
 
     private fun interruptedSession(id: Long = 1L) {
         every { sessionTracker.resumeInterruptedSession() } returns true
@@ -526,8 +515,6 @@ class CaptureFlowNavigationControllerTest {
         assertFalse(CaptureSetupScopeManager.isOpen)
     }
 
-    // --- goToDashboard ---
-
     @Test
     fun `goToDashboard clears the stack down to a single dashboard`() {
         val controller = controllerFor(standardFlow)
@@ -598,8 +585,6 @@ class CaptureFlowNavigationControllerTest {
         verify(exactly = 0) { stepCounter.disable() }
         verify(exactly = 0) { locationDataCapturer.stopGpsUpdates() }
     }
-
-    // --- goToUserSelect ---
 
     @Test
     fun `goToUserSelect replaces the whole stack including dashboard with user select`() {

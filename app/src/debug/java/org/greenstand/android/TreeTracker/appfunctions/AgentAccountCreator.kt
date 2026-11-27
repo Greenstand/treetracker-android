@@ -22,11 +22,6 @@ import org.greenstand.android.TreeTracker.models.UserRepo
 import org.greenstand.android.TreeTracker.utilities.ImageUtils
 import kotlin.random.Random
 
-/**
- * Creates accounts the way the sign-up flow does, with the bundled test image as the selfie.
- *
- * Bad input throws [IllegalArgumentException] with a message meant for the calling agent.
- */
 class AgentAccountCreator(
     private val context: Context,
     private val userRepo: UserRepo,
@@ -40,9 +35,6 @@ class AgentAccountCreator(
     ): AgentAccount {
         val details = AgentInput.accountDetails(firstName, lastName, phone, email)
 
-        // Agents can call this several times at once. One at a time, the wallet and admin checks
-        // below still hold when the account is saved, so there is never a second admin or a
-        // duplicate wallet.
         return creationLock.withLock {
             val wallet = details.email ?: details.phone ?: generateUnusedPhone()
             require(!userRepo.doesUserExists(wallet)) { "An account with wallet '$wallet' already exists." }
@@ -80,7 +72,6 @@ class AgentAccountCreator(
     companion object {
         private const val MAX_PHONE_ATTEMPTS = 10
 
-        // Shared by every instance: AgentAppFunctions builds a new one for each call
         private val creationLock = Mutex()
     }
 }

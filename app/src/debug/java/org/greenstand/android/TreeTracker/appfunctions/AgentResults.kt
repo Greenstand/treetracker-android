@@ -27,6 +27,7 @@ import androidx.appfunctions.AppFunctionSerializable
  * @property isPowerUser True for the device admin. The first account on a device is the admin,
  *   and its existence is what skips the first-run setup flow.
  */
+@Suppress("ForbiddenComment")
 @AppFunctionSerializable(isDescribedByKDoc = true)
 data class AgentAccount(
     val userId: Long,
@@ -44,6 +45,7 @@ data class AgentAccount(
  * @property treeCount Number of trees saved.
  * @property treeUuids UUIDs of the saved trees.
  */
+@Suppress("ForbiddenComment")
 @AppFunctionSerializable(isDescribedByKDoc = true)
 data class AgentCapturedTrees(
     val sessionId: Long,

@@ -113,7 +113,6 @@ fun Camera(
                         ImageCapture
                             .Builder()
                             .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                            // .setTargetResolution(Size(800, 800))
                             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
                             .build()
                     }
@@ -127,7 +126,6 @@ fun Camera(
 
                     val metadata =
                         ImageCapture.Metadata().apply {
-                            // Mirror image when using the front camera
                             isReversedHorizontal = isSelfieMode
                         }
 
@@ -174,7 +172,6 @@ fun Camera(
                             },
                         ).build()
 
-                // Navigation transitions can briefly keep the previous camera entry alive.
                 provider.unbindAll()
                 provider.bindToLifecycle(
                     lifecycleOwner,

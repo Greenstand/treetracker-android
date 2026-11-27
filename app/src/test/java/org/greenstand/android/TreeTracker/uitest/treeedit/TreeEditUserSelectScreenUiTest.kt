@@ -50,11 +50,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
-/**
- * Covers what [TreeEditUserSelectScreen] adds on top of the shared `UserSelect` screen:
- * no "create user" button, back returns to settings, and forward opens the selected
- * user's tree list.
- */
 class TreeEditUserSelectScreenUiTest : ComposeUiTest() {
     @Before
     fun setUp() {

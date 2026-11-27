@@ -36,7 +36,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.robolectric.Shadows.shadowOf
 
-/** Tests for the stateless [ImageReview] selfie review and the reject and approve paths of [ImageReviewScreen]. */
 class ImageReviewUiTest : ComposeUiTest() {
     private var rejectClicks = 0
     private var approveClicks = 0
@@ -93,7 +92,6 @@ class ImageReviewUiTest : ComposeUiTest() {
         assertEquals(listOf(DashboardRoute, SelfieRoute), backStack.toList())
     }
 
-    /** Renders [ImageReviewScreen] and returns the activity hosting it. */
     private fun renderScreen(): Activity {
         lateinit var activity: Activity
         backStack.add(SelfieRoute)

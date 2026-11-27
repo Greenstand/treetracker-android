@@ -71,9 +71,6 @@ class SplashScreenViewModel(
     suspend fun bootstrap() {
         deviceConfigUpdater.saveLatestConfig()
 
-        // The Root gate hydrates OrgRepo before this screen composes, so this is
-        // normally a no-op; ensureInitialized() (not init()) avoids a redundant
-        // reload and stays correct if the gate is ever bypassed.
         orgRepo.ensureInitialized()
         val link = linkedOrg()
         if (link != null) {

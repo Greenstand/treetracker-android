@@ -10,6 +10,15 @@ For a bug-fix or feature PR, follow the
 [`pr-validating-flow` skill](.claude/skills/pr-validating-flow/SKILL.md): a new end-to-end flow that
 fails before the change and passes after it, with both annotated videos in the PR description.
 
+## Code Rules
+
+**Do not add comments** to Kotlin files (`*.kt`, `*.kts`): no line comments, block comments,
+KDoc, commented-out code or `TODO` notes. Nothing checks a comment, so it goes stale and misleads.
+Say what the code does with clear names, pin behaviour with tests, and put the why in the PR
+description and the `docs/tasks` notes. The only exceptions are the licence header and KDoc on
+declarations annotated `isDescribedByKDoc = true`. `./gradlew detekt` enforces it. See
+[Code Conventions](docs/engineering/code-conventions.md).
+
 ## Documentation Index
 
 - [Docs Home](docs/README.md)
@@ -34,6 +43,7 @@ fails before the change and passes after it, with both annotated videos in the P
 
 ### Engineering
 
+- [Code Conventions](docs/engineering/code-conventions.md)
 - [Architecture](docs/engineering/architecture.md)
 - [Package Structure](docs/engineering/package-structure.md)
 - [Navigation Flows](docs/engineering/navigation-flows.md)

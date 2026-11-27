@@ -51,7 +51,6 @@ class ObjectStorageClientTest {
 
     private val requests = mutableListOf<PutObjectRequest>()
 
-    /** Copied out of each request's stream at upload time, since the client never re-reads it. */
     private val uploadedBodies = mutableListOf<String?>()
 
     private lateinit var client: ObjectStorageClient
@@ -172,7 +171,6 @@ class ObjectStorageClientTest {
 
     @Test
     fun `uploadBundle sets the content length to the utf8 byte size`() {
-        // "é" and "🌳" take more than one byte each in UTF-8
         val json = """{"note":"é🌳"}"""
 
         client.uploadBundle(json, "bundle")

@@ -36,16 +36,6 @@ object CaptureFlowScopeManager {
         currentScope?.get<CaptureFlowScope>()
     }
 
-    /**
-     * Reopens the scope when Android restores a capture step ([route], after the photo was taken)
-     * after killing the app, so the tree whose photo was taken can still be finished and saved.
-     * Does nothing while the scope is open. Returns true when it reopened the scope.
-     *
-     * When the kept tree can't be picked up (none kept, no session to resume, the tree belongs to
-     * another session, or [route] isn't in the flow) the scope is still opened, so the screen can
-     * be built, but the kept tree is dropped and `TreeCapturer.currentTree` stays null. The screen
-     * then sends the user back to the dashboard.
-     */
     fun restoreAt(route: String): Boolean {
         if (isOpen) return false
         Timber.tag("CaptureFlowScope").i("Restoring capture flow at $route after process death")

@@ -32,30 +32,17 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-/**
- * Base class for UI tests of root screens that resolve their ViewModel (or a shared
- * component's ViewModel, e.g. the top bar `LanguageButton`) through
- * [LocalViewModelFactory] or Koin instead of taking it as a parameter.
- *
- * Call [startKoinWith] with modules that bind the test doubles, then [setRootContent].
- * Koin is stopped after every test.
- */
 abstract class RootScreenUiTest : ComposeUiTest() {
     @After
     fun stopTestKoin() {
         stopKoin()
     }
 
-    /** Starts a fresh Koin graph containing only [testModules]. */
     fun startKoinWith(vararg testModules: Module) {
         stopKoin()
         startKoin { modules(testModules.toList()) }
     }
 
-    /**
-     * Sets [content] with inspection mode off (ViewModels are real) and a
-     * [TreeTrackerViewModelFactory] backed by the Koin graph from [startKoinWith].
-     */
     fun setRootContent(content: @Composable () -> Unit) {
         setContent(inspectionMode = false) {
             CompositionLocalProvider(LocalViewModelFactory provides TreeTrackerViewModelFactory()) {
@@ -64,7 +51,6 @@ abstract class RootScreenUiTest : ComposeUiTest() {
         }
     }
 
-    /** Koin module for the top bar `LanguageButton`, which resolves a [LanguagePickerViewModel]. */
     fun languageButtonModule(): Module {
         val languageSwitcher = mockk<LanguageSwitcher>(relaxed = true)
         every { languageSwitcher.currentLanguage() } returns Language.ENGLISH

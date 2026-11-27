@@ -23,10 +23,6 @@ import org.greenstand.android.TreeTracker.database.entity.OrganizationEntity
 
 @Dao
 interface OrganizationDAO {
-    /**
-     * ORG LINK QUERIES
-     */
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrg(orgEntity: OrganizationEntity): Long
 

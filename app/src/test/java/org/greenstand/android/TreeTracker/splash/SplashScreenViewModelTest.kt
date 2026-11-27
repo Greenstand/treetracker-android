@@ -178,8 +178,6 @@ class SplashScreenViewModelTest {
             verify(exactly = 1) { locationDataCapturer.startGpsUpdates() }
         }
 
-    // --- Deeplink org config path tests ---
-
     private fun createViewModelWithOrg(
         id: String?,
         name: String? = null,
@@ -286,8 +284,6 @@ class SplashScreenViewModelTest {
             coVerify(exactly = 0) { installReferrerOrgProvider.consume() }
         }
 
-    // --- Initial state and actions ---
-
     @Test
     fun `WHEN created THEN state is bootstrapping and no events are emitted`() =
         runTest {
@@ -313,8 +309,6 @@ class SplashScreenViewModelTest {
             assertTrue(splashScreenViewModel.events.replayCache.isEmpty())
         }
 
-    // --- Bootstrap ordering ---
-
     @Test
     fun `WHEN bootstrapping with a deeplink THEN steps run in order`() =
         runTest {
@@ -334,8 +328,6 @@ class SplashScreenViewModelTest {
                 userRepo.getPowerUser()
             }
         }
-
-    // --- Messages and power user ---
 
     @Test
     fun `GIVEN internet but no power user WHEN bootstrapping THEN syncs messages without tagging a power user`() =
@@ -361,8 +353,6 @@ class SplashScreenViewModelTest {
             coVerify(exactly = 0) { messagesRepo.syncMessages() }
             verify(exactly = 1) { exceptionDataCollector.set(ExceptionDataCollector.POWER_USER_WALLET, "power-wallet") }
         }
-
-    // --- Trees-to-sync refresh ---
 
     @Test
     fun `GIVEN an interrupted session and a known tree count WHEN bootstrapping THEN refreshes the tree count without reading it`() =
@@ -397,8 +387,6 @@ class SplashScreenViewModelTest {
 
             coVerify(exactly = 0) { treesToSyncHelper.refreshTreeCountToSync() }
         }
-
-    // --- Org link sources ---
 
     @Test
     fun `WHEN install referrer org has a Remote Config THEN applies the full config`() =

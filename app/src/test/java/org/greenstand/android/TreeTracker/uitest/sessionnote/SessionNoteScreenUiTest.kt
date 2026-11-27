@@ -40,7 +40,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-/** Tests for the [SessionNoteScreen] root: ViewModel wiring and capture setup navigation. */
 class SessionNoteScreenUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)

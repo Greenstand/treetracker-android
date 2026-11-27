@@ -20,7 +20,6 @@ import org.greenstand.android.TreeTracker.models.user.User
 internal const val ANN_NAME = "Ann Lee"
 internal const val BEN_NAME = "Ben Okoro"
 
-/** Two planters with distinct names, wallets and tree counts so each can be found by text. */
 internal val userSelectTestUsers =
     listOf(
         User(

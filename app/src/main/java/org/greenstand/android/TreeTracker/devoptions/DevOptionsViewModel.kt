@@ -31,13 +31,10 @@ import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 
 data class DevOptionsState(
     val params: List<Config> = emptyList(),
-    /** Null when there is no current org to show (the section is hidden). */
     val orgLink: OrgLinkOverridesState? = null,
 )
 
-/** One org link setting: what the org says, and what the dev options override it to. */
 data class OrgSettingRow(
-    /** The step's route, or the feature's [org.greenstand.android.TreeTracker.models.organization.OrgFeatureOption.key]. */
     val id: String,
     val label: String,
     val orgDefault: Boolean,
@@ -51,14 +48,12 @@ data class OrgSettingRow(
 data class OrgLinkOverridesState(
     val orgId: String,
     val orgName: String,
-    /** Master switch for applying the overrides. */
     val enabled: Boolean,
     val setupSteps: List<OrgSettingRow>,
     val captureSteps: List<OrgSettingRow>,
     val features: List<OrgSettingRow>,
     val orgWalletId: String,
     val walletIdOverride: String?,
-    /** Step labels of the flows the app runs now, overrides included. */
     val effectiveSetupFlow: List<String>,
     val effectiveCaptureFlow: List<String>,
     val hasOverrides: Boolean,
@@ -76,20 +71,17 @@ sealed class DevOptionsAction : Action {
         val enabled: Boolean,
     ) : DevOptionsAction()
 
-    /** [enabled] null removes the override, so the step follows the org again. */
     data class SetStepOverride(
         val flow: OrgFlow,
         val route: String,
         val enabled: Boolean?,
     ) : DevOptionsAction()
 
-    /** [enabled] null removes the override, so the feature follows the org again. */
     data class SetFeatureOverride(
         val key: String,
         val enabled: Boolean?,
     ) : DevOptionsAction()
 
-    /** Blank or null removes the override. */
     data class SetWalletIdOverride(
         val walletId: String?,
     ) : DevOptionsAction()

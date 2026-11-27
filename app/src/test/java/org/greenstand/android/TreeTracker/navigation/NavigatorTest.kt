@@ -199,8 +199,6 @@ class NavigatorTest {
         assertEquals(DashboardRoute, navigator.topKey)
     }
 
-    // --- Origin-scoped throttling (per-screen, no wall-clock gate) ---
-
     @Test
     fun `scoped navigator navigates while its origin is on top`() {
         val nav = fakeNavigator(DashboardRoute)
@@ -216,8 +214,6 @@ class NavigatorTest {
         val nav = fakeNavigator(DashboardRoute)
         val dashboard = nav.scopedTo(DashboardRoute.toString())
 
-        // Both taps come from Dashboard's button. The first navigates away; by the second
-        // tap Dashboard is no longer on top, so it is dropped — no duplicate destination.
         dashboard.throttledNavigate(SettingsRoute)
         dashboard.throttledNavigate(MapRoute)
 
@@ -228,8 +224,6 @@ class NavigatorTest {
     fun `scoped navigators from different screens all navigate with no time gap`() {
         val nav = fakeNavigator(DashboardRoute)
 
-        // Rapidly stepping through a flow: each screen fires its own scoped navigator once.
-        // No clock is advanced anywhere — cross-screen navigation is never time-throttled.
         nav.scopedTo(DashboardRoute.toString()).throttledNavigate(UserSelectRoute)
         nav.scopedTo(UserSelectRoute.toString()).throttledNavigate(WalletSelectRoute)
         nav.scopedTo(WalletSelectRoute.toString()).throttledNavigate(AddWalletRoute)
@@ -261,8 +255,6 @@ class NavigatorTest {
 
         assertEquals(listOf(DashboardRoute, capture, TreeHeightScreenRoute), nav.backStack)
     }
-
-    // --- Additional edge cases ---
 
     @Test
     fun `popUpTo targets the most recent matching entry`() {
@@ -463,7 +455,6 @@ class NavigatorTest {
     fun `scoped navigator ignores the time window`() {
         val nav = fakeNavigator(DashboardRoute)
         val dashboard = nav.scopedTo(DashboardRoute.toString())
-        // Two mutations at the same instant would throttle an unscoped navigator.
         dashboard.navigate(SettingsRoute)
         dashboard.popBackStack()
 

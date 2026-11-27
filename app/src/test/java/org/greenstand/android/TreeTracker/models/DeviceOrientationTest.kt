@@ -126,7 +126,6 @@ class DeviceOrientationTest {
     fun `snapshot holds the rotation matrix of the last sensor event`() {
         val halfSqrt2 = 0.70710677f
         deviceOrientation.orientationEventListener.onSensorChanged(sensorEventOf(0f, 0f, 0f, 1f))
-        // 90 degree rotation about the z axis
         deviceOrientation.orientationEventListener.onSensorChanged(
             sensorEventOf(0f, 0f, halfSqrt2, halfSqrt2),
         )

@@ -67,7 +67,6 @@ class DevOptionsOrgOverridesTest {
 
     private val orgRepo: OrgRepo = mockk { every { baseCurrentOrg() } returns org }
 
-    // Real store over relaxed preferences: reads nothing back, writes go nowhere.
     private val store = OrgOverrideStore(mockk(relaxed = true), Json, isDebugBuild = true)
 
     private val forceNoteKey = OrgOverrideCatalog.features.single().key
@@ -136,7 +135,6 @@ class DevOptionsOrgOverridesTest {
         assertFalse(row.value)
         assertTrue(row.isOverridden)
         assertTrue(viewModel.orgLink.hasOverrides)
-        // Still off: the flows in use are the org's.
         assertEquals(listOf("User select", "Session note"), viewModel.orgLink.effectiveSetupFlow)
 
         viewModel.handleAction(DevOptionsAction.SetOrgOverridesEnabled(true))

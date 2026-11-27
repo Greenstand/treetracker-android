@@ -23,10 +23,6 @@ import java.io.PrintStream
 import kotlin.math.PI
 import kotlin.math.exp
 
-/**
- * Covers the pure pixel math in [ImageUtils] (blur kernel, correlation and focus metric).
- * The bitmap and file helpers are covered by ImageUtilsBitmapTest.
- */
 class ImageUtilsTest {
     private fun image(vararg rows: IntArray): Array<Array<Int>> = Array(rows.size) { r -> rows[r].toTypedArray() }
 
@@ -120,7 +116,6 @@ class ImageUtilsTest {
                 intArrayOf(0, 0, 0, 0),
                 intArrayOf(0, 0, 0, 10),
             )
-        // Only the bottom-right kernel cell is weighted, so it reads the pixel below and to the right
         val kernel =
             arrayOf(
                 arrayOf(0.0, 0.0, 0.0),
@@ -184,7 +179,6 @@ class ImageUtilsTest {
                 intArrayOf(0, 0, 10),
             )
 
-        // Each row has one gradient of 10 -> 3 * 100 over 9 pixels
         assertEquals(300.0 / 9, ImageUtils.brennersFocusMetric(image), DELTA)
     }
 
@@ -209,8 +203,6 @@ class ImageUtilsTest {
                 intArrayOf(10, 0, 0),
             )
 
-        // pixel 0,0: horizontal 30 beats vertical 10 -> 900; pixel 0,2: vertical -30 -> 900;
-        // pixel 2,0: horizontal -10 -> 100
         assertEquals(1900.0 / 9, ImageUtils.brennersFocusMetric(image), DELTA)
     }
 

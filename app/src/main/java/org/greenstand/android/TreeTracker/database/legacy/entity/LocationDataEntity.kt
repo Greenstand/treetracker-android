@@ -41,7 +41,6 @@ data class LocationDataEntity(
 
         const val ID = "_id"
 
-        // Json string of LocationData defined in LocationUpdateManager.kt
         const val JSON_VALUE = "json_value"
         const val UPLOADED = "uploaded"
         const val CREATED_AT = "created_at"

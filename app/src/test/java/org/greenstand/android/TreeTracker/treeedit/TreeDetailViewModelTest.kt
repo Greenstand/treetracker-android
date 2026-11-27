@@ -99,7 +99,6 @@ class TreeDetailViewModelTest {
         runTest {
             coEvery { dao.getTreesByIds(listOf(42)) } returns emptyList()
             val vm = TreeDetailViewModel(treeId = 42, dao = dao, treesToSyncHelper = treesToSyncHelper)
-            // Give time for the init coroutine to complete
             vm.state.first { true }
             assertEquals(null, vm.state.value.tree)
         }
@@ -293,7 +292,6 @@ class TreeDetailViewModelTest {
             vm.handleAction(TreeDetailAction.DeleteTree)
             val event = vm.events.first().getContentIfNotConsumed()
 
-            // HandleUIEvents dispatches PopBackStackEvent as a throttled pop.
             assertEquals(PopBackStackEvent, event)
             navigator.throttledPopBackStack()
             assertEquals(

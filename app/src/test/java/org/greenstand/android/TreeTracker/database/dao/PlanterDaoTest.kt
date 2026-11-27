@@ -36,8 +36,6 @@ import org.robolectric.annotation.Config
 class PlanterDaoTest : InMemoryDatabaseTest() {
     private val dao: PlanterDAO get() = database.planterDao()
 
-    // region planter_info
-
     @Test
     fun `insertPlanterInfo stores every field and returns the generated id`() =
         runTest {
@@ -198,10 +196,6 @@ class PlanterDaoTest : InMemoryDatabaseTest() {
             assertEquals(listOf("b"), dao.getAllPlanterInfoToUpload().map { it.identifier })
         }
 
-    // endregion
-
-    // region planter_check_in
-
     @Test
     fun `insertPlanterCheckIn stores every field and returns the generated id`() =
         runTest {
@@ -300,6 +294,4 @@ class PlanterDaoTest : InMemoryDatabaseTest() {
             assertEquals("/b.jpg", dao.getPlanterCheckInById(second)?.localPhotoPath)
             assertEquals(listOf(second), dao.getPlanterCheckInsToUpload().map { it.id })
         }
-
-    // endregion
 }

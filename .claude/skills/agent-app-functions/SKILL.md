@@ -143,3 +143,8 @@ bash .claude/skills/agent-app-functions/scripts/test_app_fn.sh
 The script's tests use a fake `adb`. `scripts/testdata/list-app-functions.json` is real
 `list-app-functions` output. If you change a function's KDoc, re-capture it from a device and
 regenerate `list-app-functions.expected.txt`.
+
+The KDoc on the `isDescribedByKDoc = true` declarations is the one place Kotlin comments are
+allowed in this repo: the AppFunctions compiler turns it into the descriptions `$FN list` prints.
+Keep `@Suppress("ForbiddenComment")` on those declarations, and add no other comments
+(`docs/engineering/code-conventions.md`).

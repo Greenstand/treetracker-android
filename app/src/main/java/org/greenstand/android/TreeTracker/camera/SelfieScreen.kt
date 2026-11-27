@@ -72,10 +72,6 @@ fun SelfieScreen() {
     )
 }
 
-/**
- * Stateless selfie UI. The camera preview is a slot ([cameraPreview]) so the screen can be
- * rendered without CameraX; it receives the modifier that sizes the preview.
- */
 @Composable
 fun Selfie(
     showSelfieTutorial: Boolean,

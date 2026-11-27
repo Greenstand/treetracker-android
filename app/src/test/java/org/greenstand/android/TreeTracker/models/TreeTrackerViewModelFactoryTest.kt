@@ -48,7 +48,6 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class TreeTrackerViewModelFactoryTest {
-    /** One mock per view model class the factory knows how to build, registered in Koin. */
     private val viewModels: Map<KClass<out ViewModel>, ViewModel> =
         mapOf(
             UserSelectViewModel::class to mockk<UserSelectViewModel>(),

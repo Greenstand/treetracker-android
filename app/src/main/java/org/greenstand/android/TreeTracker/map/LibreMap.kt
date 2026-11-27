@@ -61,7 +61,6 @@ fun LibreMap(
             MapView(context).apply {
                 getMapAsync { mapLibreMap ->
                     mapLibreMap.setStyle(styleUrl) { style ->
-                        // Set initial camera position (centered on equator with moderate zoom)
                         val initialPosition =
                             CameraPosition
                                 .Builder()
@@ -86,7 +85,6 @@ fun LibreMap(
             }
         }
 
-    // Handle lifecycle events
     DisposableEffect(lifecycleOwner) {
         val observer =
             LifecycleEventObserver { _, event ->
@@ -112,13 +110,11 @@ fun LibreMap(
         update = { view ->
             view.getMapAsync { mapLibreMap ->
                 mapLibreMap.getStyle { style ->
-                    // Remove existing layers and sources
                     style.getLayer("step-points-layer")?.let { style.removeLayer(it) }
                     style.getSource("step-points-source")?.let { style.removeSource(it) }
                     style.getLayer("tree-markers-layer")?.let { style.removeLayer(it) }
                     style.getSource("tree-markers-source")?.let { style.removeSource(it) }
 
-                    // --- Step points layer (rendered first, underneath trees) ---
                     if (stepPoints.isNotEmpty()) {
                         val stepCollection =
                             buildJsonObject {
@@ -178,9 +174,7 @@ fun LibreMap(
                         style.addLayer(stepLayer)
                     }
 
-                    // --- Tree markers layer (rendered on top) ---
                     if (markers.isNotEmpty()) {
-                        // Create GeoJSON FeatureCollection
                         val featureCollection =
                             buildJsonObject {
                                 put("type", "FeatureCollection")
@@ -203,17 +197,15 @@ fun LibreMap(
                                 }
                             }
 
-                        // Add GeoJSON source
                         val source = GeoJsonSource("tree-markers-source", featureCollection.toString())
                         style.addSource(source)
 
-                        // Add circle layer with green dots
                         val radiusExpression =
                             if (selectedMarkerId != null) {
                                 Expression.switchCase(
                                     Expression.eq(Expression.get("id"), Expression.literal(selectedMarkerId)),
-                                    Expression.literal(12f), // Selected marker radius
-                                    Expression.literal(8f), // Default marker radius
+                                    Expression.literal(12f),
+                                    Expression.literal(8f),
                                 )
                             } else {
                                 Expression.literal(8f)
@@ -230,26 +222,21 @@ fun LibreMap(
                             }
                         style.addLayer(circleLayer)
 
-                        // Add click listener for markers
                         mapLibreMap.addOnMapClickListener { latLng ->
-                            // Convert map coordinates to screen point
                             val screenPoint = mapLibreMap.projection.toScreenLocation(latLng)
 
-                            // Query features at click point from marker layer
                             val features = mapLibreMap.queryRenderedFeatures(screenPoint, "tree-markers-layer")
 
-                            // If marker clicked, extract ID and notify
                             if (features.isNotEmpty()) {
                                 val markerId = features.first().getStringProperty("id")
                                 if (markerId != null) {
                                     onMarkerClick(markerId)
-                                    return@addOnMapClickListener true // Consume event
+                                    return@addOnMapClickListener true
                                 }
                             }
-                            false // Don't consume - allow map pan/zoom
+                            false
                         }
 
-                        // Handle selected marker zoom
                         if (selectedMarkerId != null) {
                             val selectedMarker = markers.find { it.id == selectedMarkerId }
                             selectedMarker?.let { marker ->
@@ -264,7 +251,6 @@ fun LibreMap(
                         } else {
                             val single = singleMapPoint(markers.map { it.latitude to it.longitude })
                             if (single != null) {
-                                // One point can't make a LatLngBounds (MapLibre throws), so center on it.
                                 val position =
                                     CameraPosition
                                         .Builder()
@@ -273,16 +259,14 @@ fun LibreMap(
                                         .build()
                                 mapLibreMap.animateCamera(CameraUpdateFactory.newCameraPosition(position))
                             } else {
-                                // Calculate bounds to fit all markers
                                 val boundsBuilder = LatLngBounds.Builder()
                                 markers.forEach { marker ->
                                     boundsBuilder.include(LatLng(marker.latitude, marker.longitude))
                                 }
 
                                 val bounds = boundsBuilder.build()
-                                val padding = 100 // padding in pixels
+                                val padding = 100
 
-                                // Animate camera to show all markers
                                 mapLibreMap.animateCamera(
                                     CameraUpdateFactory.newLatLngBounds(bounds, padding),
                                 )
@@ -295,9 +279,4 @@ fun LibreMap(
     )
 }
 
-/**
- * The one point to center the map on when the markers sit on fewer than two distinct points, or
- * null when there are enough to fit the camera to their bounds. MapLibre's `LatLngBounds.Builder`
- * throws `InvalidLatLngBoundsException` for a single point.
- */
 internal fun singleMapPoint(points: List<Pair<Double, Double>>): Pair<Double, Double>? = points.distinct().singleOrNull()

@@ -30,10 +30,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/**
- * Covers every [TreeTrackerDAO] query (the DAO the sync and capture use cases use). The per-table DAOs in
- * database/dao run the same SQL and have more edge-case tests.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
@@ -70,8 +66,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
                 "VALUES ($id, '{}', ${if (uploaded) 1 else 0}, 1600000000)",
         )
     }
-
-    // region users
 
     @Test
     fun `user queries filter by id, wallet, upload status and power user`() =
@@ -132,10 +126,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertFalse(updatedSecond.uploaded)
             assertEquals("Edited", updatedSecond.firstName)
         }
-
-    // endregion
-
-    // region planters
 
     @Test
     fun `planter info queries filter by id, identifier and upload status`() =
@@ -211,10 +201,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertEquals("/b.jpg", dao.getPlanterCheckInById(second)?.localPhotoPath)
             assertNull(dao.getPlanterCheckInById(third))
         }
-
-    // endregion
-
-    // region legacy tree captures
 
     @Test
     fun `tree capture queries and counts`() =
@@ -293,10 +279,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertTrue(dao.getAllTreeCaptures().isEmpty())
         }
 
-    // endregion
-
-    // region trees
-
     @Test
     fun `tree queries and counts`() =
         runTest {
@@ -365,10 +347,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertEquals(listOf("b"), dao.getAllTrees().map { it.uuid })
         }
 
-    // endregion
-
-    // region locations
-
     @Test
     fun `location queries filter by upload status and tree sessions`() =
         runTest {
@@ -415,10 +393,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertEquals(listOf(false), legacyLocationUploadedFlags())
         }
 
-    // endregion
-
-    // region sessions
-
     @Test
     fun `session queries filter by wallet and upload status`() =
         runTest {
@@ -450,10 +424,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertEquals(Instant.parse("2024-03-01T20:00:00Z"), updatedSecond.endTime)
         }
 
-    // endregion
-
-    // region device config
-
     @Test
     fun `device config queries and updates`() =
         runTest {
@@ -477,10 +447,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertNull(dao.getLatestDeviceConfig())
         }
 
-    // endregion
-
-    // region organizations
-
     @Test
     fun `org queries find orgs by id and replace on conflict`() =
         runTest {
@@ -493,8 +459,6 @@ class TreeTrackerDaoQueriesTest : InMemoryDatabaseTest() {
             assertNull(dao.getOrg(null))
             assertEquals(setOf("a", "b"), dao.getAllOrgs().map { it.id }.toSet())
         }
-
-    // endregion
 
     @Test
     fun `rows written through the per-table DAOs are visible through TreeTrackerDAO`() =

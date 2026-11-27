@@ -55,7 +55,6 @@ class CreateFakeTreesUseCase(
         repeat((params.amount / 2) + 1) {
             val file = ImageUtils.createTestImageFile(context)
 
-            // Generate random location within 1 mile radius
             val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
             val tree =
@@ -79,12 +78,6 @@ class CreateFakeTreesUseCase(
         }
 
         val legacyTreeAmount = params.amount / 2
-
-        // Create user 1
-        // User 1 checks in 2 times and plants trees
-        // Create user 2
-        // User 2 checks in 1 time and plants trees
-        // User 1 checks in 1 time and plants trees
 
         val planterOne =
             createLegacyUser(
@@ -163,7 +156,6 @@ class CreateFakeTreesUseCase(
         val centerLat = location?.latitude ?: 0.0
         val centerLon = location?.longitude ?: 0.0
 
-        // Generate random location within 1 mile radius
         val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
         val planterCheckInEntity =
@@ -184,7 +176,6 @@ class CreateFakeTreesUseCase(
         val centerLat = location?.latitude ?: 0.0
         val centerLon = location?.longitude ?: 0.0
 
-        // Generate random location within 1 mile radius
         val (randomLat, randomLon) = LocationUtils.generateRandomLocationInRadius(centerLat, centerLon)
 
         createLegacyTreeUseCase.execute(

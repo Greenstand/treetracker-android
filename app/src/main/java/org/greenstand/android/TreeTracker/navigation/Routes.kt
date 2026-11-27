@@ -18,8 +18,6 @@ package org.greenstand.android.TreeTracker.navigation
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
-// No-arg routes
-
 @Serializable data class SplashRoute(
     val orgId: String? = null,
     val orgName: String? = null,
@@ -58,8 +56,6 @@ import kotlinx.serialization.Serializable
 @Serializable data object MapRoute : NavKey
 
 @Serializable data object TreeEditUserSelectRoute : NavKey
-
-// Routes with arguments
 
 @Serializable data class ProfileRoute(
     val planterInfoId: Long,

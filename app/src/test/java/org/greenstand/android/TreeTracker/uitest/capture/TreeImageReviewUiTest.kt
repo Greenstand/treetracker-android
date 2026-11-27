@@ -38,7 +38,6 @@ import org.junit.Test
 import org.greenstand.android.TreeTracker.uitest.TEXT_FIELD_DIALOG_QUALIFIERS
 import org.robolectric.annotation.Config
 
-/** Tests for the stateless [TreeImageReview] screen. */
 @Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)
 class TreeImageReviewUiTest : ComposeUiTest() {
     private val actions = mutableListOf<TreeImageReviewAction>()

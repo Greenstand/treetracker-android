@@ -22,37 +22,16 @@ import org.greenstand.android.TreeTracker.preferences.PrefKeys
 import org.greenstand.android.TreeTracker.preferences.Preferences
 import kotlin.coroutines.cancellation.CancellationException
 
-/**
- * Brings capture setup back when Android restores a setup step after process death (#1418).
- *
- * Navigation 3 restores the back stack, but [CaptureSetupScopeManager] only keeps the setup scope
- * in memory, so the restored step finds it closed. Each step's view model calls [reopenIfClosed]
- * from init and then [loadUser], which also saves the user's id so a later restore can find it.
- * The setup step index needs nothing: `CaptureSetupNavigationController.navForward` re-derives
- * it from the restored back stack.
- */
 class CaptureSetupRestorer(
     private val preferences: Preferences,
     private val userRepo: UserRepo,
 ) {
-    /**
-     * Reopens a closed setup scope. Returns true when it did, which means the step was restored
-     * after process death and the user must be reloaded.
-     */
     fun reopenIfClosed(): Boolean {
         if (CaptureSetupScopeManager.isOpen) return false
         CaptureSetupScopeManager.open()
         return true
     }
 
-    /**
-     * The setup user: the one in the open scope, or when [restored], the one saved before the
-     * process died. If there is none, closes the scope and returns null: setup is lost.
-     *
-     * A restored step can be left (system back) while its user still reloads, and the step
-     * underneath may close the setup scope or open a new one. The scope then isn't this restore's
-     * any more, so it gives up with a [CancellationException] and leaves the scope alone.
-     */
     suspend fun loadUser(restored: Boolean): User? {
         val data = CaptureSetupScopeManager.getData()
         val user =
@@ -74,7 +53,6 @@ class CaptureSetupRestorer(
     }
 
     companion object {
-        /** The capture setup user, kept on disk so a setup step can be restored after process death. */
         val SETUP_USER_ID_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("capture-setup-user-id")
     }
 }

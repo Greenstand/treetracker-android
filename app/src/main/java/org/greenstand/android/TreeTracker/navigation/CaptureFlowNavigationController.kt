@@ -41,14 +41,9 @@ class CaptureFlowNavigationController(
 ) : FlowNavigationController(orgRepo.currentOrg().captureFlow) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    /**
-     * Navigate forward in the capture flow. Suspend because at the end of the flow
-     * it must save the tree to the database before looping back to capture.
-     */
     suspend fun navForward(navigator: Navigator) {
         incrementIndex()
 
-        // If navigating past last screen, save tree then loop back to capture
         if (currentNavPathIndex >= navPath.size) {
             resetIndex()
             val saved = treeCapturer.saveTree()
@@ -92,12 +87,6 @@ class CaptureFlowNavigationController(
         }
     }
 
-    /**
-     * Picks the capture flow up at [route] after Android killed the app there: points the flow at
-     * that step and restarts the session [sessionId] and the sensors that only lived in memory.
-     * Returns false, and changes nothing, when [route] isn't in this flow or [sessionId] isn't the
-     * session that was interrupted.
-     */
     fun resumeAt(
         route: String,
         sessionId: Long,

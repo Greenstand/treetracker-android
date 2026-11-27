@@ -116,7 +116,6 @@ class TreeListViewModelTest {
             vm.state.first { !it.isLoading }
             vm.handleAction(TreeListAction.SelectTree(tree1))
             assertEquals(tree1, vm.state.value.selectedTree)
-            // Emit updated list without tree1 (simulating deletion)
             treeFlow.emit(listOf(tree2))
             vm.state.first { it.selectedTree == null }
             assertNull(vm.state.value.selectedTree)
@@ -132,7 +131,6 @@ class TreeListViewModelTest {
             vm.state.first { !it.isLoading }
             vm.handleAction(TreeListAction.SelectTree(tree1))
             assertEquals(tree1, vm.state.value.selectedTree)
-            // Emit updated list that still includes tree1
             treeFlow.emit(listOf(tree1, tree2))
             vm.state.first { it.trees.size == 2 }
             assertEquals(

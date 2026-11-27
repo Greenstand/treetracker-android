@@ -40,10 +40,6 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 import java.io.FileOutputStream
 
-/**
- * Tests for [LocalImage], which decodes a photo from disk and falls back to a placeholder.
- * Native graphics mode gives real bitmap decoding.
- */
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 class ImagesUiTest : ComposeUiTest() {
     @get:Rule

@@ -29,20 +29,6 @@ class Convergence(
     var latitudeConvergence: ConvergenceStats? = null
         private set
 
-    /**
-     * Implementation based on the following answer found in stackexchange since it seems to be a good
-     * approximation to the running window standard deviation calculation. Considered Welford's
-     * method of computing variance but it calculates running cumulative variance but we need
-     * sliding window computation here.
-     *
-     * https://math.stackexchange.com/questions/2815732/calculating-standard-deviation-of-a-moving-window
-     *
-     * Assuming you are using SD with Bessel's correction, call μn and SDn the mean and
-     * standard deviation from n to n+99. Then, calculate μ1 and SD1 afterwards, you can use the
-     * recursive relation
-     *  μn+1=μn−(1/99*X(n))+(1/99*X(n+100)) and
-     *  variance(n+1)= variance(n) −1/99(Xn−μn)^2 + 1/99(X(n+100)−μ(n+1))^2
-     */
     fun computeSlidingWindowStats(
         currentStats: ConvergenceStats,
         replacingValue: Double,

@@ -109,8 +109,6 @@ fun Host(
     startRoute: SplashRoute = SplashRoute(),
     initialBackStack: List<NavKey> = listOf(startRoute),
 ) {
-    // Persists across configuration changes and process death; on restore, the
-    // saved stack wins over startRoute — same as Nav2's restored NavController state.
     val backStack = rememberNavBackStack(*initialBackStack.toTypedArray())
     val navigator = remember(backStack) { Navigator(backStack) }
     TreeTrackerTheme {

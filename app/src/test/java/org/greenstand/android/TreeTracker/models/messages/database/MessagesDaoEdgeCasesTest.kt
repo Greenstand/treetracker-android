@@ -38,7 +38,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
-/** Storage details and edge cases of [MessagesDAO] that MessagesDaoTest doesn't cover. */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class MessagesDaoEdgeCasesTest {
@@ -90,8 +89,6 @@ class MessagesDaoEdgeCasesTest {
             cursor.moveToFirst()
             cursor.getString(0)
         }
-
-    // region storage format
 
     @Test
     fun `message type is stored as the enum name the type filtered queries rely on`() =
@@ -163,10 +160,6 @@ class MessagesDaoEdgeCasesTest {
             assertEquals(2, dao.getMessagesForWallet("wallet").size)
             assertNull(dao.getMessage("Abc"))
         }
-
-    // endregion
-
-    // region queries and flows
 
     @Test
     fun `getLatestSyncTimeForWallet compares server timestamps across days and months`() =
@@ -284,8 +277,6 @@ class MessagesDaoEdgeCasesTest {
             assertTrue(second > first)
             assertEquals(listOf(first, second), dao.getQuestionsForSurvey("survey").map { it.id })
         }
-
-    // endregion
 
     @Test
     fun `a stored survey message converts back into a SurveyMessage with its questions`() =

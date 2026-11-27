@@ -92,7 +92,7 @@ class SnackbarControllerTest {
                 launch {
                     controller.events.collect {
                         received += (it.message as TextRef.Plain).value
-                        gate.await() // stay busy on the first snackbar
+                        gate.await()
                     }
                 }
 

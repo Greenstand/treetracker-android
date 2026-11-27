@@ -243,7 +243,6 @@ class SettingsViewModelTest {
             val event = viewModel.events.first().getContentIfNotConsumed() as NavigationEvent
             event.navigate(navigator)
 
-            // popUpToRoot() + launchSingleTop leaves SignupFlowRoute as the only entry.
             assertEquals(listOf<NavKey>(SignupFlowRoute), navigator.backStack)
         }
 
@@ -309,7 +308,6 @@ class SettingsViewModelTest {
             viewModel.handleAction(SettingsAction.NavigateBack)
 
             assertEquals(PopBackStackEvent, viewModel.events.first().getContentIfNotConsumed())
-            // HandleUIEvents dispatches PopBackStackEvent as a throttled pop.
             navigator.throttledPopBackStack()
             assertEquals(listOf<NavKey>(DashboardRoute), navigator.backStack)
         }

@@ -25,9 +25,7 @@ import org.greenstand.android.TreeTracker.viewmodel.BaseViewModel
 data class AddWalletState(
     val walletName: String = "",
     val userImagePath: String = "",
-    /** True while add wallet, restored after process death, reloads its setup user. Next and Back wait. */
     val restoring: Boolean = false,
-    /** True when add wallet came back after process death and its user could not be found again. */
     val setupLost: Boolean = false,
 )
 
@@ -45,7 +43,6 @@ class AddWalletViewModel(
     setupRestorer: CaptureSetupRestorer,
 ) : BaseViewModel<AddWalletState, AddWalletAction>(AddWalletState()) {
     init {
-        // After process death Nav3 restores add wallet with the capture setup scope closed.
         val restoring = setupRestorer.reopenIfClosed()
         if (restoring) updateState { copy(restoring = true) }
         viewModelScope.launch {
@@ -61,7 +58,6 @@ class AddWalletViewModel(
     }
 
     override fun handleAction(action: AddWalletAction) {
-        // The setup scope is closed once setup is lost; the screen is on its way to the Dashboard.
         if (currentState.setupLost) return
         when (action) {
             is AddWalletAction.UpdateWalletName -> {

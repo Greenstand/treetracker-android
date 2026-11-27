@@ -39,7 +39,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 
-/** Tests for the stateless [TreeCapture] screen, with a placeholder instead of the camera. */
 class TreeCaptureUiTest : ComposeUiTest() {
     private val clicks = mutableListOf<String>()
 

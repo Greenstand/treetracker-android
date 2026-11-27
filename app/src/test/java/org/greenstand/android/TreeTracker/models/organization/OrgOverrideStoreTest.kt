@@ -28,10 +28,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-/**
- * Covers keeping org link overrides in preferences (so they survive a restart) and
- * [OrgRepo.currentOrg] applying them on top of the org.
- */
 @RunWith(RobolectricTestRunner::class)
 class OrgOverrideStoreTest {
     private lateinit var sharedPrefs: SharedPreferences

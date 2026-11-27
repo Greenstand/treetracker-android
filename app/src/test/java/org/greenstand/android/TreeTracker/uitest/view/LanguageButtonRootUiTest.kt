@@ -33,7 +33,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.koin.dsl.module
 
-/** Tests for the top bar [LanguageButton] backed by a real [LanguagePickerViewModel]. */
 class LanguageButtonRootUiTest : RootScreenUiTest() {
     private val observedLanguage = MutableSharedFlow<Language>(replay = 1)
 

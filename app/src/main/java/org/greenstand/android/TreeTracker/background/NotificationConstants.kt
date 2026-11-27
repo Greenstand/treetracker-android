@@ -16,13 +16,11 @@
 package org.greenstand.android.TreeTracker.background
 
 object NotificationConstants {
-    // SyncNotificationManager
     const val SYNC_NOTIFICATION_ID = 212
     const val SYNC_CHANNEL_ID = "org.greenstand.android.TreeTracker.background.SyncNotificationManager"
     const val SYNC_CHANNEL_NAME = "Sync Channel"
     const val SYNC_CHANNEL_DESCRIPTION = "Tree Syncing"
 
-    // TreeSyncWorker
     const val UNIQUE_WORK_ID = "UNIQUE_WORK_ID_TREE_SYNC_WORKER"
     const val WORKER_NOTIFICATION_ID = 1337
     const val WORKER_CHANNEL_ID = "11"

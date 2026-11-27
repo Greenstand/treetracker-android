@@ -177,8 +177,6 @@ class OrgRepoTest {
         orgRepo.currentOrg()
     }
 
-    // --- addOrgFromRemoteConfig tests ---
-
     @Test
     fun `WHEN addOrgFromRemoteConfig with valid JSON THEN parses all fields and inserts org`() =
         runTest {
@@ -248,7 +246,6 @@ class OrgRepoTest {
             coVerify {
                 dao.insertOrg(
                     match {
-                        // Invalid routes should be stripped; only valid ones remain
                         !it.captureSetupFlowJson.contains("nonexistent-screen") &&
                             it.captureSetupFlowJson.contains("user-select") &&
                             !it.captureFlowJson.contains("fake-route") &&
@@ -271,7 +268,6 @@ class OrgRepoTest {
 
             val result = orgRepo.addOrgFromRemoteConfig("test-id", "TestOrg", "this is not valid json{{{")
 
-            // Falls back to addMinimalOrg which still inserts with the correct id/name
             coVerify { dao.insertOrg(match { it.id == "test-id" && it.name == "TestOrg" }) }
         }
 
@@ -296,8 +292,6 @@ class OrgRepoTest {
                 dao.insertOrg(match { it.captureFlowJson.contains("forceNote") })
             }
         }
-
-    // --- addMinimalOrg tests ---
 
     @Test
     fun `WHEN addMinimalOrg called THEN creates org with default flows and empty wallet`() =

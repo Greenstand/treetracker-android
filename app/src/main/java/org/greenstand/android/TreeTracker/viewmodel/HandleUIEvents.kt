@@ -22,24 +22,6 @@ import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.navigation.Navigator
 import timber.log.Timber
 
-/**
- * Subscribes to one-shot [UiEvent]s from a [BaseViewModel] and dispatches them.
- *
- * Built-in handling:
- * - [NavigationEvent] → invokes the lambda with the current [Navigator].
- * - [PopBackStackEvent] → `navigator.throttledPopBackStack()`.
- * - [ShowSnackbar]    → forwarded to the app-wide [SnackbarController].
- *
- * Navigation events are only executed while the hosting entry is the top of the back
- * stack — the Navigation 3 equivalent of Nav2's "current entry is RESUMED" guard. This
- * drops events replayed from screens the user has already left.
- *
- * Custom handling: pass [onEvent] to intercept any event. Return `true` to mark the event
- * as handled and skip the default handler; return `false` to fall through to the
- * built-in dispatch.
- *
- * Place `HandleUIEvents(viewModel)` near the top of each screen's root Composable.
- */
 @Composable
 fun <S, A : Action> HandleUIEvents(
     viewModel: BaseViewModel<S, A>,
@@ -71,12 +53,6 @@ fun <S, A : Action> HandleUIEvents(
     }
 }
 
-/**
- * True when the entry hosting this composition is the current top of the back stack,
- * or when the composition is not hosted inside a nav entry at all (contentKey == null).
- * Entry contentKeys default to the route's `toString()`, so compare against the top
- * key's string form.
- */
 private fun isHostingEntryOnTop(
     entryContentKey: Any?,
     navigator: Navigator,

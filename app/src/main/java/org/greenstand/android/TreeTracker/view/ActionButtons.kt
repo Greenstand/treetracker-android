@@ -24,22 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 
-/** Test tag of an [ApprovalButton] with `approval = true`. */
 const val APPROVE_BUTTON_TAG = "ApproveButton"
 
-/** Test tag of an [ApprovalButton] with `approval = false`. */
 const val DECLINE_BUTTON_TAG = "DeclineButton"
 
-/** Test tag of an [InfoButton]. */
 const val INFO_BUTTON_TAG = "InfoButton"
 
-/**
- * @param onClick The callback function for click event.
- * @param modifier The modifier to be applied to the layout.
- * @param approval Set the type of button to display(if approval is true, shows green thumps up button )
- * @param testTag The button's test tag. Dialogs shown over a screen pass their own, so it stays
- * unique on screen.
- */
 @Composable
 fun ApprovalButton(
     modifier: Modifier = Modifier,

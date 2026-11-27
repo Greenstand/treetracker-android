@@ -77,7 +77,6 @@ class LanguagePickerViewModelTest {
     @Test
     fun `Verify confirm language does nothing when no language is selected`() =
         runTest {
-            // Reset to no language selected
             coEvery { languageSwitcher.currentLanguage() } returns null
             testSubject = LanguagePickerViewModel(languageSwitcher)
 
@@ -91,7 +90,6 @@ class LanguagePickerViewModelTest {
         runTest {
             testSubject.handleAction(LanguagePickerAction.NavigateNext)
 
-            // State unchanged, no language applied
             assertEquals(Language.ENGLISH, testSubject.state.value.currentLanguage)
             coVerify(exactly = 0) { languageSwitcher.setLanguage(any()) }
         }

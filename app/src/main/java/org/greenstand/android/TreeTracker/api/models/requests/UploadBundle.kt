@@ -27,14 +27,12 @@ class UploadBundle
         val version: String,
         @SerialName("device_id")
         val deviceId: String = DeviceUtils.deviceId,
-        // V1
         @SerialName("trees")
         val trees: List<NewTreeRequest>? = null,
         @SerialName("registrations")
         val registrations: List<RegistrationRequest>? = null,
         @SerialName("devices")
         val devices: List<DeviceRequest>? = null,
-        // V2
         @SerialName("wallet_registrations")
         val walletRegistrations: List<WalletRegistrationRequest>? = null,
         @SerialName("captures")

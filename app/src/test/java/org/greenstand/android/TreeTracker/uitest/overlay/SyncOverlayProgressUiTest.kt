@@ -45,10 +45,6 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/**
- * Tests for the progress bars, item counts, error affordances and dragging of [SyncOverlay],
- * plus how [DebugOverlayHost] shows it next to the sensor overlay.
- */
 class SyncOverlayProgressUiTest : ComposeUiTest() {
     private val tracker = SyncProgressTracker()
     private val totalSteps = SyncStep.entries.size

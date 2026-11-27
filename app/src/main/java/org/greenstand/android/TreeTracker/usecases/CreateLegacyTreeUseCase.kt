@@ -44,8 +44,8 @@ class CreateLegacyTreeUseCase(
                     noteContent = params.tree.content,
                     longitude = params.tree.meanLongitude,
                     latitude = params.tree.meanLatitude,
-                    accuracy = 0.0, // accuracy is a legacy remnant and not used. Pending table cleanup
-                    createAt = timeProvider.currentTime().epochSeconds, // legacy bulk pack uses seconds, not milliseconds
+                    accuracy = 0.0,
+                    createAt = timeProvider.currentTime().epochSeconds,
                 )
             val attributeEntitites =
                 params.tree

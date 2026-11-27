@@ -75,8 +75,6 @@ fun SplashScreen(
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestMultiplePermissions(),
             onResult = { result ->
-                // Move on whatever the user answered: a denied permission must not leave the app
-                // on the splash image. Screens that need location (capture) ask for it again.
                 scope.launch {
                     Timber.tag("BuildVariant").d("build variant: ${BuildConfig.BUILD_TYPE}")
 

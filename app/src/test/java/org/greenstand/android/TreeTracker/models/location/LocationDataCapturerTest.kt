@@ -159,8 +159,6 @@ class LocationDataCapturerTest {
         locationDataCapturer.startGpsUpdates()
         locationDataCapturer.turnOnTreeCaptureMode()
 
-        // Assuming a minimum of 5 Location data required for evaulating
-        // convergence
         for (i in 1..4) {
             val location = mockk<Location>(relaxed = true)
             locationsLiveData.postValue(location)
@@ -194,7 +192,6 @@ class LocationDataCapturerTest {
         assertTrue(locationDataCapturer.isConvergenceWithinRange())
     }
 
-    // Hard coded longitude and latitude pair values
     val locationValuesHighVariance =
         listOf(
             Pair(-122.08400001, 37.42149486),
@@ -263,10 +260,6 @@ class LocationDataCapturerTest {
         )
     }
 
-    /**
-     * Waits for the location the capturer saves on its background coroutine. coVerify can see the
-     * call before the capture() matcher fills the slot, so wait on the slot itself.
-     */
     private fun awaitCaptured(slot: CapturingSlot<LocationEntity>) {
         val deadline = System.currentTimeMillis() + 5_000
         while (!slot.isCaptured && System.currentTimeMillis() < deadline) {

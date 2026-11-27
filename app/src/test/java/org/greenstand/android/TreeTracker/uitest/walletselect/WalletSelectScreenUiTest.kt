@@ -45,7 +45,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/** Tests for the [WalletSelectScreen] root: ViewModel wiring and capture setup navigation. */
 class WalletSelectScreenUiTest : ComposeUiTest() {
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)

@@ -246,7 +246,7 @@ fun SettingsItem(
     ) {
         Image(
             painter = painterResource(id = iconResId),
-            contentDescription = null, // decorative element
+            contentDescription = null,
             modifier = Modifier.size(24.dp),
             colorFilter = iconTint?.let { ColorFilter.tint(it) },
         )

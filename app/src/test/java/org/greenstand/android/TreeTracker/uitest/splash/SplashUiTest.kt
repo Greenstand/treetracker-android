@@ -119,10 +119,6 @@ class SplashUiTest : ComposeUiTest() {
         )
     }
 
-    /**
-     * Answers the permission request with [result] straight away. Robolectric only answers it by
-     * itself when every permission is already granted, so a denial needs this.
-     */
     private fun permissionAnswer(result: Map<String, Boolean>): ActivityResultRegistryOwner =
         object : ActivityResultRegistryOwner {
             override val activityResultRegistry =
@@ -155,7 +151,6 @@ class SplashUiTest : ComposeUiTest() {
             }
         }
         composeTestRule.waitForIdle()
-        // SplashScreen waits one second after bootstrapping before navigating.
         composeTestRule.mainClock.advanceTimeBy(SPLASH_DELAY_MS)
     }
 

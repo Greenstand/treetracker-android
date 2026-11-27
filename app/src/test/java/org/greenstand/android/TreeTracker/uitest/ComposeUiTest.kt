@@ -38,23 +38,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 
-/**
- * Screen qualifiers for tests that show a text field inside a dialog. Robolectric never idles
- * when such a dialog is laid out wider than 320dp (robolectric/robolectric#8460), so those test
- * classes override the default 400dp width with `@Config(qualifiers = TEXT_FIELD_DIALOG_QUALIFIERS)`.
- */
 const val TEXT_FIELD_DIALOG_QUALIFIERS = "w320dp-h800dp-xxhdpi"
 
-/**
- * Base class for Robolectric Compose UI tests.
- *
- * Renders content inside the same theme and CompositionLocals the app provides, with a
- * real [Navigator] over [backStack] so tests can assert where a click navigated to.
- * The navigator's clock moves forward on every read, so the unscoped time throttle never
- * drops a navigation in tests.
- *
- * These tests only run in `testDebugUnitTest` (see app/build.gradle).
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(
     qualifiers = "w400dp-h800dp-xxhdpi",
@@ -67,7 +52,6 @@ abstract class ComposeUiTest {
 
     private var clockMs = 0L
 
-    /** The back stack behind [navigator]. Starts with [DashboardRoute]; reset it in a test if needed. */
     val backStack: SnapshotStateList<NavKey> = mutableStateListOf(DashboardRoute)
 
     val navigator: Navigator =
@@ -81,13 +65,6 @@ abstract class ComposeUiTest {
 
     val snackbarController = SnackbarController()
 
-    /**
-     * Sets [content] inside the app theme, [LocalNavigator] and [LocalSnackbarController].
-     *
-     * [inspectionMode] defaults to true, like the screenshot tests, so shared components
-     * that would otherwise resolve a ViewModel (e.g. `LanguageButton`) render statically.
-     * Pass false when testing a root screen with a ViewModel passed in explicitly.
-     */
     fun setContent(
         inspectionMode: Boolean = true,
         content: @Composable () -> Unit,
@@ -107,11 +84,6 @@ abstract class ComposeUiTest {
         }
     }
 
-    /**
-     * Provides the Koin instance a test started, if any. Compose caches a CompositionLocal's
-     * default value for the whole JVM, so without this `koinInject` would keep resolving from
-     * the first test's (by now closed) Koin root scope.
-     */
     @Composable
     private fun WithCurrentKoin(content: @Composable () -> Unit) {
         val koin = GlobalContext.getOrNull()
@@ -122,7 +94,6 @@ abstract class ComposeUiTest {
         }
     }
 
-    /** Resolves a string resource the same way the UI does. */
     fun string(
         @StringRes id: Int,
         vararg args: Any,

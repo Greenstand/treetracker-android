@@ -699,7 +699,6 @@ class UserRepoTest {
             with(updated.captured) {
                 assertEquals("Renamed", firstName)
                 assertEquals("15551234567", phone)
-                // The upload service rejects a wallet registration whose email has no @.
                 assertEquals(null, email)
             }
         }

@@ -264,10 +264,8 @@ fun Message(
         ) {
             ChatItemBubble(msg, isOtherUser)
             if (isFirstMessageByAuthor) {
-                // Last bubble before next author
                 Spacer(modifier = Modifier.height(8.dp))
             } else {
-                // Between bubbles
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }

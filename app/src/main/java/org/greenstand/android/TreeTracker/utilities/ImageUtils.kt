@@ -53,7 +53,6 @@ object ImageUtils {
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
     fun createImageFile(context: Context): File {
-        // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = JPEG_FILE_PREFIX + timeStamp + "_"
         val directory = context.getDir("treeImages", Context.MODE_PRIVATE)
@@ -65,21 +64,16 @@ object ImageUtils {
         photoPath: String?,
         density: Float,
     ): Bitmap? {
-        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(photoPath, bmOptions)
         val imageWidth = bmOptions.outWidth
 
-        // Calculate your sampleSize based on the requiredWidth and
-        // originalWidth
-        // For e.g you want the width to stay consistent at 500dp
         val requiredWidth = (500 * density).toInt()
 
         var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
         Timber.d("sampleSize $sampleSize")
-        // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
@@ -90,7 +84,6 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
 
-        // Decode the JPEG file into a Bitmap
         val bitmap = BitmapFactory.decodeFile(photoPath, bmOptions) ?: return null
 
         var exif: ExifInterface? = null
@@ -137,9 +130,6 @@ object ImageUtils {
         )
     }
 
-    /**
-     * out put image data pixels to console
-     */
     fun printImage(image: Array<Array<Int>>) {
         var counter = 0.0
         val rows = image.lastIndex + 1
@@ -157,9 +147,6 @@ object ImageUtils {
         }
     }
 
-    /**
-     * out put image data pixels to console
-     */
     fun printImage(
         image: IntArray,
         rows: Int,
@@ -184,7 +171,6 @@ object ImageUtils {
         imagePath: String?,
         scaleToWidth: Int,
     ): Array<Array<Int>>? {
-        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(imagePath, bmOptions)
@@ -196,7 +182,6 @@ object ImageUtils {
                     (imageWidth.toFloat() / scaleToWidth.toFloat())
                         .toDouble(),
                 ).toInt()
-        // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
@@ -218,7 +203,6 @@ object ImageUtils {
         bitmap.getPixels(pix, 0, cols, 0, 0, cols, rows)
 
         val img = Array(rows) { Array(cols) { 0 } }
-        // need to get a grid to calculate gradients.
         var index = 0
         for (r in 0 until rows) {
             for (c in 0 until cols) {
@@ -230,9 +214,6 @@ object ImageUtils {
         return gimg
     }
 
-    /**
-     * blur and image with gaussian kernel with random width between 0 (no blur) and 10.
-     */
     public fun generateRandomBlurredImage(image: Array<Array<Int>>): Array<Array<Int>> {
         val ran = kotlin.random.Random(System.currentTimeMillis()).nextInt(0, 10)
         println(ran)
@@ -242,9 +223,6 @@ object ImageUtils {
         return image
     }
 
-    /**
-     *  Get grayscale image using standard formula.
-     */
     private fun getGrayPixels(image: Array<Array<Int>>): Array<Array<Int>> {
         val rows = image.lastIndex + 1
         val cols = image.get(0).lastIndex + 1
@@ -263,9 +241,6 @@ object ImageUtils {
         return result
     }
 
-    /**
-     * make a gaussian kernel
-     */
     fun gaussian(
         width: Int,
         sigma: Double,
@@ -291,9 +266,6 @@ object ImageUtils {
         return Pair(result, normalFactor)
     }
 
-    /**
-     *  correlation (or convolution since the kernel should be symmetrical)
-     */
     fun performCorrelation(
         image: Array<Array<Int>>,
         kernel: Array<Array<Double>>,
@@ -317,10 +289,6 @@ object ImageUtils {
         }
         return sum / normal
     }
-
-    /**
-     *  To test the focus detection, we need to blur some images.
-     */
 
     fun applyGaussianKernel(
         image: Array<Array<Int>>,
@@ -353,9 +321,6 @@ object ImageUtils {
         return result
     }
 
-    /**
-     * // Compute average of sum of squares of the gradient in H and V directions.
-     */
     fun brennersFocusMetric(input: Array<Array<Int>>): Double {
         val rows = input.lastIndex + 1
         val cols = input[0].lastIndex + 1
@@ -397,10 +362,6 @@ object ImageUtils {
         forceScaling: Boolean,
         targetHeight: Int,
     ) {
-        // There isn't enough memory to open up more than a couple camera photos
-        // So pre-scale the target bitmap into which the file is decoded
-
-        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bmOptions)
@@ -410,9 +371,6 @@ object ImageUtils {
         val oldExif = ExifInterface(path)
         val exifOrientation = oldExif.getAttribute(ExifInterface.TAG_ORIENTATION)
 
-        // Calculate your sampleSize based on the requiredWidth and
-        // originalWidth
-        // For e.g you want the width to stay consistent at 500dp
         val requiredWidth = targetHeight
 
         val sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
@@ -424,7 +382,6 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
 
-        // Decode the JPEG file into a Bitmap
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val matrix = Matrix()
 
@@ -462,7 +419,6 @@ object ImageUtils {
     }
 
     fun orientImage(photoPath: String) {
-        // Get the size of the image
         val bmOptions =
             BitmapFactory.Options().apply {
                 inJustDecodeBounds = true
@@ -537,28 +493,19 @@ object ImageUtils {
     }
 
     fun flip(src: Bitmap): Bitmap? {
-        // create new matrix for transformation
         val matrix = Matrix()
         matrix.preScale(-1.0f, 1.0f)
 
-        // return transformed image
         return Bitmap.createBitmap(src, 0, 0, src.width, src.height, matrix, true)
     }
 
     fun base64Image(path: String): String {
-        // There isn't enough memory to open up more than a couple camera photos
-        // So pre-scale the target bitmap into which the file is decoded
-
-        // Get the size of the image
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bmOptions)
         val imageHeight = bmOptions.outHeight
         val imageWidth = bmOptions.outWidth
 
-        // Calculate your sampleSize based on the requiredWidth and
-        // originalWidth
-        // For e.g you want the width to stay consistent at 500dp
         var requiredWidth = 800
 
         if (imageHeight > imageWidth) {
@@ -567,7 +514,6 @@ object ImageUtils {
 
         var sampleSize = ceil((imageWidth.toFloat() / requiredWidth.toFloat()).toDouble()).toInt()
 
-        // If the original image is smaller than required, don't sample
         if (sampleSize < 1) {
             sampleSize = 1
         }
@@ -577,7 +523,6 @@ object ImageUtils {
         bmOptions.inPreferredConfig = Bitmap.Config.RGB_565
         bmOptions.inJustDecodeBounds = false
 
-        // Decode the JPEG file into a Bitmap
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
 
         val rotatedBitmap =

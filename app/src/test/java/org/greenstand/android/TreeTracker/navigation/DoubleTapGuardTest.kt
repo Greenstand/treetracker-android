@@ -28,7 +28,6 @@ class DoubleTapGuardTest {
 
     @Test
     fun `a press that reached the app late is judged by when it went down`() {
-        // Navigated 700 ms ago; the press went down 500 ms ago, 200 ms after the navigation.
         assertTrue(isSecondTapOfDoubleTap(millisSinceLastNavigation = 700, millisSincePress = 500, doubleTapTimeoutMs = 300))
     }
 
@@ -68,12 +67,10 @@ class DoubleTapGuardTest {
         val nav = Navigator(mutableListOf(DashboardRoute), clock = clock::now)
         val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })
         nav.navigate(AddOrgRoute)
-        // The user taps the org field 50 ms after arriving: too soon, so that tap is dropped.
         clock.time += 50
         guard.recordPress(clock.time)
         assertTrue(guard.isSecondTapOfDoubleTap(nav))
 
-        // Seconds later they press Go on the keyboard, with no new finger down.
         clock.time += 3_000
         assertFalse(guard.isSecondTapOfDoubleTap(nav))
     }
@@ -85,7 +82,6 @@ class DoubleTapGuardTest {
         val guard = DoubleTapGuard(uptimeMillis = clock::now, doubleTapTimeoutMs = { 300L })
         nav.navigate(AddOrgRoute)
         val secondTapDown = clock.time + 120
-        // The app only handles the click 500 ms after the navigation.
         clock.time += 500
         guard.recordPress(secondTapDown)
 

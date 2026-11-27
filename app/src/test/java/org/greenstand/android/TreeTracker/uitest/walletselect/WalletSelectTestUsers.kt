@@ -20,7 +20,6 @@ import org.greenstand.android.TreeTracker.models.user.User
 internal const val CURRENT_USER_NAME = "Cara Mwangi"
 internal const val OTHER_USER_NAME = "Dan Otieno"
 
-/** The planter running the capture setup flow. */
 internal val walletTestCurrentUser =
     User(
         id = 10,
@@ -33,7 +32,6 @@ internal val walletTestCurrentUser =
         unreadMessagesAvailable = false,
     )
 
-/** Another planter whose wallet trees can be planted for. */
 internal val walletTestOtherUser =
     User(
         id = 20,

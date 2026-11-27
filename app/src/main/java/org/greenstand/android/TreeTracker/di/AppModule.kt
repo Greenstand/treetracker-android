@@ -124,7 +124,6 @@ val appModule =
         viewModel { DevOptionsViewModel(get(), get(), get(), get()) }
 
         viewModel {
-            // After process death Nav3 restores tree height without the in-memory capture scope.
             val restored = CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_HEIGHT)
             TreeHeightSelectionViewModel(get(), restoredAfterProcessDeath = restored)
         }
@@ -143,7 +142,6 @@ val appModule =
         viewModel { AnnouncementViewModel(get(), get()) }
 
         viewModel {
-            // After process death Nav3 restores image review without the in-memory capture scope.
             val restored = CaptureFlowScopeManager.restoreAt(RouteRegistry.ROUTE_TREE_IMAGE_REVIEW)
             TreeImageReviewViewModel(get(), get(), get(), restoredAfterProcessDeath = restored)
         }

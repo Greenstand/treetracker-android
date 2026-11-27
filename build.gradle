@@ -54,6 +54,7 @@ subprojects {
     apply plugin : "dev.detekt"
     detekt {
         config.setFrom(files("${project.rootDir}/detekt.yml"))
+        source.from("src/debug/java", "src/testDebug/java")
         parallel = true
         buildUponDefaultConfig = true
     }

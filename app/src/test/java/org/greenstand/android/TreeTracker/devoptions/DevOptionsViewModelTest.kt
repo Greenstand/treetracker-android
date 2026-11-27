@@ -200,7 +200,6 @@ class DevOptionsViewModelTest {
                 .single()
                 .getContentIfNotConsumed(),
         )
-        // HandleUIEvents dispatches PopBackStackEvent as a throttled pop.
         navigator.throttledPopBackStack()
         assertEquals(listOf(DashboardRoute, SettingsRoute), navigator.backStack)
         verify(exactly = 0) { configurator.putValue(any(), any()) }

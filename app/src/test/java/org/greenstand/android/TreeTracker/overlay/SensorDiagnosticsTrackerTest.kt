@@ -194,7 +194,6 @@ class SensorDiagnosticsTrackerTest {
 
     @Test
     fun `orientation angles are derived from the rotation snapshot in degrees`() {
-        // azimuth = atan2(R[1], R[5]), pitch = asin(-R[9]), roll = atan2(-R[8], R[10])
         val matrix = FloatArray(16)
         matrix[1] = 1f
         matrix[5] = 0f

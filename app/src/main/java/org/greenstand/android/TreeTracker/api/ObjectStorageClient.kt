@@ -15,8 +15,6 @@
  */
 package org.greenstand.android.TreeTracker.api
 
-// import com.amazonaws.services.s3.AmazonS3ClientBuilder
-
 import android.annotation.SuppressLint
 import android.content.Context
 import com.amazonaws.AmazonClientException
@@ -56,36 +54,11 @@ class ObjectStorageClient private constructor(
 
         if (BuildConfig.USE_AWS_S3) {
 
-            // Acceleration IS available in android SDK
-            // https://github.com/aws-amplify/aws-sdk-android/blob/master/aws-android-sdk-s3/src/main/java/com/amazonaws/services/s3/S3ClientOptions.java#L114
-            // https://github.com/aws-amplify/aws-sdk-android/issues/515
-
             val clientRegion = BuildConfig.OBJECT_STORAGE_ENDPOINT
             try {
 
-                // Create an Amazon S3 client that is configured to use the accelerate endpoint.
                 val region = Region.getRegion(Regions.fromName(clientRegion))
                 s3Client = AmazonS3Client(credentialsProvider, region, ClientConfiguration())
-
-                // Enable Transfer Acceleration for the specified bucket.
-                // This line is not necessary
-                // s3Client?.setS3ClientOptions(S3ClientOptions.builder().setAccelerateModeEnabled(true).build());
-                /*
-                s3Client?.setBucketAccelerateConfiguration(
-                    SetBucketAccelerateConfigurationRequest (bucketName,
-                    BucketAccelerateConfiguration (
-                            BucketAccelerateStatus.Enabled
-                    )
-                ));
-                 */
-
-                // Verify that transfer acceleration is enabled for the bucket.
-                // You need the right permissions to get this
-                /*val accelerateStatus = s3Client?.getBucketAccelerateConfiguration (
-                         GetBucketAccelerateConfigurationRequest (bucketName))
-                    ?.status
-                Timber.tag("Acceleration").d("Bucket accelerate status: " + accelerateStatus)
-                 */
             } catch (e: AmazonServiceException) {
                 Timber.e(e, "S3 service error during client initialization")
                 throw(e)

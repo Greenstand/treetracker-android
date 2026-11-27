@@ -52,7 +52,6 @@ class SignupViewModelTest {
         signupViewModel = SignupViewModel(userRepo, checkForInternetUseCase)
     }
 
-    // First Name
     @Test
     fun `update first name, returns valid first name`() =
         runTest {
@@ -67,7 +66,6 @@ class SignupViewModelTest {
             assertEquals(signupViewModel.state.value.firstName, FakeFileGenerator.emptyUser.firstName)
         }
 
-    // Last Name
     @Test
     fun `update last name, returns valid last name`() =
         runTest {
@@ -82,7 +80,6 @@ class SignupViewModelTest {
             assertEquals(signupViewModel.state.value.lastName, FakeFileGenerator.emptyUser.lastName)
         }
 
-    // Email
     @Test
     fun `update email contains valid credentials, returns success`() =
         runTest {
@@ -98,7 +95,6 @@ class SignupViewModelTest {
             assertNotEquals(signupViewModel.state.value.email, "somerandom@gmsail.com")
         }
 
-    // Phone
     @Test
     fun `update phone contains valid credentials, returns success`() =
         runTest {
@@ -114,7 +110,6 @@ class SignupViewModelTest {
             assertFalse(signupViewModel.state.value.isCredentialValid)
         }
 
-    // Selfie Tutorial Dialogs
     @Test
     fun `update selfie tutorial dialog state = false, returns false`() =
         runTest {
@@ -129,7 +124,6 @@ class SignupViewModelTest {
             assertTrue(signupViewModel.state.value.showSelfieTutorial!!)
         }
 
-    // Go to Credentials Entry
     @Test
     fun `Go to credentials Entry, returns true`() =
         runTest {
@@ -140,7 +134,6 @@ class SignupViewModelTest {
             assertNull(signupViewModel.state.value.lastName)
         }
 
-    // Enables Autofocus
     @Test
     fun `enable autofocus, returns true`() =
         runTest {
@@ -148,7 +141,6 @@ class SignupViewModelTest {
             assertTrue(signupViewModel.state.value.autofocusTextEnabled)
         }
 
-    // Close privacy policy dialog
     @Test
     fun `close privacy policy dialog, returns false`() =
         runTest {
@@ -156,7 +148,6 @@ class SignupViewModelTest {
             assertFalse(signupViewModel.state.value.showPrivacyDialog!!)
         }
 
-    // Close Existing User Dialog
     @Test
     fun `close existing user dialog, returns true`() =
         runTest {
@@ -228,8 +219,6 @@ class SignupViewModelTest {
             coVerify { userRepo.setPowerUserStatus(userId, true) }
         }
 
-    // Initial state
-
     @Test
     fun `GIVEN no power user and internet WHEN created THEN selfie tutorial is shown and internet is available`() =
         runTest {
@@ -278,8 +267,6 @@ class SignupViewModelTest {
             assertNull(state.lastNameError)
             assertTrue(signupViewModel.events.replayCache.isEmpty())
         }
-
-    // Name validation
 
     @Test
     fun `WHEN first name contains digits and symbols THEN they are filtered out without error`() =
@@ -427,8 +414,6 @@ class SignupViewModelTest {
             assertFalse(signupViewModel.isFormValid())
         }
 
-    // Email credential
-
     @Test
     fun `WHEN email is entered THEN it is lowercased and marked valid`() =
         runTest {
@@ -456,8 +441,6 @@ class SignupViewModelTest {
             assertNull(signupViewModel.state.value.phone)
             assertEquals("john@example.com", signupViewModel.state.value.email)
         }
-
-    // Phone credential
 
     @Test
     fun `WHEN phone is entered after an email THEN the email is cleared and validity follows the phone`() =
@@ -502,8 +485,6 @@ class SignupViewModelTest {
             assertFalse(signupViewModel.state.value.isCredentialValid)
         }
 
-    // Credential type
-
     @Test
     fun `WHEN credential type switches back to phone THEN state credential is Phone`() =
         runTest {
@@ -546,8 +527,6 @@ class SignupViewModelTest {
         credential.text = "0712345678"
         assertTrue(credential.isValid)
     }
-
-    // Submit info
 
     @Test
     fun `GIVEN email credential and existing user WHEN submitInfo THEN looks up by email and shows existing user`() =
@@ -622,8 +601,6 @@ class SignupViewModelTest {
             assertEquals("0712345678", state.phone)
         }
 
-    // Actions handled by the screen
-
     @Test
     fun `WHEN screen-handled actions are sent THEN state is unchanged and no events are emitted`() =
         runTest {
@@ -638,8 +615,6 @@ class SignupViewModelTest {
             assertTrue(signupViewModel.events.replayCache.isEmpty())
             coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
         }
-
-    // Setup checks
 
     @Test
     fun `WHEN no power user exists THEN isInitialSetupRequired returns true`() =
@@ -656,8 +631,6 @@ class SignupViewModelTest {
 
             assertFalse(signupViewModel.isInitialSetupRequired())
         }
-
-    // Create user
 
     @Test
     fun `WHEN createUser is called without a photo THEN returns null and creates nothing`() =

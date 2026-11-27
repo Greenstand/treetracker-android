@@ -41,7 +41,7 @@ class TreeTrackerActivity : AppCompatActivity() {
         enableEdgeToEdge(
             statusBarStyle =
                 SystemBarStyle.dark(
-                    scrim = android.graphics.Color.argb(128, 0, 0, 0), // 50% black scrim
+                    scrim = android.graphics.Color.argb(128, 0, 0, 0),
                 ),
             navigationBarStyle =
                 SystemBarStyle.dark(
@@ -61,9 +61,6 @@ class TreeTrackerActivity : AppCompatActivity() {
             }
         }
 
-        // AppCompatActivity's setContentView plants only the pre-navigationevent view-tree
-        // owners, so Navigation 3's NavDisplay back handling cannot find the dispatcher.
-        // Plant it ourselves; ComponentActivity (activity 1.12+) is the owner.
         window.decorView.setViewTreeNavigationEventDispatcherOwner(this)
     }
 }

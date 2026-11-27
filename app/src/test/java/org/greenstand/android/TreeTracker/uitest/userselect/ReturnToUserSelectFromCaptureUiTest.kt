@@ -59,13 +59,6 @@ import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 
-/**
- * Leaving capture through the profile button (`CaptureFlowNavigationController.goToUserSelect`)
- * ends the session and closes the capture setup scope, then shows user select again.
- *
- * Renders the same `NavDisplay` entry decorators as `Host` (saveable state, ViewModel store,
- * screen tracking), so the user select entry gets its ViewModel the way it does in the app.
- */
 class ReturnToUserSelectFromCaptureUiTest : ComposeUiTest() {
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
@@ -144,7 +137,6 @@ class ReturnToUserSelectFromCaptureUiTest : ComposeUiTest() {
         composeTestRule.waitForIdle()
     }
 
-    /** Selects [userName] on user select, then finishes setup into capture (setup keeps user select under it). */
     private fun selectUserAndStartCapture(userName: String) {
         composeTestRule.onNodeWithText(userName).performClick()
         composeTestRule.runOnIdle { navigator.navigate(TreeCaptureRoute(profilePicUrl = "")) }

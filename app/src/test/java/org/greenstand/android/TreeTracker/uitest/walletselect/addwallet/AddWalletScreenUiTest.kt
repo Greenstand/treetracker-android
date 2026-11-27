@@ -40,7 +40,6 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-/** Tests for the [AddWalletScreen] root: ViewModel wiring and capture setup navigation. */
 class AddWalletScreenUiTest : ComposeUiTest() {
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)

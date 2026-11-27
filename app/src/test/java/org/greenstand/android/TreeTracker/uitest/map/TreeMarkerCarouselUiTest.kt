@@ -40,11 +40,9 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for [TreeMarkerCard] and [TreeMarkerCarousel] on their own, and the carousel reacting to [MapContent] state. */
 class TreeMarkerCarouselUiTest : ComposeUiTest() {
     private val plantDate = Instant.parse("2024-03-15T12:00:00Z")
 
-    /** Ten markers whose latitude is their index, so each card has a unique "Lat: N.000000" line. */
     private val manyMarkers = (0 until 10).map { marker(index = it) }
 
     private fun marker(

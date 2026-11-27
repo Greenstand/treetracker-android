@@ -82,11 +82,6 @@ fun TreeTrackerButton(
         animationSpec = tween(durationMillis = 100),
     )
 
-    // Parent box handles clicking and sends size constraints to children.
-    // The tap is handled with pointerInput (for the press animation), which tells accessibility
-    // nothing, so the semantics describe the button: screen readers and UI test tools (tb,
-    // UiAutomator) then see one tappable button with its label, enabled and selected state,
-    // instead of loose texts and images.
     BoxWithConstraints(
         modifier =
             modifier
@@ -131,7 +126,6 @@ fun TreeTrackerButton(
             circleStartOffset = depth.dp
         }
 
-        // Box 1 stays still and is aligned to the bottom
         Box(
             modifier =
                 Modifier
@@ -144,8 +138,6 @@ fun TreeTrackerButton(
                     .background(color = shadowColor)
                     .align(Alignment.BottomCenter),
         )
-        // Box 2 gets pushed down by an animated top padding value which
-        // eventually aligns it directly above box 1
         Box(
             contentAlignment = contentAlignment,
             modifier =

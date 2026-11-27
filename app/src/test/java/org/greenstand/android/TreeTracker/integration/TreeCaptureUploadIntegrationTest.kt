@@ -54,11 +54,6 @@ import org.robolectric.annotation.Config
 import java.io.File
 import java.util.UUID
 
-/**
- * Captures trees with [CreateTreeUseCase] into a real in-memory Room database and uploads them
- * with [TreeUploader], faking only S3. Covers the path a planted tree takes from the capture
- * screen to the upload bundle, for v2 trees and for legacy tree captures.
- */
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
 class TreeCaptureUploadIntegrationTest : InMemoryDatabaseTest() {

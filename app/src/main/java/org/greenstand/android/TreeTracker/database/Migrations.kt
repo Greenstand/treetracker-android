@@ -73,7 +73,6 @@ val MIGRATION_3_4 =
             try {
                 database.beginTransaction()
 
-                // Create version 4 entities (tables)
                 val createPlanterInfo =
                     """CREATE TABLE IF NOT EXISTS `planter_info` (
                 | `_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -181,7 +180,6 @@ val MIGRATION_3_4 =
                     """.trimMargin()
                 database.execSQL(createIndexTreeCapture)
 
-                // Populate Planter registrations
                 val populatePlanterInfoEntity =
                     """INSERT INTO `planter_info` (
                 | `_id`, `planter_identifier`, `first_name`, `last_name`, `organization`,
@@ -194,7 +192,6 @@ val MIGRATION_3_4 =
                     """.trimMargin()
                 database.execSQL(populatePlanterInfoEntity)
 
-                // Populate planter checkins
                 val populatePlanterCheckIns =
                     """INSERT INTO `planter_check_in` (
             | `_id`, `planter_info_id`, `local_photo_path`, `photo_url`,
@@ -206,7 +203,6 @@ val MIGRATION_3_4 =
                     """.trimMargin()
                 database.execSQL(populatePlanterCheckIns)
 
-                // Populate tree captures
                 val populateTreeCaptures =
                     """INSERT INTO `tree_capture` (`_id`, `uuid`,
             | `planter_checkin_id`, `local_photo_path`, `note_content`,
@@ -234,7 +230,6 @@ val MIGRATION_3_4 =
                     """.trimMargin()
                 database.execSQL(populateTreeAttributes)
 
-                // Drop tables found in 1.2.7 release branch
                 val deletePendingUpdates = "drop table if exists `pending_updates`"
                 database.execSQL(deletePendingUpdates)
 

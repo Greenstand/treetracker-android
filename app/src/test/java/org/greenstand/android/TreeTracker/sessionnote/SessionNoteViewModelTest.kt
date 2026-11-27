@@ -123,8 +123,6 @@ class SessionNoteViewModelTest {
             verify(exactly = 0) { captureSetupData.sessionNote = any() }
         }
 
-    // --- Restored after process death ---
-
     private val setupNav = mockk<CaptureSetupNavigationController>(relaxed = true)
     private val restoreUserRepo = mockk<UserRepo>(relaxed = true)
 

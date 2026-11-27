@@ -70,15 +70,12 @@ fun WalletSelectScreen(
         WalletSelect(
             state = state,
             onHandleAction = { action ->
-                // Until a restored wallet select has its user back, leaving it would continue setup without one.
                 val canLeave = !state.restoring && !state.setupLost
                 when (action) {
                     is WalletSelectAction.NavigateToUserSelect -> {
                         if (canLeave) CaptureSetupScopeManager.nav.navToUserSelect(navigator)
                     }
                     is WalletSelectAction.NavigateForward -> {
-                        // Next sits where user select's Next was. Drop the second tap of a double
-                        // tap that opened this screen (#1442).
                         if (canLeave && !doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                             scope.launch {
                                 state.currentUser?.let {

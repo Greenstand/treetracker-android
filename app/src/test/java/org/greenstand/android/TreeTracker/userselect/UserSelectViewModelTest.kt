@@ -163,8 +163,6 @@ class UserSelectViewModelTest {
 
     private val planter = FakeFileGenerator.fakeUsers.first().copy(wallet = "0712345678")
 
-    // Init
-
     @Test
     fun `WHEN created THEN opens the capture setup scope and starts GPS updates`() =
         runTest {
@@ -219,8 +217,6 @@ class UserSelectViewModelTest {
             assertEquals(planter, state.selectedUser)
         }
 
-    // Select
-
     @Test
     fun `WHEN another user is selected THEN it replaces the previous selection`() =
         runTest {
@@ -234,8 +230,6 @@ class UserSelectViewModelTest {
             verify { preferences.setUserId(second.id) }
             verify { captureSetupData.user = second }
         }
-
-    // Delete
 
     @Test
     fun `GIVEN a selected user WHEN delete succeeds THEN marks deleted locally and asks admin to delete the account`() =
@@ -268,9 +262,7 @@ class UserSelectViewModelTest {
 
             viewModel.handleAction(UserSelectAction.DeleteUser)
 
-            // An exception escaping viewModelScope would fail runTest; reaching here means it was caught.
             assertEquals(DeleteProfileState.ACCOUNTDELETEDLOCALLY, viewModel.state.value.deleteProfileState)
-            // The admin message is queued before the sync, so the next sync can still upload it.
             coVerifyOrder {
                 userRepo.deleteUser("0712345678")
                 messagesRepo.saveMessage(
@@ -319,8 +311,6 @@ class UserSelectViewModelTest {
                 assertEquals(deleteState, viewModel.state.value.deleteProfileState)
             }
         }
-
-    // Edit selected user
 
     @Test
     fun `GIVEN no selected user WHEN updating the selected user THEN nothing changes`() =
@@ -405,8 +395,6 @@ class UserSelectViewModelTest {
             assertEquals(listOf(planter), viewModel.state.value.users)
         }
 
-    // Save
-
     @Test
     fun `GIVEN an edited selected user WHEN saved THEN the edited user is written to the repo`() =
         runTest {
@@ -428,8 +416,6 @@ class UserSelectViewModelTest {
 
             coVerify(exactly = 0) { userRepo.updateUser(any()) }
         }
-
-    // Screen-handled actions
 
     @Test
     fun `WHEN navigation actions are sent THEN state is unchanged and no events are emitted`() =

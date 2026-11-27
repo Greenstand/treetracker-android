@@ -69,8 +69,6 @@ fun UserSelect(
             selectedColor = selectedColor,
             onUserClicked = { user -> viewModel.handleAction(UserSelectAction.SelectUser(user)) },
             onCreateUserClicked = {
-                // On small screens the add-user button sits where Dashboard's Track button was, so
-                // the second tap of a double tap on Track lands here (#1423). Drop it.
                 if (!doubleTapGuard.isSecondTapOfDoubleTap(navigator)) {
                     navigator.throttledNavigate(SignupFlowRoute)
                 }
@@ -90,10 +88,6 @@ fun UserSelect(
     }
 }
 
-/**
- * Stateless user grid shared by every "pick a planter" screen. [onNavigateForward] is only
- * called with the selected user, while one is selected.
- */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun UserSelectContent(

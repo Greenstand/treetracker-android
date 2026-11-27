@@ -34,10 +34,6 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-/**
- * Exercises the Retrofit definition of [MessagesApiService] against canned responses served by an
- * OkHttp interceptor, so no network is used.
- */
 class MessagesApiServiceTest {
     private val json =
         Json {

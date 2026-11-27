@@ -26,7 +26,6 @@ import org.greenstand.android.TreeTracker.uitest.ComposeUiTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Tests for the [IndividualMessageItem] card shown for each message in the inbox. */
 class IndividualMessageItemUiTest : ComposeUiTest() {
     private var clicks = 0
 

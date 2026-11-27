@@ -33,15 +33,6 @@ class CaptureSetupNavigationController(
 ) : FlowNavigationController(orgRepo.currentOrg().captureSetupFlow) {
     private var navForwardInProgress = false
 
-    /**
-     * Navigate forward in the setup flow. Suspend because completing setup
-     * requires starting a session (DB write) before navigating to capture.
-     *
-     * A repeat call from the same screen (e.g. a double tap on Next) is dropped: either
-     * while the first call is still running, or once its screen is no longer on top.
-     * Without this the second call would see the index already advanced and could
-     * start a session and open capture, skipping the next setup step.
-     */
     suspend fun navForward(navigator: Navigator) {
         if (navForwardInProgress || !navigator.canNavigate) return
         navForwardInProgress = true
@@ -53,13 +44,8 @@ class CaptureSetupNavigationController(
         }
     }
 
-    /**
-     * One step forward from [currentNavPathIndex]. Callers sync the index first; it isn't synced
-     * here because [navFromNewUserCreation] sets the index past signup before calling this.
-     */
     private suspend fun advance(navigator: Navigator) {
         if (isAtEnd) {
-            // Setup complete — start session and transition to capture flow
             stepCounter.enable()
             deviceOrientation.enable()
             sessionTracker.startSession()
@@ -71,9 +57,6 @@ class CaptureSetupNavigationController(
             withContext(Dispatchers.Main) {
                 navigator.throttledNavigate(TreeCaptureRoute(profilePicUrl = userPhotoPath))
             }
-            // The setup scope stays open: the setup screens are still on the back stack, and
-            // capture can pop back onto them (e.g. cancelling the camera rationale). The capture
-            // flow closes it when it leaves for the dashboard or user select.
         } else {
             incrementIndex()
             val destination = navPath[currentNavPathIndex]
@@ -86,14 +69,6 @@ class CaptureSetupNavigationController(
         }
     }
 
-    /**
-     * System back pops the stack through NavDisplay's onBack without calling [navBackward], so
-     * the step index can be ahead of the screen the user is on. Re-derive it from the topmost
-     * setup step on the back stack. Screens outside the setup flow (signup, add wallet) are
-     * skipped, so the step underneath them counts. If a route appears more than once in the
-     * flow, the occurrence at or before the current index wins, so a repeated step doesn't send
-     * the user back to its first occurrence.
-     */
     private fun syncIndexWithBackStack(navigator: Navigator) {
         for (key in navigator.backStack.asReversed()) {
             val matches = navPath.indices.filter { resolveNoArgDestination(navPath[it]) == key }
@@ -117,15 +92,10 @@ class CaptureSetupNavigationController(
         }
     }
 
-    /**
-     * Navigate forward after a new user was created from the signup flow.
-     * Includes bounds checking to prevent IndexOutOfBoundsException.
-     */
     suspend fun navFromNewUserCreation(navigator: Navigator) {
         syncIndexWithBackStack(navigator)
         incrementIndex()
         if (currentNavPathIndex >= navPath.size) {
-            // Signup was the last step — treat as setup complete
             currentNavPathIndex = navPath.size - 1
             advance(navigator)
             return

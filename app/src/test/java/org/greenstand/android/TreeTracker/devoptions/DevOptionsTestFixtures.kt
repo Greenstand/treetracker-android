@@ -20,11 +20,9 @@ import io.mockk.mockk
 import org.greenstand.android.TreeTracker.models.organization.OrgOverrideStore
 import org.greenstand.android.TreeTracker.models.organization.OrgRepo
 
-/** An [OrgRepo] with no current org, so dev options hides the org link overrides section. */
 internal fun orgRepoWithoutOrg(): OrgRepo =
     mockk {
         every { baseCurrentOrg() } throws IllegalStateException("OrgRepo not initialized")
     }
 
-/** An [OrgOverrideStore] for tests that don't look at org link overrides. */
 internal fun unusedOrgOverrideStore(): OrgOverrideStore = mockk(relaxed = true)

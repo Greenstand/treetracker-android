@@ -75,7 +75,6 @@ import org.greenstand.android.TreeTracker.view.UserImageButton
 import org.greenstand.android.TreeTracker.view.dialogs.CustomDialog
 import org.greenstand.android.TreeTracker.viewmodel.HandleUIEvents
 
-/** Test tag of the debug/beta button that creates fake trees. */
 internal const val CREATE_FAKE_TREES_BUTTON_TAG = "CreateFakeTreesButton"
 
 @ExperimentalPermissionsApi
@@ -146,10 +145,6 @@ fun TreeCaptureScreen(
     )
 }
 
-/**
- * Stateless tree capture UI. The camera preview is a slot ([cameraPreview]) so the screen
- * can be rendered without CameraX; it receives the modifier that sizes the preview.
- */
 @Composable
 fun TreeCapture(
     state: TreeCaptureState,

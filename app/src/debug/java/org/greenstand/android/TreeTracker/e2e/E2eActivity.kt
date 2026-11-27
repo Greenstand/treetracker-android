@@ -48,7 +48,6 @@ import org.koin.android.ext.android.get
 import timber.log.Timber
 import java.io.File
 
-/** Debug-only fixture and screen links for E2E tests. Renders the real app's Host and screens. */
 class E2eActivity : AppCompatActivity() {
     @OptIn(ExperimentalComposeApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +62,6 @@ class E2eActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 if (uri.host == "setup") {
-                    // API 35 has no app_function shell command. Reuse its underlying helpers.
                     withContext(Dispatchers.IO) {
                         AgentAccountCreator(get(), get())
                             .createAccount("Ada", "Admin", "5551230001", null)
@@ -121,7 +119,6 @@ class E2eActivity : AppCompatActivity() {
         } finally {
             CaptureSetupScopeManager.close()
         }
-        // TreeCaptureViewModelFactory opens the capture scope, as in normal navigation.
         return listOf(DashboardRoute, TreeCaptureRoute(user.photoPath))
     }
 

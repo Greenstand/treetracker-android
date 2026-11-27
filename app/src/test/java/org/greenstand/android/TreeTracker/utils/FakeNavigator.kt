@@ -18,7 +18,6 @@ package org.greenstand.android.TreeTracker.utils
 import androidx.navigation3.runtime.NavKey
 import org.greenstand.android.TreeTracker.navigation.Navigator
 
-/** Manually advanced clock for deterministic navigation throttle tests. */
 class FakeClock(
     var now: Long = 0L,
 ) {
@@ -27,11 +26,6 @@ class FakeClock(
     }
 }
 
-/**
- * A [Navigator] over a plain in-memory back stack with a controllable clock.
- * Lets ViewModel tests execute a captured `NavigationEvent` lambda and assert
- * the resulting back stack, e.g. `event.navigate(navigator)`.
- */
 fun fakeNavigator(
     vararg initialStack: NavKey,
     clock: FakeClock = FakeClock(),

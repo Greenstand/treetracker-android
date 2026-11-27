@@ -58,21 +58,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-/**
- * Next on the org-configured setup steps (wallet select, add wallet, session note) must drop the
- * second tap of a double tap that opened the screen, like user select and Add org do (#1423).
- *
- * Every setup screen's Next is the bottom bar's right arrow, so the second tap of a double tap on
- * the previous screen's Next lands on it. That tap is a first tap from a new screen on top, so
- * neither the origin throttle nor `CaptureSetupNavigationController.navForward`'s same-screen guard
- * stops it, and setup moves on a second step: the step is skipped, or capture opens.
- *
- * Each test renders the screen behind a navigator whose last navigation was [millisSinceOpened]
- * ago and counts how often Next reached `navForward`. No press is recorded on the navigator, so
- * the guard judges by the time since the navigation. How the guard judges a press itself (and that
- * each check uses up the press) is covered by `DoubleTapGuardTest`; these tests check that each
- * screen's Next and keyboard Go go through the guard.
- */
 class SetupNextDoubleTapUiTest : ComposeUiTest() {
     private val userRepo = mockk<UserRepo>(relaxed = true)
     private val captureSetupData = mockk<CaptureSetupData>(relaxed = true)
@@ -97,10 +82,6 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
         unmockkObject(CaptureSetupScopeManager)
     }
 
-    /**
-     * Shows [screen] as if the previous setup screen's Next pushed [route] [millisSinceOpened] ago:
-     * the navigator's clock stands still at that distance from its last navigation.
-     */
     private fun open(
         route: NavKey,
         millisSinceOpened: Long,
@@ -132,8 +113,6 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     private fun assertTapAccepted(screenName: String) {
         assertEquals("Next on $screenName ignored a tap long after the screen opened", 1, navForwardCalls)
     }
-
-    // --- session note: Next is always enabled ---
 
     private fun openSessionNote(millisSinceOpened: Long) {
         val viewModel = SessionNoteViewModel(CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
@@ -168,8 +147,6 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
         assertTapAccepted("session note")
     }
 
-    // --- wallet select: Next is enabled once a wallet is picked ---
-
     private fun openWalletSelectAndPickWallet(millisSinceOpened: Long) {
         val viewModel = WalletSelectViewModel(userRepo, CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
         open(WalletSelectRoute, millisSinceOpened) { WalletSelectScreen(viewModel = viewModel) }
@@ -194,8 +171,6 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
 
         assertTapAccepted("wallet select")
     }
-
-    // --- add wallet: Next is enabled once a wallet name is typed ---
 
     private fun openAddWalletAndTypeName(millisSinceOpened: Long) {
         val viewModel = AddWalletViewModel(CaptureSetupRestorer(mockk(relaxed = true), mockk(relaxed = true)))
@@ -235,7 +210,6 @@ class SetupNextDoubleTapUiTest : ComposeUiTest() {
     private companion object {
         const val OPENED_AT_MS = 1_000_000L
 
-        /** Far past any double-tap timeout, and past any gap between the test's and the press's clocks. */
         const val LONG_AFTER_MS = 1_000_000L
     }
 }

@@ -65,7 +65,7 @@ class AnnouncementViewModel(
     override fun handleAction(action: AnnouncementAction) {
         when (action) {
             is AnnouncementAction.NavigateBack -> popBackStack()
-            is AnnouncementAction.OpenLink -> { /* handled by the screen via Intent */ }
+            is AnnouncementAction.OpenLink -> { }
         }
     }
 }

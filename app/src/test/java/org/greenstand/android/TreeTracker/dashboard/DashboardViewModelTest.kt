@@ -130,7 +130,6 @@ class DashboardViewModelTest {
     @Test
     fun `updateData should update the state with correct values querying totalTreesToSync`() =
         runTest {
-            // updateData() runs on Dispatchers.IO, so wait for state to be populated
             testSubject.state.first { it.totalTreesToSync != 0 }
             assertEquals(6, testSubject.state.value.totalTreesToSync)
         }
@@ -168,7 +167,6 @@ class DashboardViewModelTest {
             assertEquals(6, vm.state.value.treesRemainingToSync)
             assertEquals(8, vm.state.value.treesSynced)
 
-            // Simulate a tree being uploaded (one fewer non-uploaded)
             nonUploadedFlow.value = 3
             vm.state.first { it.treesRemainingToSync == 5 }
             assertEquals(5, vm.state.value.treesRemainingToSync)

@@ -28,10 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.greenstand.android.TreeTracker.R
 
-/** Test tag of an [ArrowButton] with `isLeft = true`. */
 const val ARROW_BACK_BUTTON_TAG = "ArrowBackButton"
 
-/** Test tag of an [ArrowButton] with `isLeft = false`. */
 const val ARROW_FORWARD_BUTTON_TAG = "ArrowForwardButton"
 
 @Composable

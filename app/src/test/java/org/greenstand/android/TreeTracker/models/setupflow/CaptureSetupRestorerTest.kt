@@ -131,9 +131,6 @@ class CaptureSetupRestorerTest {
             verify { CaptureSetupScopeManager.close() }
         }
 
-    // --- The user leaves a restored step (system back) while its user still reloads ---
-
-    /** Starts a restored [CaptureSetupRestorer.loadUser] that waits on [reload], and returns its outcome. */
     private fun TestScope.restoreWaitingOn(reload: CompletableDeferred<User?>): Deferred<Result<User?>> {
         coEvery { userRepo.getUser(any()) } coAnswers { reload.await() }
         val loading = async { runCatching { restorer.loadUser(restored = true) } }
@@ -146,7 +143,6 @@ class CaptureSetupRestorerTest {
         runTest {
             val reload = CompletableDeferred<User?>()
             val loading = restoreWaitingOn(reload)
-            // The step underneath (e.g. user select) opened a new setup scope.
             val newData = mockk<CaptureSetupData>(relaxed = true)
             every { CaptureSetupScopeManager.getData() } returns newData
 
@@ -166,7 +162,6 @@ class CaptureSetupRestorerTest {
         runTest {
             val reload = CompletableDeferred<User?>()
             val loading = restoreWaitingOn(reload)
-            // The step underneath (e.g. Add org without a user) closed the setup scope.
             every { CaptureSetupScopeManager.getData() } throws
                 IllegalStateException("CaptureSetupScope not open. Call open() before getData().")
 

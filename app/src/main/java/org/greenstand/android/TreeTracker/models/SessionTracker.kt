@@ -66,11 +66,6 @@ class SessionTracker(
         }
     }
 
-    /**
-     * Saves a new session for [userId] without making it the current one, so a capture flow in
-     * progress is unaffected. [organizationName] falls back to the current org when null. End it
-     * with [closeSession].
-     */
     suspend fun createSession(
         userId: Long,
         organizationName: String?,
@@ -92,7 +87,6 @@ class SessionTracker(
             ).also { it.id = dao.insertSession(it) }
         }
 
-    /** Sets the end time of session [sessionId], leaving the current session alone. */
     suspend fun closeSession(sessionId: Long) {
         val session = dao.getSessionById(sessionId)
         session.endTime = timeProvider.currentTime()
@@ -117,10 +111,6 @@ class SessionTracker(
         exceptionDataCollector.set(ExceptionDataCollector.IS_IN_SESSION, false)
     }
 
-    /**
-     * Makes the session that was in progress when Android killed the app current again, so the
-     * restored capture flow keeps adding trees to it. Returns false when no session was running.
-     */
     fun resumeInterruptedSession(): Boolean {
         if (_currentSessionId != null) return true
         val sessionId = preferences.getLong(SESSION_ID_KEY)
@@ -135,8 +125,6 @@ class SessionTracker(
             preferences.getLong(SESSION_ID_KEY) != -1L
 
     companion object {
-        // Session key is used to keep track of session ID after app is killed. If the app is killed
-        // while a session is in progress, this lets the system know
         val SESSION_ID_KEY = PrefKeys.SYSTEM_SETTINGS + PrefKey("session-active")
     }
 }

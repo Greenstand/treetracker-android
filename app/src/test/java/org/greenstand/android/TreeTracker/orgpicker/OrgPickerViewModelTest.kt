@@ -67,13 +67,10 @@ class OrgPickerViewModelTest {
     fun `set fake organization, returns success with valid Org`() =
         runTest {
             val currentOrg = FakeFileGenerator.fakeOrganizationList.first()
-            // Given
             coEvery { orgRepo.currentOrg() } returns currentOrg
 
-            // When
             orgPickerViewModel.handleAction(OrgPickerAction.SetOrg(FakeFileGenerator.fakeOrganizationList.first()))
 
-            // Assert state has correct data
             val result = orgPickerViewModel.state.value.currentOrg
             Assert.assertEquals(result, FakeFileGenerator.fakeOrganizationList.first())
         }

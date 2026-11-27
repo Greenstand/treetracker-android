@@ -22,6 +22,7 @@ This is the primary documentation system for the repository.
 
 ## Engineering
 
+- [Code Conventions](engineering/code-conventions.md)
 - [Architecture](engineering/architecture.md)
 - [Package Structure](engineering/package-structure.md)
 - [Navigation Flows](engineering/navigation-flows.md)

@@ -138,15 +138,12 @@ class UserRepo(
     suspend fun updateUser(user: User) {
         val userEntity = dao.getUserById(user.id) ?: return
         val photoChanged = user.photoPath != userEntity.photoPath
-        // Phone and email stay as registered: the upload service rejects a wallet registration
-        // whose email has no "@", which writing the wallet into both fields caused.
         val updated =
             userEntity
                 .copy(
                     firstName = user.firstName,
                     lastName = user.lastName ?: "",
                     photoPath = user.photoPath,
-                    // A new photo needs uploading before the registration is sent again.
                     photoUrl = if (photoChanged) null else userEntity.photoUrl,
                     uploaded = false,
                 ).also { it.id = user.id }

@@ -54,7 +54,6 @@ import org.greenstand.android.TreeTracker.view.AppButtonColors
 import org.greenstand.android.TreeTracker.view.ArrowButton
 import org.greenstand.android.TreeTracker.view.TreeTrackerButton
 
-/** Test tag of the colour button at [index] in [TreeHeightSelectionState.colors]. */
 internal fun treeHeightColorTag(index: Int): String = "TreeHeightColor$index"
 
 @Composable
