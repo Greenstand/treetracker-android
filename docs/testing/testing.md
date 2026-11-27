@@ -16,6 +16,17 @@ Run a single test class:
 ./gradlew test --tests "org.greenstand.android.TreeTracker.capture.TreeCaptureViewModelTest"
 ```
 
+## Integration Tests
+
+Robolectric tests in `app/src/test/.../integration/` run real app classes (uploaders, use cases)
+against an in-memory Room database, built by `database/InMemoryDatabaseTest`, and fake only the
+network edge (`ObjectStorageClient`). Use them to check what an upload sends and which rows it
+leaves pending, uploaded or deleted, including after a failure:
+
+```bash
+./gradlew testDebugUnitTest --tests "org.greenstand.android.TreeTracker.integration.*"
+```
+
 ## Compose UI Tests
 
 Robolectric Compose UI tests live in `app/src/test/.../uitest/<feature>/` and extend
