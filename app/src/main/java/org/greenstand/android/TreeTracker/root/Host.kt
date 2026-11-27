@@ -78,6 +78,7 @@ import org.greenstand.android.TreeTracker.navigation.TreeImageReviewRoute
 import org.greenstand.android.TreeTracker.navigation.TreeListRoute
 import org.greenstand.android.TreeTracker.navigation.UserSelectRoute
 import org.greenstand.android.TreeTracker.navigation.WalletSelectRoute
+import org.greenstand.android.TreeTracker.navigation.recordPressesFor
 import org.greenstand.android.TreeTracker.navigation.rememberScreenTrackingNavEntryDecorator
 import org.greenstand.android.TreeTracker.orgpicker.AddOrgScreen
 import org.greenstand.android.TreeTracker.orgpicker.OrgPickerScreen
@@ -115,7 +116,7 @@ fun Host(
     val navigator = remember(backStack) { Navigator(backStack) }
     TreeTrackerTheme {
         CompositionLocalProvider(LocalNavigator provides navigator) {
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier.fillMaxSize().recordPressesFor(navigator)) {
                 NavDisplay(
                     backStack = backStack,
                     onBack = { navigator.popBackStack() },

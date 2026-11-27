@@ -107,6 +107,10 @@ class Navigator private constructor(
     /** When the stack last changed, shared by this navigator and every [scopedTo] view of it. */
     private class LastNavigation {
         var at: Long? = null
+
+        var lastPressUptime: Long? = null
+
+        var pressBeforeNavigation: Long? = null
     }
 
     // Start outside the throttle window so the first navigation is never dropped.
@@ -130,6 +134,16 @@ class Navigator private constructor(
      */
     val millisSinceLastNavigation: Long
         get() = lastNavigation.at?.let { clock() - it } ?: Long.MAX_VALUE
+
+    fun recordPress(uptimeMs: Long) {
+        lastNavigation.lastPressUptime = uptimeMs
+    }
+
+    val pressBeforeLastNavigation: Long?
+        get() = lastNavigation.pressBeforeNavigation
+
+    val recordsPresses: Boolean
+        get() = lastNavigation.lastPressUptime != null
 
     /** Push [route], honoring [NavOptions] (popUpTo / popUpToRoot / launchSingleTop). */
     fun navigate(
@@ -227,6 +241,7 @@ class Navigator private constructor(
         Snapshot.withMutableSnapshot(block)
         lastMutationTime = clock()
         lastNavigation.at = lastMutationTime
+        lastNavigation.pressBeforeNavigation = lastNavigation.lastPressUptime
     }
 
     private companion object {

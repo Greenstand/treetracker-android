@@ -19,6 +19,7 @@ import android.os.SystemClock
 import android.view.ViewConfiguration
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -58,14 +59,28 @@ class DoubleTapGuard(
      * Go) is judged as happening now rather than by an older tap on the screen.
      */
     fun isSecondTapOfDoubleTap(navigator: Navigator): Boolean {
-        val millisSincePress = lastPressUptimeMs?.let { uptimeMillis() - it } ?: 0L
+        val pressUptimeMs = lastPressUptimeMs
         lastPressUptimeMs = null
+        val tapBeforeNavigation = navigator.pressBeforeLastNavigation
+        if (tapBeforeNavigation != null) {
+            return (pressUptimeMs ?: uptimeMillis()) - tapBeforeNavigation < doubleTapTimeoutMs()
+        }
+        if (navigator.recordsPresses) return false
+        val millisSincePress = pressUptimeMs?.let { uptimeMillis() - it } ?: 0L
         return isSecondTapOfDoubleTap(navigator.millisSinceLastNavigation, millisSincePress, doubleTapTimeoutMs())
     }
 }
 
 @Composable
 fun rememberDoubleTapGuard(): DoubleTapGuard = remember { DoubleTapGuard() }
+
+fun Modifier.recordPressesFor(navigator: Navigator): Modifier =
+    pointerInput(navigator) {
+        awaitEachGesture {
+            navigator.recordPress(awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial).uptimeMillis)
+            waitForUpOrCancellation(pass = PointerEventPass.Initial)?.let { navigator.recordPress(it.uptimeMillis) }
+        }
+    }
 
 /**
  * Whether a press that went down [millisSincePress] ago, on a screen whose navigator last changed
