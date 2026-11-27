@@ -118,6 +118,8 @@ if [[ $ONLINE != 1 ]]; then
   "$ADB" -s "$SERIAL" shell svc wifi disable
 fi
 "$ADB" -s "$SERIAL" emu geo fix 37.3 -3.5 >/dev/null || true
+# The first tb session after boot can run without its accessibility service (warm-up-tb.sh).
+TB="$TB" ADB="$ADB" bash e2e/warm-up-tb.sh -s "$SERIAL" > "$OUT/tb-warm-up.txt" 2>&1 || true
 
 # CI's emulator drops its adb connection on one or two of the first `adb pull`s after it boots,
 # and then no more (docs/testing/ci-flows.md, "Lost recordings"). tb pulls its recording once and

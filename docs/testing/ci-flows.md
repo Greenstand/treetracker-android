@@ -14,6 +14,7 @@ writing a one-off CI script per PR.
 | `e2e/ci/cut_flow.py` | Copies a flow cut after its first N steps (`name@N` selectors). |
 | `.github/workflows/flow-runner-pr.yml` | Starts it on a PR from the `run-flows` label or a `/run-flows` comment, and keeps one summary comment on the PR up to date. |
 | `e2e/ci/run-flows.sh` | Runs the flows on an emulator (CI's or yours) and writes the results folder. |
+| `e2e/warm-up-tb.sh` | One short tb session on a fresh emulator before the flows, so tb's accessibility service is on for them (see `e2e/README.md`). |
 | `e2e/ci/step_shots.py` | Copies a flow with a `takeScreenshot` after each step. |
 | `e2e/ci/summarize.py` | Writes `summary.json` and `summary.md`. |
 | `e2e/ci/cloud-flows.sh` | For the session: start a run, wait for it, fetch the results. |

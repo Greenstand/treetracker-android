@@ -46,6 +46,17 @@ ANDROID_SERIAL=emulator-5584 ./gradlew :app:installDebug
 TB=tb bash e2e/run.sh -s emulator-5584
 ```
 
+`run.sh` (and `ci/run-flows.sh`) first call `warm-up-tb.sh`. On an emulator that does not have
+Test Buddy's helper app yet (a freshly booted CI emulator), tb installs the helper at the start
+of its first session and enables the helper's accessibility service straight away; the system
+can drop that setting while it is still registering the package, and tb then runs the whole
+session without the service: every tap waits a full second, typed text is not verified and keys
+get lost or doubled. The warm-up is one short tb session (`first-screen`), after which the
+helper is installed and the setting stays. It does nothing when the helper is already there.
+A run that is in this state logs `the focused field is unavailable through the device focus
+API` on its `inputText` steps and `nothing changed (… waited 1000 ms)` on most taps
+(`log.txt`); see `docs/tasks/task_118`.
+
 JUnit reports and failure artifacts are written to `build/e2e/` (`OUT` overrides
 the destination). CI uses the same runner on API 35 with emulated cameras.
 
@@ -103,6 +114,21 @@ root sets `Modifier.exposeTestTags()` so the tags become resource ids. Use them 
 (`LanguageOption_ENGLISH`, `TreeButton_0`) and dialog buttons have their own names
 (`DialogPositiveButton`). When you add a screen or a dialog window, tag its controls in
 `TestTags` and check them with `tb look`.
+
+## Typing
+
+Tap the field by id, type, then assert the text is in the field before acting on it:
+
+```yaml
+- tapOn: {id: ProfileFirstName}
+- eraseText
+- inputText: Grace
+- assertVisible: {id: ProfileFirstName, text: "Grace"}
+```
+
+`inputText` can pass without the text having reached the field (tb then logs `typed: nothing
+changed`). With the assertion a lost or doubled key fails at the typing step, with the field's
+real content in the error, not several screens later where the text is read back.
 
 ## Screen tour
 

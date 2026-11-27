@@ -32,6 +32,8 @@ trap cleanup EXIT
 # a user, and with CI's dummy keys the upload fails outside its try/catch (bug 2 in the plan).
 "$ADB" -s "$SERIAL" shell cmd connectivity airplane-mode enable
 "$ADB" -s "$SERIAL" shell svc wifi disable
+# tb's first session after boot can run without its accessibility service: see warm-up-tb.sh.
+TB="$TB" ADB="$ADB" bash e2e/warm-up-tb.sh -s "$SERIAL"
 # known-bug flows assert the fixed behaviour and fail until their bug is fixed; run them with
 # `tb test e2e/flows/ --include-tags known-bug`. org-config flows need a seeded org (run-org.sh).
 "$TB" test e2e/flows/ -p android --device "$SERIAL" --exclude-tags dev-tools,org-config,known-bug \

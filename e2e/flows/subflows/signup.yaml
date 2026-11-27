@@ -24,8 +24,10 @@ name: Sign up
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: FirstNameField}
 - inputText: ${FIRST_NAME}
+- assertVisible: {id: FirstNameField, text: "${FIRST_NAME}"}
 - tapOn: {id: LastNameField}
 - inputText: ${LAST_NAME}
+- assertVisible: {id: LastNameField, text: "${LAST_NAME}"}
 - hideKeyboard
 - tapOn: {id: ArrowForwardButton}
 - tapOn: {id: TutorialDoneButton}
