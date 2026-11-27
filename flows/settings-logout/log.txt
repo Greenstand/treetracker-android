@@ -1,0 +1,276 @@
+   0.000s tb 0.6.3: "E6 Logout" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-settings-logout.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.000s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-settings-logout.yaml:7)
+   1.888s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1888 ms
+   1.888s ▶ Take screenshot step-01-launchApp  (.ci-settings-logout.yaml:8)
+   2.178s ✓ Take screenshot step-01-launchApp  289 ms
+   2.178s ▶ Run Sign up  (.ci-settings-logout.yaml:9)
+   2.178s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   2.425s     snapshot history: screen context changed; discarding 1 snapshots
+   3.872s     snapshot history: screen context changed; discarding 1 snapshots
+   3.873s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 1694 ms and 3 reads
+   3.873s   ✓ Wait until id: LanguageOption_ENGLISH is visible  1694 ms
+   3.873s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   3.890s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.053s     waited 163 ms for a still screen
+   4.086s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   4.218s     tap at (160, 264): the screen changed (sent in 23 ms, waited 61 ms)
+   4.218s   ✓ Tap on id: LanguageOption_ENGLISH  345 ms
+   4.218s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   4.360s     waited 141 ms for the last action's change to settle
+   4.389s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   4.449s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   4.530s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   4.780s     tap at (264, 572): the screen changed (sent in 42 ms, waited 192 ms)
+   4.780s   ✓ Tap on id: ArrowForwardButton  561 ms
+   4.780s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   4.938s     waited 157 ms for the last action's change to settle
+   5.258s     snapshot history: screen context changed; discarding 2 snapshots
+   5.258s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   5.380s     waited 122 ms for a still screen
+   5.399s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   5.509s     tap at (160, 571): the screen changed (sent in 9 ms, waited 58 ms)
+   5.510s   ✓ Tap on id: PrivacyPolicyCloseButton  729 ms
+   5.510s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+   5.689s     waited 179 ms for the last action's change to settle
+   5.689s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+   5.689s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  179 ms
+   5.689s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+   5.689s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+   5.702s       snapshot history: screen context changed; discarding 1 snapshots
+   5.702s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   5.753s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   6.765s       tap at (88, 244): nothing changed (sent in 5 ms, waited 1003 ms)
+   6.765s     ✓ Tap on id: PhoneCredentialButton  1075 ms
+   6.765s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+   6.776s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   6.828s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   6.979s       tap at (160, 313): the screen changed (sent in 29 ms, waited 117 ms)
+   6.979s     ✓ Tap on id: PhoneField  214 ms
+   6.979s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  1289 ms
+   6.979s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+   7.151s     waited 172 ms for the last action's change to settle
+   7.151s     typing 10 characters
+   8.270s     typed with device verification: the screen changed (sent in 946 ms, waited 137 ms)
+   8.270s   ✓ Input text 5551230001  1291 ms
+   8.270s   ▶ Hide keyboard  (signup.yaml:23)
+   8.386s     snapshot history: screen context changed; discarding 1 snapshots
+   8.386s   ✓ Hide keyboard  115 ms
+   8.386s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+   8.386s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.493s     waited 107 ms for a still screen
+   8.546s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   8.676s     tap at (264, 572): the screen changed (sent in 9 ms, waited 76 ms)
+   8.676s   ✓ Tap on id: ArrowForwardButton  290 ms
+   8.676s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+   8.951s     waited 274 ms for the last action's change to settle
+   8.960s     snapshot history: screen context changed; discarding 1 snapshots
+   8.960s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+   9.010s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+   9.060s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+   9.145s     tap at (160, 227): the screen changed (sent in 10 ms, waited 30 ms)
+   9.145s   ✓ Tap on id: FirstNameField  468 ms
+   9.145s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+   9.350s     waited 204 ms for the last action's change to settle
+   9.350s     typing 3 characters
+   9.673s     typed with device verification: the screen changed (sent in 319 ms, waited 1 ms)
+   9.673s   ✓ Input text Ada  528 ms
+   9.673s   ▶ Assert that "${FIRST_NAME}", id: FirstNameField is visible  (signup.yaml:27)
+   9.759s     snapshot history: screen context changed; discarding 1 snapshots
+   9.759s     found "Ada", id: FirstNameField: EditText "Ada" #FirstNameField [12,199][308,255]
+   9.759s   ✓ Assert that "Ada", id: FirstNameField is visible  86 ms
+   9.759s   ▶ Tap on id: LastNameField  (signup.yaml:28)
+   9.803s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+   9.862s     waited 59 ms for a still screen
+   9.939s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  10.027s     tap at (160, 315): the screen changed (sent in 14 ms, waited 65 ms)
+  10.027s   ✓ Tap on id: LastNameField  268 ms
+  10.027s   ▶ Input text ${LAST_NAME}  (signup.yaml:29)
+  10.172s     waited 145 ms for the last action's change to settle
+  10.252s     typing 5 characters
+  10.522s     typed with device verification: the screen changed (sent in 98 ms, waited 169 ms)
+  10.522s   ✓ Input text Admin  494 ms
+  10.522s   ▶ Assert that "${LAST_NAME}", id: LastNameField is visible  (signup.yaml:30)
+  10.571s     snapshot history: screen context changed; discarding 2 snapshots
+  10.571s     found "Admin", id: LastNameField: EditText "Admin" #LastNameField [12,287][308,343]
+  10.572s   ✓ Assert that "Admin", id: LastNameField is visible  49 ms
+  10.572s   ▶ Hide keyboard  (signup.yaml:31)
+  10.678s     snapshot history: screen context changed; discarding 1 snapshots
+  10.678s   ✓ Hide keyboard  106 ms
+  10.678s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:32)
+  10.678s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.785s     waited 107 ms for a still screen
+  10.797s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.910s     tap at (264, 572): the screen changed (sent in 18 ms, waited 92 ms)
+  10.910s   ✓ Tap on id: ArrowForwardButton  232 ms
+  10.910s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:33)
+  11.038s     waited 127 ms for the last action's change to settle
+  11.269s     snapshot history: screen context changed; discarding 1 snapshots
+  12.710s     snapshot history: screen context changed; discarding 2 snapshots
+  12.711s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498], after 1672 ms and 3 reads
+  12.713s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  12.763s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  12.817s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  12.844s     tap at (160, 474): the screen changed (sent in 6 ms, waited 17 ms)
+  12.844s     the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+  12.844s   ✓ Tap on id: TutorialDoneButton  1933 ms
+  12.844s   ▶ Tap on id: CaptureButton  (signup.yaml:34)
+  13.004s     waited 160 ms for the last action's change to settle
+  13.020s     snapshot history: screen context changed; discarding 1 snapshots
+  13.020s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  13.083s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  13.147s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  13.726s     tap at (160, 572): the screen changed (sent in 19 ms, waited 452 ms, held 102 ms for its new window to take input)
+  13.726s   ✓ Tap on id: CaptureButton  882 ms
+  13.726s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:35)
+  13.795s     snapshot history: screen context changed; discarding 1 snapshots
+  13.795s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  13.795s   ✓ Wait until id: ApproveButton is visible  69 ms
+  13.795s   ▶ Tap on id: ApproveButton  (signup.yaml:38)
+  13.945s     waited 150 ms for the last action's change to settle
+  13.986s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  14.035s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  14.083s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  14.114s     tap at (202, 574): the screen changed (sent in 8 ms, waited 19 ms)
+  14.114s   ✓ Tap on id: ApproveButton  318 ms
+  14.114s   ▶ Wait until id: TrackButton is visible  (signup.yaml:39)
+  14.254s     snapshot history: screen context changed; discarding 1 snapshots
+  14.595s     snapshot history: screen context changed; discarding 1 snapshots
+  14.595s     found id: TrackButton: View #TrackButton [20,473][300,606], after 481 ms and 2 reads
+  14.595s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 30
+  14.595s   ✓ Wait until id: TrackButton is visible  481 ms
+  14.595s ✓ Run Sign up  12417 ms
+  14.595s ▶ Take screenshot step-02-runFlow-signup  (.ci-settings-logout.yaml:12)
+  14.682s   waited 86 ms for the last action's change to settle
+  14.701s ✓ Take screenshot step-02-runFlow-signup  105 ms
+  14.701s ▶ Tap on id: SettingsButton  (.ci-settings-logout.yaml:13)
+  14.709s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  14.761s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  14.884s   tap at (39, 68): the screen changed (sent in 5 ms, waited 111 ms)
+  14.884s ✓ Tap on id: SettingsButton  183 ms
+  14.884s ▶ Take screenshot step-03-tapOn-SettingsButton  (.ci-settings-logout.yaml:14)
+  15.152s   waited 268 ms for the last action's change to settle
+  15.167s ✓ Take screenshot step-03-tapOn-SettingsButton  283 ms
+  15.167s ▶ Tap on id: SettingsLogout  (.ci-settings-logout.yaml:15)
+  15.177s   snapshot history: screen context changed; discarding 1 snapshots
+  15.177s   found id: SettingsLogout: View #SettingsLogout [20,428][300,476]
+  15.226s   found id: SettingsLogout: View #SettingsLogout [20,428][300,476]
+  15.597s   tap at (160, 452): the screen changed (sent in 4 ms, waited 363 ms)
+  15.597s ✓ Tap on id: SettingsLogout  429 ms
+  15.597s ▶ Take screenshot step-04-tapOn-SettingsLogout  (.ci-settings-logout.yaml:16)
+  15.638s ✓ Take screenshot step-04-tapOn-SettingsLogout  41 ms
+  15.639s ▶ Assert that id: DialogUserButton is visible  (.ci-settings-logout.yaml:17)
+  15.770s   snapshot history: screen context changed; discarding 1 snapshots
+  15.771s   found id: DialogUserButton: View #DialogUserButton [82,206][238,476]
+  15.771s ✓ Assert that id: DialogUserButton is visible  132 ms
+  15.771s ▶ Tap on id: DialogNegativeButton  (.ci-settings-logout.yaml:18)
+  15.771s   found id: DialogNegativeButton: View #DialogNegativeButton [104,508][152,556]
+  15.922s   found id: DialogNegativeButton: View #DialogNegativeButton [104,508][152,556]
+  15.922s   it was moving: at rest after 150 ms at [104,508][152,556]
+  16.010s   tap at (128, 532): the screen changed (sent in 19 ms, waited 60 ms)
+  16.011s ✓ Tap on id: DialogNegativeButton  239 ms
+  16.011s ▶ Take screenshot step-06-tapOn-DialogNegativeButton  (.ci-settings-logout.yaml:19)
+  16.157s   waited 146 ms for the last action's change to settle
+  16.171s ✓ Take screenshot step-06-tapOn-DialogNegativeButton  160 ms
+  16.171s ▶ Assert that id: DialogTitle is not visible  (.ci-settings-logout.yaml:20)
+  16.179s   snapshot history: screen context changed; discarding 2 snapshots
+  16.179s   gone: id: DialogTitle (checked on a settled screen, 8 ms)
+  16.179s ✓ Assert that id: DialogTitle is not visible  8 ms
+  16.179s ▶ Assert that id: SettingsLogout is visible  (.ci-settings-logout.yaml:21)
+  16.227s   found id: SettingsLogout: View #SettingsLogout [20,428][300,476]
+  16.227s ✓ Assert that id: SettingsLogout is visible  47 ms
+  16.227s ▶ Tap on id: SettingsLogout  (.ci-settings-logout.yaml:22)
+  16.234s   found id: SettingsLogout: View #SettingsLogout [20,428][300,476]
+  16.306s   waited 71 ms for a still screen
+  16.355s   found id: SettingsLogout: View #SettingsLogout [20,428][300,476]
+  16.473s   tap at (160, 452): the screen changed (sent in 3 ms, waited 60 ms, held 47 ms for its new window to take input)
+  16.473s ✓ Tap on id: SettingsLogout  246 ms
+  16.473s ▶ Take screenshot step-09-tapOn-SettingsLogout  (.ci-settings-logout.yaml:23)
+  16.690s   waited 216 ms for the last action's change to settle
+  16.704s ✓ Take screenshot step-09-tapOn-SettingsLogout  230 ms
+  16.704s ▶ Tap on id: DialogPositiveButton  (.ci-settings-logout.yaml:24)
+  16.711s   snapshot history: screen context changed; discarding 1 snapshots
+  16.711s   found id: DialogPositiveButton: View #DialogPositiveButton [168,508][216,556]
+  16.758s   found id: DialogPositiveButton: View #DialogPositiveButton [168,508][216,556]
+  16.972s   tap at (192, 532): the screen changed (sent in 4 ms, waited 20 ms, held 145 ms for its new window to take input)
+  16.972s ✓ Tap on id: DialogPositiveButton  268 ms
+  16.972s ▶ Take screenshot step-10-tapOn-DialogPositiveButton  (.ci-settings-logout.yaml:25)
+  17.220s   waited 247 ms for the last action's change to settle
+  17.235s ✓ Take screenshot step-10-tapOn-DialogPositiveButton  262 ms
+  17.235s ▶ Tap on id: PrivacyPolicyCloseButton  (.ci-settings-logout.yaml:27)
+  17.244s   snapshot history: screen context changed; discarding 1 snapshots
+  17.244s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  17.294s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+  17.370s   tap at (160, 571): the screen changed (sent in 3 ms, waited 27 ms, held 42 ms for its new window to take input)
+  17.370s ✓ Tap on id: PrivacyPolicyCloseButton  134 ms
+  17.370s ▶ Take screenshot step-11-tapOn-PrivacyPolicyCloseButton  (.ci-settings-logout.yaml:28)
+  17.591s   waited 220 ms for the last action's change to settle
+  17.632s ✓ Take screenshot step-11-tapOn-PrivacyPolicyCloseButton  262 ms
+  17.632s ▶ Assert that id: PhoneField is visible  (.ci-settings-logout.yaml:29)
+  17.641s   snapshot history: screen context changed; discarding 1 snapshots
+  17.641s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  17.641s ✓ Assert that id: PhoneField is visible  8 ms
+  17.641s ▶ Assert that id: TrackButton is not visible  (.ci-settings-logout.yaml:30)
+  17.653s   gone: id: TrackButton (checked on a settled screen, 11 ms)
+  17.653s ✓ Assert that id: TrackButton is not visible  11 ms
+  17.653s ▶ Assert that id: SettingsButton is not visible  (.ci-settings-logout.yaml:31)
+  17.659s   gone: id: SettingsButton (checked on a settled screen, 6 ms)
+  17.659s ✓ Assert that id: SettingsButton is not visible  6 ms
+  17.659s ▶ Tap on id: PhoneField  (.ci-settings-logout.yaml:33)
+  17.659s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  17.709s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+  17.747s   tap at (160, 313): the screen changed (sent in 7 ms, waited 26 ms)
+  17.747s ✓ Tap on id: PhoneField  87 ms
+  17.747s ▶ Take screenshot step-15-tapOn-PhoneField  (.ci-settings-logout.yaml:34)
+  17.971s   waited 223 ms for the last action's change to settle
+  17.987s ✓ Take screenshot step-15-tapOn-PhoneField  240 ms
+  17.987s ▶ Input text 5551230001  (.ci-settings-logout.yaml:35)
+  17.987s   typing 10 characters
+  18.389s   typed with device verification: the screen changed (sent in 340 ms, waited 59 ms)
+  18.389s ✓ Input text 5551230001  402 ms
+  18.389s ▶ Take screenshot step-16-inputText-5551230001  (.ci-settings-logout.yaml:36)
+  18.404s ✓ Take screenshot step-16-inputText-5551230001  14 ms
+  18.404s ▶ Hide keyboard  (.ci-settings-logout.yaml:37)
+  18.515s   snapshot history: screen context changed; discarding 1 snapshots
+  18.515s ✓ Hide keyboard  111 ms
+  18.515s ▶ Take screenshot step-17-hideKeyboard  (.ci-settings-logout.yaml:38)
+  18.528s ✓ Take screenshot step-17-hideKeyboard  12 ms
+  18.528s ▶ Tap on id: ArrowForwardButton  (.ci-settings-logout.yaml:39)
+  18.528s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.625s   waited 97 ms for a still screen
+  18.675s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  18.702s   tap at (264, 572): the screen changed (sent in 5 ms, waited 20 ms)
+  18.702s ✓ Tap on id: ArrowForwardButton  174 ms
+  18.702s ▶ Take screenshot step-18-tapOn-ArrowForwardButton  (.ci-settings-logout.yaml:40)
+  18.972s   waited 269 ms for the last action's change to settle
+  18.987s ✓ Take screenshot step-18-tapOn-ArrowForwardButton  284 ms
+  18.987s ▶ Tap on id: ExistingUserButton  (.ci-settings-logout.yaml:41)
+  18.993s   snapshot history: screen context changed; discarding 1 snapshots
+  18.993s   found id: ExistingUserButton: View #ExistingUserButton [82,196][238,466]
+  19.042s   found id: ExistingUserButton: View #ExistingUserButton [82,196][238,466]
+  19.278s   tap at (160, 331): the screen changed (sent in 6 ms, waited 77 ms, held 142 ms for its new window to take input)
+  19.278s ✓ Tap on id: ExistingUserButton  290 ms
+  19.278s ▶ Take screenshot step-19-tapOn-ExistingUserButton  (.ci-settings-logout.yaml:42)
+  19.485s   waited 206 ms for the last action's change to settle
+  19.498s ✓ Take screenshot step-19-tapOn-ExistingUserButton  220 ms
+  19.498s ▶ Wait until id: TrackButton is visible  (.ci-settings-logout.yaml:43)
+  19.506s   snapshot history: screen context changed; discarding 1 snapshots
+  19.507s   found id: TrackButton: View #TrackButton [20,473][300,606]
+  19.507s ✓ Wait until id: TrackButton is visible  8 ms
+  19.507s ▶ Take screenshot step-20-extendedWaitUntil-TrackButton  (.ci-settings-logout.yaml:46)
+  19.520s ✓ Take screenshot step-20-extendedWaitUntil-TrackButton  13 ms
+  19.520s ▶ Press back  (.ci-settings-logout.yaml:48)
+  19.551s   the screen changed (sent in 3 ms, waited 24 ms)
+  19.551s ✓ Press back  31 ms
+  19.551s ▶ Take screenshot step-21-back  (.ci-settings-logout.yaml:49)
+  19.748s   waited 196 ms for the last action's change to settle
+  19.890s ✓ Take screenshot step-21-back  338 ms
+  19.890s ▶ Assert that id: TrackButton is not visible  (.ci-settings-logout.yaml:50)
+  19.898s   gone: id: TrackButton (checked on a settled screen, 8 ms)
+  19.898s ✓ Assert that id: TrackButton is not visible  8 ms
+  19.898s ▶ Assert that id: ExistingUserButton is not visible  (.ci-settings-logout.yaml:51)
+  19.904s   gone: id: ExistingUserButton (checked on a settled screen, 5 ms)
+  19.904s ✓ Assert that id: ExistingUserButton is not visible  6 ms
+  19.904s ▶ Take screenshot step-23-end-assertNotVisible-ExistingUserButton  (.ci-settings-logout.yaml:52)
+  19.996s ✓ Take screenshot step-23-end-assertNotVisible-ExistingUserButton  91 ms
+  19.996s PASSED in 19.996s
