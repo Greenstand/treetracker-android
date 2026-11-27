@@ -1,4 +1,4 @@
-# Task 118 - No comments in Kotlin files: the rule, its enforcement, and the removal
+# Task 122 - No comments in Kotlin files: the rule, its enforcement, and the removal
 
 ## Problem
 
@@ -93,9 +93,9 @@ multi-line comment could otherwise join two lines unnoticed.
 At the removal commit, against the commit before it:
 
 ```
-$ docs/tasks/task_118/tools/kotlin-comments.sh verify HEAD~1
+$ docs/tasks/task_122/tools/kotlin-comments.sh verify HEAD~1
 verified 510 files, 400536 significant tokens, 0 failures
-$ docs/tasks/task_118/tools/kotlin-comments.sh check --keep-headers
+$ docs/tasks/task_122/tools/kotlin-comments.sh check --keep-headers
 0 comments in 510 files
 ```
 
@@ -155,9 +155,9 @@ not resolve those by hand:
   and rule commits, drop the two removal commits, then
 
   ```bash
-  docs/tasks/task_118/tools/kotlin-comments.sh strip --keep-headers
+  docs/tasks/task_122/tools/kotlin-comments.sh strip --keep-headers
   ./gradlew ktlintFormat
-  docs/tasks/task_118/tools/kotlin-comments.sh verify origin/master
+  docs/tasks/task_122/tools/kotlin-comments.sh verify origin/master
   ./gradlew ktlintCheck detekt
   ```
 
@@ -166,10 +166,10 @@ not resolve those by hand:
 - **A PR that is still open after this one merges.** On the PR's branch, before merging master:
 
   ```bash
-  git checkout origin/master -- docs/tasks/task_118/tools
-  docs/tasks/task_118/tools/kotlin-comments.sh strip --keep-headers
+  git checkout origin/master -- docs/tasks/task_122/tools
+  docs/tasks/task_122/tools/kotlin-comments.sh strip --keep-headers
   ./gradlew ktlintFormat
-  git commit -am "Remove comments (task 118 tool)"
+  git commit -am "Remove comments (task 122 tool)"
   git merge origin/master
   ```
 
@@ -186,12 +186,13 @@ moved files by itself, and the detekt source line has to move into the conventio
 ## Merge of master on 27 Nov
 
 Master gained #1470 (two integration test files and one UI test), whose notes took
-`docs/tasks/task_117`, so this task moved to `task_118`. The merge was redone with the tool, as
+`docs/tasks/task_117`, so this task moved to `task_122` (118 to 121 and 123 are used by open
+PRs). The merge was redone with the tool, as
 described above: `strip --keep-headers` removed the 9 comments the new files brought (3 KDoc, 6
 region markers), `ktlintFormat`, then
 
 ```
-$ docs/tasks/task_118/tools/kotlin-comments.sh verify origin/master
+$ docs/tasks/task_122/tools/kotlin-comments.sh verify origin/master
 verified 513 files, 404918 significant tokens, 4 failures
 ```
 
