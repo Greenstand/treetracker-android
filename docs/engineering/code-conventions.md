@@ -56,5 +56,5 @@ The rule covers Kotlin. YAML flows, XML, shell and Python scripts, Gradle files 
 their comments, and some need them: an end-to-end flow starts with a header comment that says
 what it guards.
 
-[Task 117](../tasks/task_117/README.md) has the tool that removed the existing comments, the
+[Task 118](../tasks/task_118/README.md) has the tool that removed the existing comments, the
 proof that nothing else changed, and how to run it again.
