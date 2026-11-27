@@ -1,4 +1,4 @@
-# Task 118 - The media check passes without anyone re-saving the PR description
+# Task 123 - The media check passes without anyone re-saving the PR description
 
 ## Problem
 
