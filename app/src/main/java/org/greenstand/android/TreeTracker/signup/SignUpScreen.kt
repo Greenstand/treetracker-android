@@ -54,6 +54,9 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
                 viewModel.createUser(photoPath)?.let { user ->
                     if (user.isPowerUser) {
                         navigateToDashboardAfterSignup(navigator)
+                    } else if (viewModel.state.value.isLoggedOut) {
+                        viewModel.handleAction(SignupAction.LogBackIn)
+                        navigateToDashboardAfterSignup(navigator)
                     } else {
                         CaptureSetupScopeManager.getData().user = user
                         scope.launch { CaptureSetupScopeManager.nav.navFromNewUserCreation(navigator) }
@@ -72,6 +75,9 @@ fun SignUpScreen(viewModel: SignupViewModel = viewModel(factory = LocalViewModel
                     val user = action.user
                     if (state.isTherePowerUser == false) {
                         viewModel.handleAction(SignupAction.SetExistingUserAsPowerUser(user.id))
+                        navigateToDashboardAfterSignup(navigator)
+                    } else if (state.isLoggedOut) {
+                        viewModel.handleAction(SignupAction.LogBackIn)
                         navigateToDashboardAfterSignup(navigator)
                     } else {
                         CaptureSetupScopeManager.getData().user = user

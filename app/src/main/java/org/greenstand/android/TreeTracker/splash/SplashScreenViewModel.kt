@@ -114,6 +114,8 @@ class SplashScreenViewModel(
 
     suspend fun isInitialSetupRequired(): Boolean = userRepo.getPowerUser() == null
 
+    fun isLoggedOut(): Boolean = userRepo.isLoggedOut()
+
     companion object {
         private const val ORG_LINK_TAG = "OrgLink"
     }

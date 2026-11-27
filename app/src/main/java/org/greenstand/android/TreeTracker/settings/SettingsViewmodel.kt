@@ -74,12 +74,8 @@ class SettingsViewModel(
                 updateState { copy(showPrivacyPolicyDialog = action.show) }
             }
             is SettingsAction.Logout -> {
-                viewModelScope.launch {
-                    currentState.powerUser?.let {
-                        userRepo.setPowerUserStatus(it.id, false)
-                    }
-                    handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
-                }
+                userRepo.setLoggedOut(true)
+                handleAction(SettingsAction.UpdateLogoutDialogVisibility(false))
             }
             is SettingsAction.UpdateLogoutDialogVisibility -> {
                 updateState { copy(showLogoutDialog = action.show) }

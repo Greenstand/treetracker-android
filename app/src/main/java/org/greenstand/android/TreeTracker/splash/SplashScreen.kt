@@ -41,6 +41,7 @@ import org.greenstand.android.TreeTracker.BuildConfig
 import org.greenstand.android.TreeTracker.R
 import org.greenstand.android.TreeTracker.navigation.DashboardRoute
 import org.greenstand.android.TreeTracker.navigation.LanguageRoute
+import org.greenstand.android.TreeTracker.navigation.SignupFlowRoute
 import org.greenstand.android.TreeTracker.navigation.SplashRoute
 import org.greenstand.android.TreeTracker.navigation.LocalNavigator
 import org.greenstand.android.TreeTracker.view.AppColors
@@ -89,6 +90,8 @@ fun SplashScreen(
                             viewModel.handleAction(SplashAction.StartGPSUpdatesForSignup)
                         }
                         navigateToLanguageScreen(navigator)
+                    } else if (viewModel.isLoggedOut()) {
+                        navigateToSignupScreen(navigator)
                     } else {
                         navigateToDashboardScreen(navigator)
                     }
@@ -136,6 +139,13 @@ private fun isLocationPermissionGranted(result: Map<String, Boolean>): Boolean =
 
 private fun navigateToLanguageScreen(navigator: Navigator) {
     navigator.navigate(LanguageRoute(isFromTopBar = false)) {
+        popUpTo<SplashRoute> { inclusive = true }
+        launchSingleTop = true
+    }
+}
+
+private fun navigateToSignupScreen(navigator: Navigator) {
+    navigator.navigate(SignupFlowRoute) {
         popUpTo<SplashRoute> { inclusive = true }
         launchSingleTop = true
     }

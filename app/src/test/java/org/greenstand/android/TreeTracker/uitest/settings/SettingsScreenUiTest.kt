@@ -176,7 +176,7 @@ class SettingsScreenUiTest : RootScreenUiTest() {
     }
 
     @Test
-    fun `declining the logout keeps the power user and stays on settings`() {
+    fun `declining the logout stays logged in on settings`() {
         assumeTrue(FeatureFlags.DEBUG_ENABLED)
         launchSettings()
         clickItem(R.string.logout_title)
@@ -185,12 +185,12 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithText(string(R.string.logout_dialog_message)).assertDoesNotExist()
-        coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
+        coVerify(exactly = 0) { userRepo.setLoggedOut(any()) }
         assertEquals(listOf(DashboardRoute, SettingsRoute), backStack.toList())
     }
 
     @Test
-    fun `confirming the logout drops the power user and restarts sign up`() {
+    fun `confirming the logout keeps the power user and restarts sign up`() {
         assumeTrue(FeatureFlags.DEBUG_ENABLED)
         launchSettings()
         clickItem(R.string.logout_title)
@@ -198,7 +198,8 @@ class SettingsScreenUiTest : RootScreenUiTest() {
         composeTestRule.onNodeWithTag(TestTags.DIALOG_POSITIVE_BUTTON).performClick()
         composeTestRule.waitForIdle()
 
-        coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+        coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
+        coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
         assertEquals(listOf(SignupFlowRoute), backStack.toList())
     }
 }

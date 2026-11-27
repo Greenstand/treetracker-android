@@ -40,6 +40,7 @@ data class SignUpState(
     val autofocusTextEnabled: Boolean = false,
     val isInternetAvailable: Boolean = false,
     val isTherePowerUser: Boolean? = null,
+    val isLoggedOut: Boolean = false,
     val showSelfieTutorial: Boolean? = null,
     val showPrivacyDialog: Boolean? = true,
     val firstNameError: String? = null,
@@ -102,6 +103,8 @@ sealed class SignupAction : Action {
         val id: Long,
     ) : SignupAction()
 
+    object LogBackIn : SignupAction()
+
     object NavigateBack : SignupAction()
 
     object LaunchCamera : SignupAction()
@@ -124,6 +127,7 @@ class SignupViewModel(
                     isInternetAvailable = result,
                     showSelfieTutorial = initialSetupRequired,
                     isTherePowerUser = !initialSetupRequired,
+                    isLoggedOut = userRepo.isLoggedOut(),
                 )
             }
         }
@@ -182,6 +186,10 @@ class SignupViewModel(
             }
             is SignupAction.ClosePrivacyPolicyDialog -> {
                 updateState { copy(showPrivacyDialog = false) }
+            }
+            is SignupAction.LogBackIn -> {
+                userRepo.setLoggedOut(false)
+                updateState { copy(isLoggedOut = false) }
             }
             is SignupAction.SetExistingUserAsPowerUser -> {
                 viewModelScope.launch {

@@ -100,7 +100,7 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout THEN calls setPowerUserStatus and hides logout dialog`() =
+    fun `WHEN logout THEN marks the app logged out and hides logout dialog`() =
         runTest {
             val powerUser = FakeFileGenerator.fakeUsers.first()
             coEvery { userRepo.getPowerUser() } returns powerUser
@@ -109,7 +109,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.Logout)
 
-            coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+            coVerify { userRepo.setLoggedOut(true) }
             val state = viewModel.state.first()
             assertFalse(state.showLogoutDialog!!)
         }
@@ -207,7 +207,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.LogoutConfirmed)
 
-            coVerify { userRepo.setPowerUserStatus(powerUser.id, false) }
+            coVerify { userRepo.setLoggedOut(true) }
             val event = viewModel.events.first().getContentIfNotConsumed()
             assertTrue(event is NavigationEvent, "Expected NavigationEvent but got $event")
         }
@@ -315,7 +315,7 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `WHEN logout without a power user THEN only hides the logout dialog`() =
+    fun `WHEN logout without a power user THEN still logs out and hides the logout dialog`() =
         runTest {
             coEvery { userRepo.getPowerUser() } returns null
             val viewModel = SettingsViewModel(userRepo)
@@ -323,7 +323,7 @@ class SettingsViewModelTest {
 
             viewModel.handleAction(SettingsAction.Logout)
 
-            coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
+            coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             assertTrue(viewModel.events.replayCache.isEmpty())
         }
@@ -339,7 +339,7 @@ class SettingsViewModelTest {
 
             assertEquals(false, viewModel.state.value.showLogoutDialog)
             assertEquals(1, viewModel.events.replayCache.size)
-            coVerify(exactly = 1) { userRepo.setPowerUserStatus(FakeFileGenerator.fakeUsers.first().id, false) }
+            coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
         }
 
     @Test
@@ -367,5 +367,17 @@ class SettingsViewModelTest {
 
             assertTrue(viewModel.events.replayCache.isEmpty())
             assertNull(viewModel.state.value.showDeleteAccountDialog)
+        }
+
+    @Test
+    fun `WHEN logout THEN the power user is left unchanged`() =
+        runTest {
+            coEvery { userRepo.getPowerUser() } returns FakeFileGenerator.fakeUsers.first()
+            val viewModel = SettingsViewModel(userRepo)
+
+            viewModel.handleAction(SettingsAction.LogoutConfirmed)
+
+            coVerify(exactly = 1) { userRepo.setLoggedOut(true) }
+            coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
         }
 }

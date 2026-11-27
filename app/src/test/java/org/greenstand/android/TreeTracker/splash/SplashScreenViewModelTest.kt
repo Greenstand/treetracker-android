@@ -151,6 +151,13 @@ class SplashScreenViewModelTest {
         }
 
     @Test
+    fun `WHEN logged out THEN isLoggedOut is true`() {
+        every { userRepo.isLoggedOut() } returns true
+
+        assertTrue(splashScreenViewModel.isLoggedOut())
+    }
+
+    @Test
     fun `WHEN User object is null THEN isInitialSetupRequired is true`() =
         runTest {
             coEvery { userRepo.getPowerUser() } returns null

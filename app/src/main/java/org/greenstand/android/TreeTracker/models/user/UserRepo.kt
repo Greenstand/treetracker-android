@@ -26,6 +26,9 @@ import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.preferences.PrefKey
+import org.greenstand.android.TreeTracker.preferences.PrefKeys
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import java.util.*
 
@@ -36,7 +39,18 @@ class UserRepo(
     private val timeProvider: TimeProvider,
     private val messagesDao: MessagesDAO,
     private val exceptionDataCollector: ExceptionDataCollector,
+    private val preferences: Preferences,
 ) {
+    /**
+     * True after a logout until someone signs in again. Logout never changes the power user: the
+     * device keeps its power user for good, and this flag alone sends the app to Signup.
+     */
+    fun isLoggedOut(): Boolean = preferences.getBoolean(LOGGED_OUT, false)
+
+    fun setLoggedOut(loggedOut: Boolean) {
+        preferences.edit().putBoolean(LOGGED_OUT, loggedOut).commit()
+    }
+
     fun users(): Flow<List<User>> =
         dao
             .getAllUsers()
@@ -151,5 +165,9 @@ class UserRepo(
                     uploaded = false,
                 ).also { it.id = user.id }
         dao.updateUser(updated)
+    }
+
+    companion object {
+        val LOGGED_OUT = PrefKeys.SYSTEM_SETTINGS + PrefKey("logged-out")
     }
 }

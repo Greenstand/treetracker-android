@@ -39,6 +39,7 @@ import org.greenstand.android.TreeTracker.database.entity.UserEntity
 import org.greenstand.android.TreeTracker.models.location.LocationUpdateManager
 import org.greenstand.android.TreeTracker.models.messages.database.MessagesDAO
 import org.greenstand.android.TreeTracker.models.user.User
+import org.greenstand.android.TreeTracker.preferences.Preferences
 import org.greenstand.android.TreeTracker.utilities.TimeProvider
 import org.greenstand.android.TreeTracker.utils.FakeFileGenerator
 import org.junit.Before
@@ -77,6 +78,9 @@ class UserRepoTest {
     @MockK(relaxed = true)
     private lateinit var exceptionDataCollector: ExceptionDataCollector
 
+    @MockK(relaxed = true)
+    private lateinit var preferences: Preferences
+
     private lateinit var userRepo: UserRepo
 
     @Before
@@ -90,7 +94,36 @@ class UserRepoTest {
                 timeProvider = timeProvider,
                 messagesDao = messagesDao,
                 exceptionDataCollector = exceptionDataCollector,
+                preferences = preferences,
             )
+    }
+
+    @Test
+    fun `WHEN nothing is stored THEN not logged out`() {
+        every { preferences.getBoolean(UserRepo.LOGGED_OUT, false) } returns false
+
+        assertFalse(userRepo.isLoggedOut())
+    }
+
+    @Test
+    fun `WHEN logged out is stored THEN isLoggedOut is true`() {
+        every { preferences.getBoolean(UserRepo.LOGGED_OUT, false) } returns true
+
+        assertTrue(userRepo.isLoggedOut())
+    }
+
+    @Test
+    fun `WHEN setLoggedOut THEN commits the flag`() {
+        val editor = mockk<Preferences.Editor>(relaxed = true)
+        every { preferences.edit() } returns editor
+        every { editor.putBoolean(any(), any()) } returns editor
+
+        userRepo.setLoggedOut(true)
+
+        verify {
+            editor.putBoolean(UserRepo.LOGGED_OUT, true)
+            editor.commit()
+        }
     }
 
     private fun createFakeUserEntity(

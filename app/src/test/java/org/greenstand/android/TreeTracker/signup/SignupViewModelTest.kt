@@ -18,6 +18,8 @@ package org.greenstand.android.TreeTracker.signup
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.verify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -226,6 +228,29 @@ class SignupViewModelTest {
             signupViewModel.handleAction(SignupAction.SetExistingUserAsPowerUser(userId))
 
             coVerify { userRepo.setPowerUserStatus(userId, true) }
+        }
+
+    @Test
+    fun `GIVEN logged out WHEN created THEN state is logged out`() =
+        runTest {
+            every { userRepo.isLoggedOut() } returns true
+
+            val viewModel = SignupViewModel(userRepo, checkForInternetUseCase)
+
+            assertTrue(viewModel.state.value.isLoggedOut)
+        }
+
+    @Test
+    fun `WHEN LogBackIn THEN clears logged out and leaves the power user alone`() =
+        runTest {
+            every { userRepo.isLoggedOut() } returns true
+            val viewModel = SignupViewModel(userRepo, checkForInternetUseCase)
+
+            viewModel.handleAction(SignupAction.LogBackIn)
+
+            verify { userRepo.setLoggedOut(false) }
+            coVerify(exactly = 0) { userRepo.setPowerUserStatus(any(), any()) }
+            assertFalse(viewModel.state.value.isLoggedOut)
         }
 
     // Initial state
