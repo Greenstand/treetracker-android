@@ -1,0 +1,389 @@
+   0.000s tb 0.6.3: "E4 E5 Edit trees and map" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-settings-trees-map.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.141s recording the screen to recording.mp4
+   0.141s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-settings-trees-map.yaml:7)
+   1.811s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1669 ms
+   1.811s ▶ Run Sign up  (.ci-settings-trees-map.yaml:8)
+   1.811s   ▶ Wait until id: LanguageOption_ENGLISH is visible  (signup.yaml:6)
+   2.154s     snapshot history: screen context changed; discarding 1 snapshots
+   3.631s     snapshot history: screen context changed; discarding 1 snapshots
+   3.632s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 1820 ms and 4 reads
+   3.632s     the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 30
+   3.632s   ✓ Wait until id: LanguageOption_ENGLISH is visible  1820 ms
+   3.632s   ▶ Tap on id: LanguageOption_ENGLISH  (signup.yaml:9)
+   3.645s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   3.812s     waited 166 ms for a still screen
+   3.828s     found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   3.900s     tap at (160, 264): the screen changed (sent in 21 ms, waited 46 ms)
+   3.900s   ✓ Tap on id: LanguageOption_ENGLISH  268 ms
+   3.900s     --annotate: holding the screen 930ms for the recording
+   4.829s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:10)
+   4.843s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   4.897s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   4.951s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.055s     tap at (264, 572): the screen changed (sent in 13 ms, waited 85 ms)
+   5.055s   ✓ Tap on id: ArrowForwardButton  226 ms
+   5.055s     --annotate: holding the screen 900ms for the recording
+   5.951s   ▶ Tap on id: PrivacyPolicyCloseButton  (signup.yaml:11)
+   5.967s     snapshot history: screen context changed; discarding 2 snapshots
+   5.967s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.018s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.067s     found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.118s     tap at (160, 571): the screen changed (sent in 5 ms, waited 43 ms)
+   6.118s   ✓ Tap on id: PrivacyPolicyCloseButton  167 ms
+   6.118s     --annotate: holding the screen 950ms for the recording
+   7.067s   ▶ Run flow when "${CREDENTIAL == 'Email'}" is true  (signup.yaml:12)
+   7.070s     condition not met ("${CREDENTIAL == 'Email'}" is true): skipped
+   7.070s   ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2 ms
+   7.070s   ▶ Run flow when "${CREDENTIAL != 'Email'}" is true  (signup.yaml:17)
+   7.070s     ▶ Tap on id: PhoneCredentialButton  (signup.yaml:20)
+   7.082s       snapshot history: screen context changed; discarding 1 snapshots
+   7.083s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   7.131s       found id: PhoneCredentialButton: View #PhoneCredentialButton [28,219][148,269]
+   8.143s       tap at (88, 244): nothing changed (sent in 9 ms, waited 1000 ms)
+   8.143s     ✓ Tap on id: PhoneCredentialButton  1073 ms
+   8.143s     ▶ Tap on id: PhoneField  (signup.yaml:21)
+   8.155s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   8.207s       found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   8.304s       tap at (160, 313): the screen changed (sent in 20 ms, waited 73 ms)
+   8.305s     ✓ Tap on id: PhoneField  161 ms
+   8.305s       --annotate: holding the screen 900ms for the recording
+   9.207s   ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2137 ms
+   9.207s   ▶ Input text ${IDENTIFIER}  (signup.yaml:22)
+   9.208s     typing 10 characters
+   9.772s     typed with device verification: the screen changed (sent in 427 ms, waited 134 ms)
+   9.772s   ✓ Input text 5551230001  565 ms
+   9.772s     --annotate: holding the screen 430ms for the recording
+  10.208s   ▶ Hide keyboard  (signup.yaml:23)
+  10.279s     snapshot history: screen context changed; discarding 1 snapshots
+  10.279s   ✓ Hide keyboard  71 ms
+  10.279s     --annotate: holding the screen 930ms for the recording
+  11.209s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:24)
+  11.209s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.260s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  11.331s     tap at (264, 572): the screen changed (sent in 5 ms, waited 63 ms)
+  11.331s   ✓ Tap on id: ArrowForwardButton  122 ms
+  11.331s     --annotate: holding the screen 930ms for the recording
+  12.261s   ▶ Tap on id: FirstNameField  (signup.yaml:25)
+  12.270s     snapshot history: screen context changed; discarding 1 snapshots
+  12.271s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.318s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.366s     found id: FirstNameField: EditText #FirstNameField [12,199][308,255]
+  12.405s     tap at (160, 227): the screen changed (sent in 9 ms, waited 28 ms)
+  12.405s   ✓ Tap on id: FirstNameField  144 ms
+  12.405s     --annotate: holding the screen 960ms for the recording
+  13.366s   ▶ Input text ${FIRST_NAME}  (signup.yaml:26)
+  13.367s     typing 3 characters
+  13.624s     typed with device verification: the screen changed (sent in 101 ms, waited 152 ms)
+  13.624s   ✓ Input text Ada  257 ms
+  13.624s     --annotate: holding the screen 740ms for the recording
+  14.367s   ▶ Tap on id: LastNameField  (signup.yaml:27)
+  14.403s     snapshot history: screen context changed; discarding 1 snapshots
+  14.403s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.429s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.510s     found id: LastNameField: EditText #LastNameField [12,287][308,343]
+  14.510s     it was moving: at rest after 81 ms at [12,287][308,343]
+  14.592s     tap at (160, 315): the screen changed (sent in 12 ms, waited 27 ms)
+  14.592s   ✓ Tap on id: LastNameField  225 ms
+  14.592s     --annotate: holding the screen 920ms for the recording
+  15.511s   ▶ Input text ${LAST_NAME}  (signup.yaml:28)
+  15.561s     typing 5 characters
+  15.826s     typed with device verification: the screen changed (sent in 108 ms, waited 149 ms)
+  15.826s   ✓ Input text Admin  314 ms
+  15.826s     --annotate: holding the screen 690ms for the recording
+  16.512s   ▶ Hide keyboard  (signup.yaml:29)
+  16.578s     snapshot history: screen context changed; discarding 2 snapshots
+  16.578s   ✓ Hide keyboard  65 ms
+  16.578s     --annotate: holding the screen 930ms for the recording
+  17.512s   ▶ Tap on id: ArrowForwardButton  (signup.yaml:30)
+  17.512s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  17.562s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  17.669s     tap at (264, 572): the screen changed (sent in 9 ms, waited 95 ms)
+  17.669s   ✓ Tap on id: ArrowForwardButton  157 ms
+  17.669s     --annotate: holding the screen 890ms for the recording
+  18.563s   ▶ Tap on id: TutorialDoneButton  (signup.yaml:31)
+  18.812s     waited 248 ms for the last action's change to settle
+  19.067s     snapshot history: screen context changed; discarding 1 snapshots
+  19.067s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.088s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.152s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.215s     found id: TutorialDoneButton: View #TutorialDoneButton [136,450][184,498]
+  19.236s     tap at (160, 474): the screen changed (sent in 4 ms, waited 14 ms)
+  19.237s   ✓ Tap on id: TutorialDoneButton  673 ms
+  19.237s     --annotate: holding the screen 980ms for the recording
+  20.216s   ▶ Tap on id: CaptureButton  (signup.yaml:32)
+  20.231s     snapshot history: screen context changed; discarding 1 snapshots
+  20.232s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.288s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.355s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  20.755s     tap at (160, 572): the screen changed (sent in 20 ms, waited 378 ms)
+  20.755s   ✓ Tap on id: CaptureButton  539 ms
+  20.755s     --annotate: holding the screen 600ms for the recording
+  21.356s   ▶ Wait until id: ApproveButton is visible  (signup.yaml:33)
+  21.363s     snapshot history: screen context changed; discarding 1 snapshots
+  21.363s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.363s   ✓ Wait until id: ApproveButton is visible  6 ms
+  21.363s   ▶ Tap on id: ApproveButton  (signup.yaml:36)
+  21.364s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.411s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.458s     found id: ApproveButton: View #ApproveButton [172,544][232,604]
+  21.489s     tap at (202, 574): the screen changed (sent in 4 ms, waited 24 ms)
+  21.489s   ✓ Tap on id: ApproveButton  125 ms
+  21.489s     --annotate: holding the screen 970ms for the recording
+  22.458s   ▶ Wait until id: TrackButton is visible  (signup.yaml:37)
+  22.470s     snapshot history: screen context changed; discarding 1 snapshots
+  22.470s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  22.470s   ✓ Wait until id: TrackButton is visible  11 ms
+  22.470s ✓ Run Sign up  20659 ms
+  22.470s ▶ Run Start capture  (.ci-settings-trees-map.yaml:12)
+  22.492s   ▶ Tap on id: TrackButton  (start-capture.yaml:6)
+  22.492s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  22.581s     found id: TrackButton: View #TrackButton [20,473][300,606]
+  22.627s     tap at (160, 539): the screen changed (sent in 5 ms, waited 38 ms)
+  22.627s   ✓ Tap on id: TrackButton  135 ms
+  22.627s     --annotate: holding the screen 950ms for the recording
+  23.582s   ▶ Wait until id: UserButton_${WALLET} is visible  (start-capture.yaml:7)
+  23.591s     snapshot history: screen context changed; discarding 1 snapshots
+  23.591s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  23.591s   ✓ Wait until id: UserButton_${WALLET} is visible  8 ms
+  23.591s   ▶ Tap on id: UserButton_${WALLET}  (start-capture.yaml:10)
+  23.592s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  23.640s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  23.688s     found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  23.709s     tap at (84, 177): the screen changed (sent in 5 ms, waited 12 ms)
+  23.709s   ✓ Tap on id: UserButton_5551230001  118 ms
+  23.709s     --annotate: holding the screen 980ms for the recording
+  24.689s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:11)
+  24.698s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  24.748s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  24.795s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  24.852s     tap at (264, 572): the screen changed (sent in 3 ms, waited 51 ms)
+  24.852s   ✓ Tap on id: ArrowForwardButton  163 ms
+  24.852s     --annotate: holding the screen 940ms for the recording
+  25.795s   ▶ Wait until id: OrgNameField is visible  (start-capture.yaml:12)
+  25.803s     snapshot history: screen context changed; discarding 2 snapshots
+  25.803s     found id: OrgNameField: EditText #OrgNameField [12,132][308,188]
+  25.803s   ✓ Wait until id: OrgNameField is visible  7 ms
+  25.803s   ▶ Tap on id: ArrowForwardButton  (start-capture.yaml:15)
+  25.804s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  25.851s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  25.897s     found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  25.951s     tap at (264, 572): the screen changed (sent in 3 ms, waited 48 ms)
+  25.951s   ✓ Tap on id: ArrowForwardButton  148 ms
+  25.951s     --annotate: holding the screen 950ms for the recording
+  26.899s   ▶ Run flow when id: TutorialDoneButton is visible  (start-capture.yaml:16)
+  26.990s     snapshot history: screen context changed; discarding 1 snapshots
+  26.990s     found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  26.990s     ▶ Tap on id: TutorialDoneButton  (start-capture.yaml:19)
+  26.990s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  27.038s       found id: TutorialDoneButton: View #TutorialDoneButton [136,445][184,493]
+  27.172s       tap at (160, 469): the screen changed (sent in 4 ms, waited 17 ms, held 75 ms for its new window to take input)
+  27.172s     ✓ Tap on id: TutorialDoneButton  181 ms
+  27.172s       --annotate: holding the screen 870ms for the recording
+  28.038s   ✓ Run flow when id: TutorialDoneButton is visible  1139 ms
+  28.038s   ▶ Wait until id: CaptureButton is visible  (start-capture.yaml:20)
+  28.057s     snapshot history: screen context changed; discarding 1 snapshots
+  28.058s     found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  28.058s   ✓ Wait until id: CaptureButton is visible  19 ms
+  28.058s ✓ Run Start capture  5587 ms
+  28.058s ▶ Tap on id: CaptureButton  (.ci-settings-trees-map.yaml:15)
+  28.059s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  28.112s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  28.170s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  28.207s   tap at (160, 572): the screen changed (sent in 4 ms, waited 29 ms)
+  28.207s ✓ Tap on id: CaptureButton  149 ms
+  28.207s   --annotate: holding the screen 960ms for the recording
+  29.171s ▶ Wait until id: TutorialDoneButton is visible  (.ci-settings-trees-map.yaml:16)
+  29.202s   snapshot history: screen context changed; discarding 1 snapshots
+  32.022s   no change reported by the device for 1.5s while looking for id: TutorialDoneButton: reading the screen again
+  35.043s   no change reported by the device for 3s while looking for id: TutorialDoneButton: reading the screen again
+  36.496s   snapshot history: screen context changed; discarding 2 snapshots
+  36.496s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487], after 7324 ms and 5 reads
+  36.496s ✓ Wait until id: TutorialDoneButton is visible  7324 ms
+  36.496s ▶ Tap on id: TutorialDoneButton  (.ci-settings-trees-map.yaml:19)
+  36.497s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487]
+  36.544s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487]
+  36.590s   found id: TutorialDoneButton: View #TutorialDoneButton [136,439][184,487]
+  36.805s   tap at (160, 463): the screen changed (sent in 2 ms, waited 8 ms, held 167 ms for its new window to take input)
+  36.805s ✓ Tap on id: TutorialDoneButton  309 ms
+  36.805s   --annotate: holding the screen 780ms for the recording
+  37.591s ▶ Tap on id: ApproveButton  (.ci-settings-trees-map.yaml:20)
+  37.600s   snapshot history: screen context changed; discarding 1 snapshots
+  37.600s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  37.647s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  37.693s   found id: ApproveButton: View #ApproveButton [130,544][190,604]
+  37.740s   tap at (160, 574): the screen changed (sent in 3 ms, waited 40 ms)
+  37.740s ✓ Tap on id: ApproveButton  149 ms
+  37.741s   --annotate: holding the screen 950ms for the recording
+  38.694s ▶ Wait until id: CaptureButton is visible  (.ci-settings-trees-map.yaml:21)
+  38.744s   snapshot history: screen context changed; discarding 1 snapshots
+  38.744s   found id: CaptureButton: View #CaptureButton [125,537][195,607]
+  38.744s ✓ Wait until id: CaptureButton is visible  50 ms
+  38.744s ▶ Tap on id: ArrowBackButton  (.ci-settings-trees-map.yaml:24)
+  39.262s   waited 518 ms for the last action's change to settle
+  39.262s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  39.323s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  39.384s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+  39.415s   tap at (56, 572): the screen changed (sent in 3 ms, waited 26 ms)
+  39.415s ✓ Tap on id: ArrowBackButton  671 ms
+  39.415s   --annotate: holding the screen 970ms for the recording
+  40.385s ▶ Wait until id: SettingsButton is visible  (.ci-settings-trees-map.yaml:25)
+  40.393s   snapshot history: screen context changed; discarding 1 snapshots
+  40.393s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  40.393s ✓ Wait until id: SettingsButton is visible  8 ms
+  40.393s ▶ Tap on id: SettingsButton  (.ci-settings-trees-map.yaml:28)
+  40.394s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  40.441s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  40.488s   found id: SettingsButton: ImageView "SETTINGS" #SettingsButton [14,43][64,93]
+  40.499s   tap at (39, 68): the screen changed (sent in 5 ms, waited 2 ms)
+  40.499s ✓ Tap on id: SettingsButton  105 ms
+  40.499s   --annotate: holding the screen 990ms for the recording
+  41.490s ▶ Tap on id: SettingsMap  (.ci-settings-trees-map.yaml:30)
+  41.498s   snapshot history: screen context changed; discarding 1 snapshots
+  41.498s   found id: SettingsMap: View #SettingsMap [20,274][300,322]
+  41.546s   found id: SettingsMap: View #SettingsMap [20,274][300,322]
+  41.594s   found id: SettingsMap: View #SettingsMap [20,274][300,322]
+  41.662s   tap at (160, 298): the screen changed (sent in 3 ms, waited 62 ms)
+  41.662s ✓ Tap on id: SettingsMap  172 ms
+  41.662s   --annotate: holding the screen 930ms for the recording
+  42.594s ▶ Wait until id: MapTreeCard_0 is visible  (.ci-settings-trees-map.yaml:31)
+  42.604s   snapshot history: screen context changed; discarding 1 snapshots
+  42.605s   found id: MapTreeCard_0: View #MapTreeCard_0 [16,322][216,602]
+  42.605s ✓ Wait until id: MapTreeCard_0 is visible  10 ms
+  42.605s ▶ Assert that id: MapBackButton is visible  (.ci-settings-trees-map.yaml:34)
+  42.613s   found id: MapBackButton: View #MapBackButton [16,28][64,76]
+  42.613s ✓ Assert that id: MapBackButton is visible  8 ms
+  42.613s ▶ Tap on id: MapBackButton  (.ci-settings-trees-map.yaml:35)
+  42.613s   found id: MapBackButton: View #MapBackButton [16,28][64,76]
+  42.663s   found id: MapBackButton: View #MapBackButton [16,28][64,76]
+  42.713s   found id: MapBackButton: View #MapBackButton [16,28][64,76]
+  42.721s   tap at (40, 52): the screen changed (sent in 4 ms, waited 2 ms)
+  42.721s ✓ Tap on id: MapBackButton  108 ms
+  42.721s   --annotate: holding the screen 990ms for the recording
+  43.713s ▶ Tap on id: SettingsEditTrees  (.ci-settings-trees-map.yaml:37)
+  43.722s   snapshot history: screen context changed; discarding 1 snapshots
+  43.722s   found id: SettingsEditTrees: View #SettingsEditTrees [20,209][300,257]
+  43.770s   found id: SettingsEditTrees: View #SettingsEditTrees [20,209][300,257]
+  43.822s   found id: SettingsEditTrees: View #SettingsEditTrees [20,209][300,257]
+  43.828s   tap at (160, 233): the screen changed (sent in 2 ms, waited 1 ms)
+  43.828s ✓ Tap on id: SettingsEditTrees  114 ms
+  43.828s   --annotate: holding the screen 990ms for the recording
+  44.823s ▶ Tap on id: UserButton_5551230001  (.ci-settings-trees-map.yaml:38)
+  44.831s   snapshot history: screen context changed; discarding 1 snapshots
+  44.831s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  44.878s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  44.925s   found id: UserButton_5551230001: View #UserButton_5551230001 [16,42][152,312]
+  44.953s   tap at (84, 177): the screen changed (sent in 4 ms, waited 21 ms)
+  44.953s ✓ Tap on id: UserButton_5551230001  129 ms
+  44.953s   --annotate: holding the screen 970ms for the recording
+  45.925s ▶ Tap on id: ArrowForwardButton  (.ci-settings-trees-map.yaml:39)
+  45.934s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  45.981s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  46.028s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  46.121s   tap at (264, 572): the screen changed (sent in 3 ms, waited 42 ms)
+  46.121s ✓ Tap on id: ArrowForwardButton  196 ms
+  46.121s   --annotate: holding the screen 910ms for the recording
+  47.029s ▶ Tap on id: TreeButton_0  (.ci-settings-trees-map.yaml:40)
+  47.037s   snapshot history: screen context changed; discarding 2 snapshots
+  47.037s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  47.085s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  47.132s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  47.156s   tap at (84, 265): the screen changed (sent in 4 ms, waited 17 ms)
+  47.156s ✓ Tap on id: TreeButton_0  126 ms
+  47.156s   --annotate: holding the screen 980ms for the recording
+  48.132s ▶ Tap on id: ArrowForwardButton  (.ci-settings-trees-map.yaml:41)
+  48.140s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.188s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.241s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  48.342s   tap at (264, 572): the screen changed (sent in 3 ms, waited 54 ms)
+  48.342s ✓ Tap on id: ArrowForwardButton  209 ms
+  48.342s   --annotate: holding the screen 900ms for the recording
+  49.241s ▶ Scroll DOWN until id: TreeNoteField is visible  (.ci-settings-trees-map.yaml:42)
+  49.249s   snapshot history: screen context changed; discarding 2 snapshots
+  49.326s   drag 1: (160, 487) -> (160, 153); target not on screen yet, 6 texts seen
+  49.437s   in view after 1 swipes, 195 ms: EditText #TreeNoteField [20,339][300,459]
+  49.438s ✓ Scroll DOWN until id: TreeNoteField is visible  196 ms
+  49.438s   --annotate: holding the screen 810ms for the recording
+  50.251s ▶ Tap on id: TreeNoteField  (.ci-settings-trees-map.yaml:44)
+  50.258s   found id: TreeNoteField: EditText #TreeNoteField [20,339][300,459]
+  50.307s   found id: TreeNoteField: EditText #TreeNoteField [20,339][300,459]
+  50.358s   tap at (160, 399): the screen changed (sent in 8 ms, waited 37 ms)
+  50.358s ✓ Tap on id: TreeNoteField  107 ms
+  50.358s   --annotate: holding the screen 950ms for the recording
+  51.307s ▶ Input text Edited note  (.ci-settings-trees-map.yaml:45)
+  51.308s   typing 11 characters
+  51.627s   typed with device verification: the screen changed (sent in 195 ms, waited 121 ms)
+  51.627s ✓ Input text Edited note  320 ms
+  51.627s   --annotate: holding the screen 680ms for the recording
+  52.308s ▶ Hide keyboard  (.ci-settings-trees-map.yaml:46)
+  52.377s ✓ Hide keyboard  69 ms
+  52.377s   --annotate: holding the screen 930ms for the recording
+  53.308s ▶ Scroll DOWN until id: SaveNoteButton is visible  (.ci-settings-trees-map.yaml:47)
+  53.316s ✓ Scroll DOWN until id: SaveNoteButton is visible  7 ms
+  53.316s   --annotate: holding the screen 990ms for the recording
+  54.309s ▶ Tap on id: SaveNoteButton  (.ci-settings-trees-map.yaml:49)
+  54.309s   found id: SaveNoteButton: View #SaveNoteButton [20,475][300,523]
+  54.359s   found id: SaveNoteButton: View #SaveNoteButton [20,475][300,523]
+  54.386s   tap at (160, 499): the screen changed (sent in 4 ms, waited 20 ms)
+  54.386s ✓ Tap on id: SaveNoteButton  76 ms
+  54.386s   --annotate: holding the screen 970ms for the recording
+  55.360s ▶ Assert that id: Snackbar is visible  (.ci-settings-trees-map.yaml:50)
+  55.369s   snapshot history: screen context changed; discarding 3 snapshots
+  55.369s   found id: Snackbar: View #Snackbar [0,568][320,616]
+  55.369s ✓ Assert that id: Snackbar is visible  8 ms
+  55.369s ▶ Tap on id: ArrowBackButton  (.ci-settings-trees-map.yaml:52)
+  55.370s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,568]
+  55.419s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,568]
+  55.469s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,568]
+  55.510s   tap at (56, 554): the screen changed (sent in 3 ms, waited 34 ms)
+  55.510s ✓ Tap on id: ArrowBackButton  141 ms
+  55.510s   --annotate: holding the screen 960ms for the recording
+  56.469s ▶ Tap on id: TreeButton_0  (.ci-settings-trees-map.yaml:53)
+  56.476s   snapshot history: screen context changed; discarding 1 snapshots
+  56.476s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  56.524s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  56.575s   found id: TreeButton_0: View #TreeButton_0 [16,130][152,400]
+  57.582s   tap at (84, 265): nothing changed (sent in 3 ms, waited 1000 ms)
+  57.582s ✓ Tap on id: TreeButton_0  1113 ms
+  57.582s ▶ Tap on id: ArrowForwardButton  (.ci-settings-trees-map.yaml:54)
+  57.590s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,568]
+  57.641s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,568]
+  57.714s   tap at (264, 554): the screen changed (sent in 2 ms, waited 27 ms)
+  57.714s ✓ Tap on id: ArrowForwardButton  131 ms
+  57.714s   --annotate: holding the screen 930ms for the recording
+  58.641s ▶ Scroll DOWN until id: TreeNoteField is visible  (.ci-settings-trees-map.yaml:55)
+  58.649s   snapshot history: screen context changed; discarding 1 snapshots
+  58.723s   drag 1: (160, 487) -> (160, 153); target not on screen yet, 6 texts seen
+  58.836s   in view after 1 swipes, 193 ms: EditText "Edited note" #TreeNoteField [20,339][300,459]
+  58.836s ✓ Scroll DOWN until id: TreeNoteField is visible  194 ms
+  58.836s   --annotate: holding the screen 810ms for the recording
+  59.650s ▶ Assert that "Edited note", id: TreeNoteField is visible  (.ci-settings-trees-map.yaml:57)
+  59.657s   found "Edited note", id: TreeNoteField: EditText "Edited note" #TreeNoteField [20,339][300,459]
+  59.657s ✓ Assert that "Edited note", id: TreeNoteField is visible  7 ms
+  59.657s ▶ Scroll DOWN until id: DeleteTreeButton is visible  (.ci-settings-trees-map.yaml:59)
+  59.742s   drag 1: (160, 487) -> (160, 203); target not on screen yet, 12 texts seen
+  59.852s   in view after 1 swipes, 195 ms: View #DeleteTreeButton [20,460][300,508]
+  59.853s ✓ Scroll DOWN until id: DeleteTreeButton is visible  195 ms
+  59.853s   --annotate: holding the screen 810ms for the recording
+  60.664s ▶ Tap on id: DeleteTreeButton  (.ci-settings-trees-map.yaml:61)
+  60.671s   found id: DeleteTreeButton: View #DeleteTreeButton [20,460][300,508]
+  60.721s   found id: DeleteTreeButton: View #DeleteTreeButton [20,460][300,508]
+  60.737s   tap at (160, 484): the screen changed (sent in 3 ms, waited 10 ms)
+  60.737s ✓ Tap on id: DeleteTreeButton  73 ms
+  60.737s   --annotate: holding the screen 980ms for the recording
+  61.721s ▶ Assert that id: DialogTitle is visible  (.ci-settings-trees-map.yaml:62)
+  61.730s   snapshot history: screen context changed; discarding 3 snapshots
+  61.730s   found id: DialogTitle: TextView "Delete this tree?" #DialogTitle [47,244][182,263]
+  61.730s ✓ Assert that id: DialogTitle is visible  8 ms
+  61.730s ▶ Tap on id: DialogNegativeButton  (.ci-settings-trees-map.yaml:63)
+  61.731s   found id: DialogNegativeButton: View #DialogNegativeButton [104,364][152,412]
+  61.778s   found id: DialogNegativeButton: View #DialogNegativeButton [104,364][152,412]
+  61.825s   found id: DialogNegativeButton: View #DialogNegativeButton [104,364][152,412]
+  61.888s   tap at (128, 388): the screen changed (sent in 3 ms, waited 17 ms)
+  61.888s ✓ Tap on id: DialogNegativeButton  157 ms
+  61.888s   --annotate: holding the screen 940ms for the recording
+  62.826s ▶ Take screenshot step-36-end-tapOn-DialogNegativeButton  (.ci-settings-trees-map.yaml:64)
+  62.942s ✓ Take screenshot step-36-end-tapOn-DialogNegativeButton  116 ms
+  63.315s --annotate: recording.mp4 is in sync (its frame times say so, within -10 ms)
+  67.904s --annotate: drew 63 captions and 39 touches on recording.mp4 in 4588 ms
+  67.904s PASSED in 1m7.904s

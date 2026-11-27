@@ -1,0 +1,73 @@
+▶ E4 E5 Edit trees and map on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.7s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  268ms
+    ✓ Tap on id: ArrowForwardButton  226ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  167ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  161ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  565ms
+    ✓ Hide keyboard  71ms
+    ✓ Tap on id: ArrowForwardButton  122ms
+    ✓ Tap on id: FirstNameField  144ms
+    ✓ Input text Ada  257ms
+    ✓ Tap on id: LastNameField  225ms
+    ✓ Input text Admin  314ms
+    ✓ Hide keyboard  65ms
+    ✓ Tap on id: ArrowForwardButton  157ms
+    ✓ Tap on id: TutorialDoneButton  673ms
+    ✓ Tap on id: CaptureButton  539ms
+    ✓ Wait until id: ApproveButton is visible  6ms
+    ✓ Tap on id: ApproveButton  125ms
+    ✓ Wait until id: TrackButton is visible  11ms
+  ✓ Run Sign up  20.7s
+    ✓ Tap on id: TrackButton  135ms
+    ✓ Wait until id: UserButton_${WALLET} is visible  8ms
+    ✓ Tap on id: UserButton_5551230001  118ms
+    ✓ Tap on id: ArrowForwardButton  163ms
+    ✓ Wait until id: OrgNameField is visible  7ms
+    ✓ Tap on id: ArrowForwardButton  148ms
+      ✓ Tap on id: TutorialDoneButton  181ms
+    ✓ Run flow when id: TutorialDoneButton is visible  1.1s
+    ✓ Wait until id: CaptureButton is visible  19ms
+  ✓ Run Start capture  5.6s
+  ✓ Tap on id: CaptureButton  149ms
+  ✓ Wait until id: TutorialDoneButton is visible  7.3s
+  ✓ Tap on id: TutorialDoneButton  309ms
+  ✓ Tap on id: ApproveButton  149ms
+  ✓ Wait until id: CaptureButton is visible  50ms
+  ✓ Tap on id: ArrowBackButton  671ms
+  ✓ Wait until id: SettingsButton is visible  8ms
+  ✓ Tap on id: SettingsButton  105ms
+  ✓ Tap on id: SettingsMap  172ms
+  ✓ Wait until id: MapTreeCard_0 is visible  10ms
+  ✓ Assert that id: MapBackButton is visible  8ms
+  ✓ Tap on id: MapBackButton  108ms
+  ✓ Tap on id: SettingsEditTrees  114ms
+  ✓ Tap on id: UserButton_5551230001  129ms
+  ✓ Tap on id: ArrowForwardButton  196ms
+  ✓ Tap on id: TreeButton_0  126ms
+  ✓ Tap on id: ArrowForwardButton  209ms
+  ✓ Scroll DOWN until id: TreeNoteField is visible  196ms
+  ✓ Tap on id: TreeNoteField  107ms
+  ✓ Input text Edited note  320ms
+  ✓ Hide keyboard  69ms
+  ✓ Scroll DOWN until id: SaveNoteButton is visible  7ms
+  ✓ Tap on id: SaveNoteButton  76ms
+  ✓ Assert that id: Snackbar is visible  8ms
+  ✓ Tap on id: ArrowBackButton  141ms
+  ✓ Tap on id: TreeButton_0  1.1s
+  ✓ Tap on id: ArrowForwardButton  131ms
+  ✓ Scroll DOWN until id: TreeNoteField is visible  194ms
+  ✓ Assert that "Edited note", id: TreeNoteField is visible  7ms
+  ✓ Scroll DOWN until id: DeleteTreeButton is visible  195ms
+  ✓ Tap on id: DeleteTreeButton  73ms
+  ✓ Assert that id: DialogTitle is visible  8ms
+  ✓ Tap on id: DialogNegativeButton  157ms
+  ✓ Take screenshot step-36-end-tapOn-DialogNegativeButton  116ms
+✓ E4 E5 Edit trees and map passed in 1m8s
+  video: build/flow-results/flows/settings-trees-map/tb/E4_E5_Edit_trees_and_map/recording.mp4
+
+1 passed in 1m9s

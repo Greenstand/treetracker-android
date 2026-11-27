@@ -1,0 +1,949 @@
+--------- beginning of main
+11-27 22:54:17.448  7735  7735 I eeTracker.debug: Late-enabling -Xcheck:jni
+11-27 22:54:17.471  7735  7735 I eeTracker.debug: Using CollectorTypeCMC GC.
+11-27 22:54:17.474  7735  7735 W eeTracker.debug: Unexpected CPU variant for x86: x86_64.
+11-27 22:54:17.474  7735  7735 W eeTracker.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-27 22:54:17.485  7735  7735 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-27 22:54:17.594  7735  7735 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-27 22:54:17.595  7735  7735 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-27 22:54:17.595  7735  7735 W ziparchive: Unable to open '/data/app/~~QJmZ1NsKZdo6wy3KRWinVQ==/org.greenstand.android.TreeTracker.debug-tRVvM80KED1xntF3G-JyHg==/base.dm': No such file or directory
+11-27 22:54:17.595  7735  7735 W ziparchive: Unable to open '/data/app/~~QJmZ1NsKZdo6wy3KRWinVQ==/org.greenstand.android.TreeTracker.debug-tRVvM80KED1xntF3G-JyHg==/base.dm': No such file or directory
+11-27 22:54:18.027  7735  7735 D nativeloader: Configuring clns-7 for other apk /data/app/~~QJmZ1NsKZdo6wy3KRWinVQ==/org.greenstand.android.TreeTracker.debug-tRVvM80KED1xntF3G-JyHg==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~QJmZ1NsKZdo6wy3KRWinVQ==/org.greenstand.android.TreeTracker.debug-tRVvM80KED1xntF3G-JyHg==/lib/x86_64:/data/app/~~QJmZ1NsKZdo6wy3KRWinVQ==/org.greenstand.android.TreeTracker.debug-tRVvM80KED1xntF3G-JyHg==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/org.greenstand.android.TreeTracker.debug
+11-27 22:54:18.034  7735  7735 V GraphicsEnvironment: Currently set values for:
+11-27 22:54:18.034  7735  7735 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-27 22:54:18.034  7735  7735 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-27 22:54:18.034  7735  7735 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-27 22:54:18.034  7735  7735 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-27 22:54:18.039  7735  7735 I MultiDex: VM with version 2.1.0 has multidex support
+11-27 22:54:18.039  7735  7735 I MultiDex: Installing application
+11-27 22:54:18.039  7735  7735 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+11-27 22:54:18.057  7735  7735 D SessionsDependencies: Dependency to CRASHLYTICS added.
+11-27 22:54:18.065  7735  7735 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-27 22:54:18.114  7735  7735 D FirebaseSessions: Initializing Firebase Sessions SDK.
+11-27 22:54:18.121  7735  7735 I FirebaseCrashlytics: Initializing Firebase Crashlytics 18.6.3 for org.greenstand.android.TreeTracker.debug
+11-27 22:54:18.128  7735  7735 D SessionsDependencies: Subscriber CRASHLYTICS registered.
+11-27 22:54:18.144  7735  7769 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-27 22:54:18.145  7735  7769 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-27 22:54:18.146  7735  7769 I DynamiteModule: Considering local module com.google.android.gms.measurement.dynamite:105 and remote module com.google.android.gms.measurement.dynamite:115
+11-27 22:54:18.147  7735  7769 I DynamiteModule: Selected remote version of com.google.android.gms.measurement.dynamite, version >= 115
+11-27 22:54:18.147  7735  7769 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-27 22:54:18.168  7735  7735 I FirebaseInitProvider: FirebaseApp initialization successful
+11-27 22:54:18.170  7735  7735 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-27 22:54:18.171  7735  7773 E FirebaseCrashlytics: Settings request failed.
+11-27 22:54:18.192  7735  7735 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-27 22:54:18.192  7735  7735 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+11-27 22:54:18.205  7735  7769 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-27 22:54:18.205  7735  7769 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-27 22:54:18.211  7735  7735 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-27 22:54:18.212  7735  7735 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-27 22:54:18.241  7735  7735 I AWSKeyValueStore: Detected Android API Level = 35
+11-27 22:54:18.242  7735  7735 I AWSKeyValueStore: Creating the AWSKeyValueStore with key for sharedPreferencesForData = com.amazonaws.android.auth
+11-27 22:54:18.243  7735  7735 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-27 22:54:18.243  7735  7735 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-27 22:54:18.243  7735  7735 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.identityId
+11-27 22:54:18.244  7735  7735 D CognitoCachingCredentia: Loading credentials from SharedPreferences
+11-27 22:54:18.244  7735  7735 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-27 22:54:18.244  7735  7735 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-27 22:54:18.244  7735  7735 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.expirationDate
+11-27 22:54:18.248  7735  7771 I FirebaseCrashlytics: No version control information found
+11-27 22:54:18.261  7735  7770 W InstallationId: Error getting authentication token.
+11-27 22:54:18.261  7735  7770 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-27 22:54:18.261  7735  7770 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-27 22:54:18.264  7735  7735 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-27 22:54:18.265  7735  7770 D SessionConfigFetcher: Fetching settings from server.
+11-27 22:54:18.266  7735  7735 D AmazonS3Client: initialized with endpoint = https://s3.eu-central-1.amazonaws.com
+11-27 22:54:18.268  7735  7763 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-27 22:54:18.270  7735  7768 D LifecycleServiceBinder: Binding service to application.
+11-27 22:54:18.300  7735  7787 I FA      : App measurement initialized, version: 95014
+11-27 22:54:18.304  7735  7787 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-27 22:54:18.318  7735  7735 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-27 22:54:18.321  7735  7787 I FA      : To enable faster debug mode event logging run:
+11-27 22:54:18.321  7735  7787 I FA      :   adb shell setprop debug.firebase.analytics.app org.greenstand.android.TreeTracker.debug
+11-27 22:54:18.357  7735  7735 W eeTracker.debug: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-27 22:54:18.362  7735  7768 D SessionLifecycleClient: Queued message 1. Queue size 1
+11-27 22:54:18.364  7735  7735 W HWUI    : Unknown dataspace 0
+11-27 22:54:18.373  7735  7735 D SessionLifecycleService: Service bound to new client on process 7735
+11-27 22:54:18.374  7735  7793 D SessionLifecycleService: App has not yet foregrounded. Using previously stored session: null
+11-27 22:54:18.374  7735  7793 D SessionLifecycleService: Client android.os.Messenger@b94c8d3 bound at 203997. Clients: 1
+11-27 22:54:18.396  7735  7787 I FA      : Tag Manager is not found and thus will not be used
+11-27 22:54:18.515  7735  7735 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-27 22:54:18.584  7735  7788 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-27 22:54:18.585  7735  7788 I EGL_emulation: Opening libGLESv2_emulation.so
+11-27 22:54:18.590  7735  7788 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-27 22:54:18.612  7735  7788 I Gralloc4: mapper 4.x is not supported
+11-27 22:54:18.880  7735  7742 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-27 22:54:18.943  7735  7735 D SessionLifecycleClient: Connected to SessionLifecycleService. Queue size 1
+11-27 22:54:18.945  7735  7772 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-27 22:54:18.945  7735  7793 D SessionLifecycleService: Activity foregrounding at 204570.
+11-27 22:54:18.945  7735  7793 D SessionLifecycleService: Cold start detected.
+11-27 22:54:18.976  7735  7793 D SessionLifecycleService: Generated new session 55f7d281841b4e11a75e7564f8bfb396
+11-27 22:54:18.978  7735  7793 D SessionLifecycleService: Broadcasting new session: SessionDetails(sessionId=55f7d281841b4e11a75e7564f8bfb396, firstSessionId=55f7d281841b4e11a75e7564f8bfb396, sessionIndex=0, sessionStartTimestampUs=1795820058975000)
+11-27 22:54:18.982  7735  7735 I Choreographer: Skipped 34 frames!  The application may be doing too much work on its main thread.
+11-27 22:54:19.013  7735  7772 D SessionFirelogPublisher: Data Collection is enabled for at least one Subscriber
+11-27 22:54:19.021  7735  7735 D SessionLifecycleClient: Session update received: 55f7d281841b4e11a75e7564f8bfb396
+11-27 22:54:19.022  7735  7772 D SessionLifecycleClient: Notified CRASHLYTICS of new session 55f7d281841b4e11a75e7564f8bfb396
+11-27 22:54:19.075  7735  7735 D OrgRepo : Org set to: Greenstand
+11-27 22:54:19.076  7735  7735 D OrgRepo : Org settings: Org(id=-1, name=Greenstand, walletId=, logoPath=, captureSetupFlow=[Destination(route=user-select, features=null), Destination(route=add-org, features=null)], captureFlow=[Destination(route=capture/{profilePicUrl}, features=null), Destination(route=tree-image-review/{photoPath}, features=null)])
+11-27 22:54:19.157  7735  7768 W InstallationId: Error getting authentication token.
+11-27 22:54:19.157  7735  7768 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-27 22:54:19.157  7735  7768 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-27 22:54:19.159  7735  7768 D SessionConfigFetcher: Fetching settings from server.
+11-27 22:54:19.179  7735  7763 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-27 22:54:19.187  7735  7774 W InstallationId: Error getting authentication token.
+11-27 22:54:19.187  7735  7774 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-27 22:54:19.187  7735  7774 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-27 22:54:19.192  7735  7772 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"55f7d281841b4e11a75e7564f8bfb396","firstSessionId":"55f7d281841b4e11a75e7564f8bfb396","sessionIndex":0,"eventTimestampUs":1795820058975000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"dHxa9pr3TSagVfaqnBmFlV","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":7735,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":7735,"importance":100,"defaultProcess":true}]}}}
+11-27 22:54:19.196  7735  7772 D SessionFirelogPublisher: Successfully logged Session Start event: 55f7d281841b4e11a75e7564f8bfb396
+11-27 22:54:19.292  7735  7735 D BuildVariant: build variant: debug
+11-27 22:54:19.306  7735  7765 W OrgLink : Install referrer not supported on this device
+11-27 22:54:19.313  7735  7735 D OrgLink : No org deeplink, using existing org
+11-27 22:54:19.338  7735  7824 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteDatabase;->getThreadSession()Landroid/database/sqlite/SQLiteSession; (unsupported, reflection, allowed)
+11-27 22:54:19.338  7735  7824 W eeTracker.debug: Accessing hidden method Landroid/database/sqlite/SQLiteSession;->beginTransaction(ILandroid/database/sqlite/SQLiteTransactionListener;ILandroid/os/CancellationSignal;)V (unsupported, reflection, allowed)
+11-27 22:54:20.480  7735  7788 D EGL_emulation: app_time_stats: avg=513.59ms min=55.78ms max=1050.72ms count=3
+11-27 22:54:22.084  7735  7772 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-27 22:54:22.086  7735  7793 D SessionLifecycleService: Activity backgrounding at 207709
+11-27 22:54:22.112  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@e26fd76
+11-27 22:54:22.114  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@9b8190e
+11-27 22:54:22.135  7735  7772 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-27 22:54:22.135  7735  7793 D SessionLifecycleService: Activity foregrounding at 207760.
+11-27 22:54:22.156  7735  7735 D AutofillManager: Fill dialog is enabled:false, hints=[]
+11-27 22:54:23.570  7735  7862 D ProfileInstaller: Installing profile for org.greenstand.android.TreeTracker.debug
+11-27 22:54:23.981  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m29s603ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:24.259  7735  7788 D EGL_emulation: app_time_stats: avg=345.49ms min=6.30ms max=1003.70ms count=6
+11-27 22:54:24.981  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m30s603ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:25.357  7735  7735 D InsetsController: show(ime(), fromIme=false)
+11-27 22:54:25.358  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:d6f44f3: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-27 22:54:25.359  7735  7735 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{634aa2f VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT_BY_INSETS_API
+11-27 22:54:25.369  7735  7788 D EGL_emulation: app_time_stats: avg=1109.96ms min=1109.96ms max=1109.96ms count=1
+11-27 22:54:25.374  7735  7735 I AssistStructure: Flattened final assist data: 1024 bytes, containing 1 windows, 5 views
+11-27 22:54:25.396  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:b4898135: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-27 22:54:25.396  7735  7735 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{634aa2f VFED..... .F...... 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-27 22:54:25.408  7735  7735 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-27 22:54:25.408  7735  7735 D Autofill Status: 
+11-27 22:54:25.408  7735  7735 D Autofill Status: Did you set up autofill?
+11-27 22:54:25.408  7735  7735 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-27 22:54:25.408  7735  7735 D Autofill Status: 2. Pick a service
+11-27 22:54:25.408  7735  7735 D Autofill Status: 
+11-27 22:54:25.408  7735  7735 D Autofill Status: Did you add an account?
+11-27 22:54:25.408  7735  7735 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-27 22:54:25.408  7735  7735 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-27 22:54:25.408  7735  7735 D Autofill Status: 3. Add your account
+11-27 22:54:25.453  7735  7735 D InsetsController: show(ime(), fromIme=true)
+11-27 22:54:25.471  7735  7735 W InteractionJankMonitor: Initializing without READ_DEVICE_CONFIG permission. enabled=true, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=org.greenstand.android.TreeTracker.debug
+11-27 22:54:25.485  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:b4898135: onShown
+11-27 22:54:26.403  7735  7788 D EGL_emulation: app_time_stats: avg=129.23ms min=13.62ms max=461.73ms count=8
+11-27 22:54:26.981  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m32s603ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:27.316  7735  7735 D InsetsController: hide(ime(), fromIme=true)
+11-27 22:54:27.339  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@187843976 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@f2014f4
+11-27 22:54:27.351  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:44b40140: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+11-27 22:54:27.353  7735  7735 I ImeTracker: com.google.android.inputmethod.latin:507b7b51: onHidden
+11-27 22:54:27.552  7735  7743 W eeTracker.debug: Cleared Reference was only reachable from finalizer (only reported once)
+11-27 22:54:27.750  7735  7788 D EGL_emulation: app_time_stats: avg=61.64ms min=2.21ms max=496.30ms count=21
+11-27 22:54:28.433  7735  7735 D InsetsController: hide(ime(), fromIme=false)
+11-27 22:54:28.434  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:4d2d98b2: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_BY_INSETS_API fromUser false
+11-27 22:54:28.434  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:4d2d98b2: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-27 22:54:28.981  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m34s603ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:29.483  7735  7735 D InsetsController: show(ime(), fromIme=false)
+11-27 22:54:29.483  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:88b734ed: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-27 22:54:29.484  7735  7735 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{634aa2f VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT_BY_INSETS_API
+11-27 22:54:29.490  7735  7735 I AssistStructure: Flattened final assist data: 1148 bytes, containing 1 windows, 6 views
+11-27 22:54:29.492  7735  7788 D EGL_emulation: app_time_stats: avg=431.89ms min=6.76ms max=1040.60ms count=4
+11-27 22:54:29.495  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:6185c783: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-27 22:54:29.495  7735  7735 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{634aa2f VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-27 22:54:29.503  7735  7735 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-27 22:54:29.503  7735  7735 D Autofill Status: 
+11-27 22:54:29.503  7735  7735 D Autofill Status: Did you set up autofill?
+11-27 22:54:29.503  7735  7735 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-27 22:54:29.503  7735  7735 D Autofill Status: 2. Pick a service
+11-27 22:54:29.503  7735  7735 D Autofill Status: 
+11-27 22:54:29.503  7735  7735 D Autofill Status: Did you add an account?
+11-27 22:54:29.503  7735  7735 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-27 22:54:29.503  7735  7735 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-27 22:54:29.503  7735  7735 D Autofill Status: 3. Add your account
+11-27 22:54:29.561  7735  7735 D InsetsController: show(ime(), fromIme=true)
+11-27 22:54:29.581  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:6185c783: onShown
+11-27 22:54:29.981  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m35s604ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:30.494  7735  7788 D EGL_emulation: app_time_stats: avg=166.86ms min=13.63ms max=494.57ms count=6
+11-27 22:54:30.981  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m36s604ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:31.532  7735  7788 D EGL_emulation: app_time_stats: avg=172.89ms min=11.40ms max=500.05ms count=6
+11-27 22:54:31.607  7735  7735 I AssistStructure: Flattened final assist data: 1148 bytes, containing 1 windows, 6 views
+11-27 22:54:31.613  7735  7735 D Autofill Status: Autofill popup isn't shown because autofill is not available.
+11-27 22:54:31.613  7735  7735 D Autofill Status: 
+11-27 22:54:31.613  7735  7735 D Autofill Status: Did you set up autofill?
+11-27 22:54:31.613  7735  7735 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced > Autofill Service
+11-27 22:54:31.613  7735  7735 D Autofill Status: 2. Pick a service
+11-27 22:54:31.613  7735  7735 D Autofill Status: 
+11-27 22:54:31.613  7735  7735 D Autofill Status: Did you add an account?
+11-27 22:54:31.613  7735  7735 D Autofill Status: 1. Go to Settings > System > Languages&input > Advanced
+11-27 22:54:31.613  7735  7735 D Autofill Status: 2. Click on the settings icon next to the Autofill Service
+11-27 22:54:31.613  7735  7735 D Autofill Status: 3. Add your account
+11-27 22:54:31.619  7735  7735 D InsetsController: show(ime(), fromIme=false)
+11-27 22:54:31.619  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:c39aaaa7: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+11-27 22:54:31.620  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:c39aaaa7: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-27 22:54:31.627  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:e78d5150: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+11-27 22:54:31.627  7735  7735 D InputMethodManager: showSoftInput() view=androidx.compose.ui.platform.AndroidComposeView{634aa2f VFED..... .F....ID 0,0-320,640 aid=1073741825} flags=0 reason=SHOW_SOFT_INPUT
+11-27 22:54:31.670  7735  7735 D InsetsController: show(ime(), fromIme=true)
+11-27 22:54:31.671  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:fb152dda: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-27 22:54:31.679  7735  7735 D InsetsController: show(ime(), fromIme=true)
+11-27 22:54:31.679  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:e78d5150: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-27 22:54:32.632  7735  7788 D EGL_emulation: app_time_stats: avg=219.97ms min=14.27ms max=499.88ms count=5
+11-27 22:54:32.987  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m38s604ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:33.602  7735  7735 D InsetsController: hide(ime(), fromIme=true)
+11-27 22:54:33.622  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=ImeCallback=ImeOnBackInvokedCallback@187843976 Callback=android.window.IOnBackInvokedCallback$Stub$Proxy@3e38c98
+11-27 22:54:33.631  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:8153c735: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+11-27 22:54:33.631  7735  7735 I ImeTracker: com.google.android.inputmethod.latin:ea3cfafa: onHidden
+11-27 22:54:33.638  7735  7788 D EGL_emulation: app_time_stats: avg=96.66ms min=2.61ms max=358.13ms count=10
+11-27 22:54:34.657  7735  7772 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-27 22:54:34.658  7735  7793 D SessionLifecycleService: Activity backgrounding at 220282
+11-27 22:54:34.669  7735  7770 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-27 22:54:34.669  7735  7793 D SessionLifecycleService: Activity foregrounding at 220294.
+11-27 22:54:34.676  7735  7735 D AutofillManager: Fill dialog is enabled:false, hints=[]
+11-27 22:54:34.719  7735  7735 D QuirkSettingsLoader: QuirkSettings$MetadataHolderService is not found.
+11-27 22:54:34.719  7735  7735 D CameraX : QuirkSettings from app metadata: null
+11-27 22:54:34.719  7735  7735 D CameraX : QuirkSettings by default: QuirkSettings{enabledWhenDeviceHasQuirk=true, forceEnabledQuirks=[], forceDisabledQuirks=[]}
+11-27 22:54:34.726  7735  7976 D DeviceQuirks: camera2 DeviceQuirks = CaptureSessionShouldUseMrirQuirk
+11-27 22:54:34.728  7735  7976 I CameraManagerGlobal: Connecting to camera service
+11-27 22:54:34.744  7735  7976 D Camera2CameraCoordinator: Updated concurrent camera map: {0=[1], 1=[0]}
+11-27 22:54:34.745  7735  7976 D Camera2CameraFactory: Updated available camera list: [] -> [0, 1]
+11-27 22:54:34.810  7735  7976 D CameraRepository: Added camera: 0
+11-27 22:54:34.815  7735  7976 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:34.821  7735  7976 I Camera2CameraInfo: Device Level: INFO_SUPPORTED_HARDWARE_LEVEL_3
+11-27 22:54:34.823  7735  7976 D CameraRepository: Added camera: 1
+11-27 22:54:34.823  7735  7976 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:34.823  7735  7976 I Camera2CameraInfo: Device Level: INFO_SUPPORTED_HARDWARE_LEVEL_FULL
+11-27 22:54:34.824  7735  7976 I CameraPresencePrvdr: Starting CameraPresenceProvider monitoring.
+11-27 22:54:34.824  7735  7976 I CameraPresenceSrc: First observer added. Starting monitoring.
+11-27 22:54:34.824  7735  7976 I Camera2PresenceSrc: Starting system availability monitoring.
+11-27 22:54:34.824  7735  7976 D CameraValidator: Verifying camera lens facing on emu64xa, lensFacingInteger: null
+11-27 22:54:34.825  7735  7980 D Camera2PresenceSrc: System onCameraAvailable: 0
+11-27 22:54:34.825  7735  7980 D Camera2PresenceSrc: System onCameraAvailable: 1
+11-27 22:54:34.825  7735  7980 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:34.825  7735  7980 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:34.826  7735  7976 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:34.977  7735  7788 D EGL_emulation: app_time_stats: avg=446.18ms min=127.43ms max=711.01ms count=3
+11-27 22:54:35.012  7735  7735 D DeviceQuirks: core DeviceQuirks = SurfaceOrderQuirk
+11-27 22:54:35.021  7735  7735 D ResolvedFeatureGroup: resolveFeatureGroup: sessionConfig = androidx.camera.core.LegacySessionConfig@c5c9442, lensFacing = 0
+11-27 22:54:35.023  7735  7735 D CameraUseCaseAdapter: addUseCases: appUseCasesToAdd = [ImageCapture:androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd6, Preview:androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36], featureGroup = null
+11-27 22:54:35.036  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = ImageCapture:androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd6
+11-27 22:54:35.038  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = Preview:androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36
+11-27 22:54:35.039  7735  7735 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36 to no compatible HDR dynamic ranges.
+11-27 22:54:35.039  7735  7735 D DynamicRangeResolver: DynamicRange@cee7aaf{encoding=UNSPECIFIED, bitDepth=0}
+11-27 22:54:35.039  7735  7735 D DynamicRangeResolver: ->
+11-27 22:54:35.039  7735  7735 D DynamicRangeResolver: DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}
+11-27 22:54:35.039  7735  7735 D SupportedSurfaceCombination: resolvedDynamicRanges = {androidx.camera.core.impl.ImageCaptureConfig@5a36c53=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, androidx.camera.core.impl.PreviewConfig@5937289=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}}
+11-27 22:54:35.039  7735  7735 D SupportedSurfaceCombination: getSuggestedStreamSpecifications: isPreviewStabilizationOn = false, mIsPreviewStabilizationSupported = false, isFeatureComboInvocation = false
+11-27 22:54:35.040  7735  7735 D SupportedSurfaceCombination: resolveSpecsByCheckingMethod: checkingMethod = WITHOUT_FEATURE_COMBO
+11-27 22:54:35.040  7735  7735 D SupportedSurfaceCombination: resolveSpecsBySettings: featureSettings = FeatureSettings{getCameraMode=0, hasVideoCapture=false, getRequiredMaxBitDepth=8, isPreviewStabilizationOn=false, isUltraHdrOn=false, isHighSpeedOn=false, isFeatureComboInvocation=false, requiresFeatureComboQuery=false, getTargetFpsRange=[0, 0], isStrictFpsRequired=false}
+11-27 22:54:35.042  7735  7735 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:35.042  7735  7735 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:35.043  7735  7735 D SupportedSurfaceCombination: orderedSurfaceConfigListForStreamUseCase = [SurfaceConfig(configType=JPEG, configSize=MAXIMUM, streamUseCase=STILL_CAPTURE), SurfaceConfig(configType=PRIV, configSize=PREVIEW, streamUseCase=PREVIEW)]
+11-27 22:54:35.043  7735  7735 D SupportedSurfaceCombination: resolveSpecsBySettings: bestSizesAndFps = BestSizesAndMaxFpsForConfigs{bestSizes=[1440x1080, 352x288], bestSizesForStreamUseCase=[1440x1080, 352x288], maxFpsForBestSizes=30, maxFpsForStreamUseCase=30, maxFpsForAllSizes=2147483647}
+11-27 22:54:35.045  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = ImageCapture:androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd6
+11-27 22:54:35.046  7735  7735 D ImageCapture: onSuggestedStreamSpecUpdated: primaryStreamSpec = StreamSpec{resolution=1440x1080, originalConfiguredResolution=1440x1080, dynamicRange=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@c578566, zslDisabled=false}, secondaryStreamSpec null
+11-27 22:54:35.047  7735  7735 D ImageCapture: createPipeline(cameraId: 1, streamSpec: StreamSpec{resolution=1440x1080, originalConfiguredResolution=1440x1080, dynamicRange=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@c578566, zslDisabled=false})
+11-27 22:54:35.057  7735  7735 D DeferrableSurface: Surface created[total_surfaces=1, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@ecd10a7}
+11-27 22:54:35.069  7735  7976 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081 ACTIVE
+11-27 22:54:35.070  7735  7976 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:35.073  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = Preview:androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36
+11-27 22:54:35.073  7735  7735 D Preview : onSuggestedStreamSpecUpdated: primaryStreamSpec = StreamSpec{resolution=352x288, originalConfiguredResolution=352x288, dynamicRange=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@9aa60fd, zslDisabled=false}, secondaryStreamSpec null
+11-27 22:54:35.077  7735  7735 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](androidx.camera.core.processing.SurfaceEdge$SettableSurface@7c691f2}
+11-27 22:54:35.078  7735  7735 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@396d9f}
+11-27 22:54:35.081  7735  7735 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@396d9f}
+11-27 22:54:35.081  7735  7735 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.SurfaceRequest$2@396d9f
+11-27 22:54:35.081  7735  7735 D ImageCapture: onCameraControlReady
+11-27 22:54:35.082  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081 ACTIVE
+11-27 22:54:35.082  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:35.082  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646 INACTIVE
+11-27 22:54:35.082  7735  7735 D Camera2CameraControlImp: setFlashMode: mFlashMode = 2
+11-27 22:54:35.086  7735  7735 D DeferrableSurface: surface closed,  useCount=1 closed=true androidx.camera.core.SurfaceRequest$2@396d9f
+11-27 22:54:35.086  7735  7735 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.processing.SurfaceEdge$SettableSurface@7c691f2
+11-27 22:54:35.087  7735  7735 D DeferrableSurface: Surface terminated[total_surfaces=2, used_surfaces=1](androidx.camera.core.processing.SurfaceEdge$SettableSurface@7c691f2}
+11-27 22:54:35.087  7735  7735 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.SurfaceRequest$2@396d9f
+11-27 22:54:35.087  7735  7735 D DeferrableSurface: Surface no longer in use[total_surfaces=2, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@396d9f}
+11-27 22:54:35.087  7735  7735 D DeferrableSurface: Surface terminated[total_surfaces=1, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@396d9f}
+11-27 22:54:35.087  7735  7735 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](androidx.camera.core.processing.SurfaceEdge$SettableSurface@df78f84}
+11-27 22:54:35.088  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:35.088  7735  7735 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@9201ff0}
+11-27 22:54:35.089  7735  7735 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@9201ff0}
+11-27 22:54:35.089  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:35.089  7735  7735 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.SurfaceRequest$2@9201ff0
+11-27 22:54:35.090  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use cases [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646] now ATTACHED
+11-27 22:54:35.092  7735  7980 D Camera2CameraControlImp: setActive: isActive = true
+11-27 22:54:35.093  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646] for camera: 1
+11-27 22:54:35.094  7735  7980 D MeteringRepeating: MeteringSession SurfaceTexture size: 352x288
+11-27 22:54:35.094  7735  7980 D DeferrableSurface: Surface created[total_surfaces=4, used_surfaces=1](androidx.camera.core.impl.ImmediateSurface@358d2ab}
+11-27 22:54:35.095  7735  7980 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.camera2.internal.MeteringRepeatingSession-dc612860-21a7-419f-aa6a-50ca290acc3e to no compatible HDR dynamic ranges.
+11-27 22:54:35.095  7735  7980 D DynamicRangeResolver: DynamicRange@cee7aaf{encoding=UNSPECIFIED, bitDepth=0}
+11-27 22:54:35.095  7735  7980 D DynamicRangeResolver: ->
+11-27 22:54:35.095  7735  7980 D DynamicRangeResolver: DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}
+11-27 22:54:35.095  7735  7980 D SupportedSurfaceCombination: resolvedDynamicRanges = {androidx.camera.camera2.internal.MeteringRepeatingSession$MeteringRepeatingConfig@d05aec6=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}}
+11-27 22:54:35.095  7735  7980 D SupportedSurfaceCombination: getSuggestedStreamSpecifications: isPreviewStabilizationOn = false, mIsPreviewStabilizationSupported = false, isFeatureComboInvocation = false
+11-27 22:54:35.096  7735  7980 D SupportedSurfaceCombination: resolveSpecsByCheckingMethod: checkingMethod = WITHOUT_FEATURE_COMBO
+11-27 22:54:35.096  7735  7980 D SupportedSurfaceCombination: resolveSpecsBySettings: featureSettings = FeatureSettings{getCameraMode=0, hasVideoCapture=false, getRequiredMaxBitDepth=8, isPreviewStabilizationOn=false, isUltraHdrOn=false, isHighSpeedOn=false, isFeatureComboInvocation=false, requiresFeatureComboQuery=false, getTargetFpsRange=[0, 0], isStrictFpsRequired=false}
+11-27 22:54:35.096  7735  7980 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:35.096  7735  7980 D SupportedSurfaceCombination: orderedSurfaceConfigListForStreamUseCase = [SurfaceConfig(configType=JPEG, configSize=MAXIMUM, streamUseCase=STILL_CAPTURE), SurfaceConfig(configType=PRIV, configSize=PREVIEW, streamUseCase=PREVIEW)]
+11-27 22:54:35.097  7735  7980 D SupportedSurfaceCombination: resolveSpecsBySettings: bestSizesAndFps = BestSizesAndMaxFpsForConfigs{bestSizes=[352x288], bestSizesForStreamUseCase=[352x288], maxFpsForBestSizes=30, maxFpsForStreamUseCase=30, maxFpsForAllSizes=2147483647}
+11-27 22:54:35.097  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Surface combination with metering repeating supported!
+11-27 22:54:35.097  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, MeteringRepeating164621959] for camera: 1
+11-27 22:54:35.098  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Resetting Capture Session
+11-27 22:54:35.098  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Skipping Capture Session state check due to current camera state: INITIALIZED and previous session status: false
+11-27 22:54:35.098  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Releasing session in state INITIALIZED
+11-27 22:54:35.098  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Attempting to force open the camera.
+11-27 22:54:35.100  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m40s604ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:35.100  7735  7980 D CameraStateRegistry: tryOpenCamera(Camera@edce30b[id=1]) [Available Cameras: 1, Already Open: false (Previous state: null)] --> SUCCESS
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         UNKNOWN               
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         OPENING               
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:35.101  7735  7980 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-27 22:54:35.101  7735  7735 D VRI[TreeTrackerActivity]: visibilityChanged oldVisibility=true newVisibility=false
+11-27 22:54:35.101  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Opening camera.
+11-27 22:54:35.101  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Transitioning camera internal state: INITIALIZED --> OPENING
+11-27 22:54:35.101  7735  7980 D CameraStateMachine: New public camera state CameraState{type=OPENING, error=null} from OPENING and null
+11-27 22:54:35.101  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=OPENING, error=null}
+11-27 22:54:35.101  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646, MeteringRepeating164621959] for camera: 1
+11-27 22:54:35.105  7735  7735 D PreviewView: Surface requested by Preview.
+11-27 22:54:35.105  7735  7735 D DeviceQuirks: view DeviceQuirks = 
+11-27 22:54:35.120  7735  7976 D Camera2PresenceSrc: System onCameraUnavailable: 1
+11-27 22:54:35.120  7735  7976 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:35.133  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081 ACTIVE
+11-27 22:54:35.134  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, MeteringRepeating164621959] for camera: 1
+11-27 22:54:35.136  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646 INACTIVE
+11-27 22:54:35.136  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, MeteringRepeating164621959] for camera: 1
+11-27 22:54:35.136  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646 RESET
+11-27 22:54:35.139  7735  7735 D TextureViewImpl: SurfaceTexture available. Size: 352x288
+11-27 22:54:35.139  7735  7735 D TextureViewImpl: Surface set on Preview.
+11-27 22:54:35.139  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646, MeteringRepeating164621959] for camera: 1
+11-27 22:54:35.139  7735  7980 D MeteringRepeating: MeteringRepeating clear!
+11-27 22:54:35.139  7735  7980 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.impl.ImmediateSurface@358d2ab
+11-27 22:54:35.139  7735  7980 D DeferrableSurface: Surface terminated[total_surfaces=3, used_surfaces=1](androidx.camera.core.impl.ImmediateSurface@358d2ab}
+11-27 22:54:35.139  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Resetting Capture Session
+11-27 22:54:35.139  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Skipping Capture Session state check due to current camera state: OPENING and previous session status: false
+11-27 22:54:35.139  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Releasing session in state OPENING
+11-27 22:54:35.140  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081] for camera: 1
+11-27 22:54:35.140  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use case androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646 ACTIVE
+11-27 22:54:35.140  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646] for camera: 1
+11-27 22:54:35.140  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} CameraDevice.onOpened()
+11-27 22:54:35.140  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Transitioning camera internal state: OPENING --> OPENED
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         UNKNOWN               
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         OPEN                  
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:35.140  7735  7980 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-27 22:54:35.140  7735  7980 D CameraStateMachine: New public camera state CameraState{type=OPEN, error=null} from OPEN and null
+11-27 22:54:35.140  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=OPEN, error=null}
+11-27 22:54:35.140  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646] for camera: 1
+11-27 22:54:35.141  7735  7980 D StreamUseCaseUtil: populateSurfaceToStreamUseCaseMapping() - streamUseCaseMap = {androidx.camera.core.SurfaceRequest$2@9201ff0=1, androidx.camera.core.impl.ImmediateSurface@ecd10a7=2}
+11-27 22:54:35.142  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646] for camera: 1
+11-27 22:54:35.142  7735  7980 D SyncCaptureSessionBase: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@81d028b] getSurface done with results: [Surface(name=android.graphics.SurfaceTexture@1fd5576 mNativeObject=134011696093248)/@0xad91fe4, Surface(name=null mNativeObject=134011696049648)/@0x1b2405a]
+11-27 22:54:35.142  7735  7980 D CaptureSession: Opening capture session.
+11-27 22:54:35.148  7735  7980 D Camera2CaptureRequestBuilder: template type = 1
+11-27 22:54:35.152  7735  7980 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-27 22:54:35.156  7735  7735 D PreviewView: Preview transformation info updated. TransformationInfo{getCropRect=Rect(0, 0 - 352, 288), getRotationDegrees=270, getTargetRotation=0, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[0.2, 0.0, -16.0][0.0, 0.2, -0.0][0.0, 0.0, 1.0]}, isMirroring=true}
+11-27 22:54:35.156  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@81d028b] start openCaptureSession
+11-27 22:54:35.156  7735  7980 D DeferrableSurface: use count+1, useCount=2 androidx.camera.core.SurfaceRequest$2@9201ff0
+11-27 22:54:35.156  7735  7735 D PreviewTransform: Transformation info set: TransformationInfo{getCropRect=Rect(0, 0 - 352, 288), getRotationDegrees=270, getTargetRotation=0, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[0.2, 0.0, -16.0][0.0, 0.2, -0.0][0.0, 0.0, 1.0]}, isMirroring=true} 352x288 true
+11-27 22:54:35.159  7735  7980 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=2](androidx.camera.core.impl.ImmediateSurface@ecd10a7}
+11-27 22:54:35.159  7735  7980 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.impl.ImmediateSurface@ecd10a7
+11-27 22:54:35.187  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@81d028b] Session onConfigured()
+11-27 22:54:35.187  7735  7980 D CaptureSession: Attempting to send capture request onConfigured
+11-27 22:54:35.187  7735  7980 D CaptureSession: Issuing request for session.
+11-27 22:54:35.187  7735  7980 D Camera2CaptureRequestBuilder: createCaptureRequest
+11-27 22:54:35.187  7735  7980 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-27 22:54:35.187  7735  7980 D Camera2CaptureRequestBuilder: applyVideoStabilization: mode = null
+11-27 22:54:35.194  7735  7980 D CaptureSession: CameraCaptureSession.onConfigured() mState=OPENED
+11-27 22:54:35.199  7735  7980 D CaptureSession: CameraCaptureSession.onReady() OPENED
+11-27 22:54:35.790  7735  7743 I eeTracker.debug: Background concurrent mark compact GC freed 7352KB AllocSpace bytes, 17(656KB) LOS objects, 49% free, 9465KB/18MB, paused 788us,125.933ms total 565.014ms
+11-27 22:54:35.890  7735  7735 D StreamStateObserver: Update Preview stream state to STREAMING
+11-27 22:54:35.891  7735  7735 E FrameTracker: force finish cuj, time out: J<IME_INSETS_SHOW_ANIMATION::0@1@org.greenstand.android.TreeTracker.debug>
+11-27 22:54:36.088  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m41s616ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:36.150  7735  7788 D EGL_emulation: app_time_stats: avg=197.82ms min=26.10ms max=759.51ms count=6
+11-27 22:54:36.415  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@f4d047d
+11-27 22:54:37.183  7735  7788 D EGL_emulation: app_time_stats: avg=34.33ms min=18.02ms max=84.19ms count=30
+11-27 22:54:37.466  7735  7735 D ImageCapture: takePictureInternal
+11-27 22:54:37.471  7735  7735 D TakePictureManagerImpl: Issue the next TakePictureRequest.
+11-27 22:54:37.476  7735  7976 D Camera2CapturePipeline: createPipeline: captureMode = 1, flashMode = 2, flashType = 0, pipeline tasks = [androidx.camera.camera2.internal.Camera2CapturePipeline$AePreCaptureTask@8da7562]
+11-27 22:54:37.476  7735  7976 D Camera2CapturePipeline: isFlashRequired: flashMode = 2
+11-27 22:54:37.476  7735  7976 D Camera2CapturePipeline: isFlashRequired: flashMode = 2
+11-27 22:54:37.476  7735  7976 D Camera2CapturePipeline: applyStillCaptureTemplate: templateToModify = -1
+11-27 22:54:37.476  7735  7976 D Camera2CameraImpl: {Camera@edce30b[id=1]} Issue capture request
+11-27 22:54:37.477  7735  7976 D CaptureSession: Issuing capture request.
+11-27 22:54:37.477  7735  7976 D Camera2CaptureRequestBuilder: createCaptureRequest
+11-27 22:54:37.503  7735  7976 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-27 22:54:37.503  7735  7976 D Camera2CaptureRequestBuilder: applyVideoStabilization: mode = null
+11-27 22:54:37.592  7735  7735 E FrameTracker: force finish cuj, time out: J<IME_INSETS_HIDE_ANIMATION::1@1@org.greenstand.android.TreeTracker.debug>
+11-27 22:54:37.743  7735  7735 D TakePictureManagerImpl: Issue the next TakePictureRequest.
+11-27 22:54:37.743  7735  7735 D TakePictureManagerImpl: No new request.
+11-27 22:54:37.816  7735  7735 D CameraXApp: Photo capture succeeded: /data/user/0/org.greenstand.android.TreeTracker.debug/app_treeImages/IMG_20261127_225437_443143777634363921.jpg
+11-27 22:54:37.880  7735  7735 W ScreenFlashWrapper: completePendingScreenFlashClear: none pending!
+11-27 22:54:37.881  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Use cases [androidx.camera.core.ImageCapture-36b7be2c-6473-47cf-b105-23385c2cacd664186081, androidx.camera.core.Preview-1a16a3f9-2d60-40fe-8aca-a41040416f36224496646] now DETACHED for camera
+11-27 22:54:37.881  7735  7980 D UseCaseAttachState: All use case: [] for camera: 1
+11-27 22:54:37.881  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Resetting Capture Session
+11-27 22:54:37.881  7735  7735 W ScreenFlashWrapper: completePendingScreenFlashClear: none pending!
+11-27 22:54:37.882  7735  7735 D ImageCapture: clearPipeline
+11-27 22:54:37.882  7735  7735 D DeferrableSurface: surface closed,  useCount=1 closed=true androidx.camera.core.impl.ImmediateSurface@ecd10a7
+11-27 22:54:37.882  7735  7735 D DeferrableSurface: surface closed,  useCount=2 closed=true androidx.camera.core.SurfaceRequest$2@9201ff0
+11-27 22:54:37.882  7735  7735 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.processing.SurfaceEdge$SettableSurface@df78f84
+11-27 22:54:37.882  7735  7735 D DeferrableSurface: Surface terminated[total_surfaces=2, used_surfaces=2](androidx.camera.core.processing.SurfaceEdge$SettableSurface@df78f84}
+11-27 22:54:37.882  7735  7735 D DeferrableSurface: use count-1,  useCount=1 closed=true androidx.camera.core.SurfaceRequest$2@9201ff0
+11-27 22:54:37.883  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@81d028b] Session call close()
+11-27 22:54:37.883  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Releasing session in state OPENED
+11-27 22:54:37.884  7735  7980 D Camera2CameraControlImp: setActive: isActive = false
+11-27 22:54:37.885  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:37.890  7735  7735 W LifecycleCameraRepository: Attempt to unbind use cases from an invalid camera.
+11-27 22:54:37.891  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:37.891  7735  7980 D VideoUsageControl: resetDirectly: mVideoUsage reset!
+11-27 22:54:37.893  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Closing camera.
+11-27 22:54:37.893  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Transitioning camera internal state: OPENED --> CLOSING
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         UNKNOWN               
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         CLOSING               
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:37.896  7735  7980 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-27 22:54:37.898  7735  7980 D CameraStateMachine: New public camera state CameraState{type=CLOSING, error=null} from CLOSING and null
+11-27 22:54:37.898  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=CLOSING, error=null}
+11-27 22:54:37.898  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Resetting Capture Session
+11-27 22:54:37.899  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Skipping Capture Session state check due to current camera state: CLOSING and previous session status: false
+11-27 22:54:37.899  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Releasing session in state CLOSING
+11-27 22:54:37.899  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@81d028b] Session call super.close()
+11-27 22:54:37.899  7735  7735 D StreamStateObserver: Update Preview stream state to IDLE
+11-27 22:54:37.902  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 1
+11-27 22:54:37.903  7735  7980 D CaptureSession: onSessionFinished()
+11-27 22:54:37.904  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} closing camera
+11-27 22:54:37.982  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m43s605ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:38.042  7735  7976 D Camera2PresenceSrc: System onCameraAvailable: 1
+11-27 22:54:38.043  7735  7980 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.SurfaceRequest$2@9201ff0
+11-27 22:54:38.043  7735  7980 D DeferrableSurface: Surface no longer in use[total_surfaces=2, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@9201ff0}
+11-27 22:54:38.043  7735  7980 D DeferrableSurface: Surface terminated[total_surfaces=1, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@9201ff0}
+11-27 22:54:38.044  7735  7980 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.impl.ImmediateSurface@ecd10a7
+11-27 22:54:38.044  7735  7735 D TextureViewImpl: Safe to release surface.
+11-27 22:54:38.044  7735  7735 D TextureViewImpl: SurfaceTexture about to manually be destroyed
+11-27 22:54:38.044  7735  7980 D DeferrableSurface: Surface no longer in use[total_surfaces=1, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@ecd10a7}
+11-27 22:54:38.044  7735  7976 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:38.044  7735  7980 D DeferrableSurface: Surface terminated[total_surfaces=0, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@ecd10a7}
+11-27 22:54:38.045  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} CameraDevice.onClosed()
+11-27 22:54:38.045  7735  7980 D Camera2CameraImpl: {Camera@edce30b[id=1]} Transitioning camera internal state: CLOSING --> INITIALIZED
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         UNKNOWN               
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         CLOSED                
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:38.045  7735  7980 D CameraStateRegistry: Open count: 0 (Max allowed: 1)
+11-27 22:54:38.045  7735  7980 D CameraStateMachine: New public camera state CameraState{type=CLOSED, error=null} from CLOSED and null
+11-27 22:54:38.045  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=CLOSED, error=null}
+11-27 22:54:38.046  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@81d028b] onClosed()
+11-27 22:54:38.571  7735  7768 D SessionLifecycleClient: Sending lifecycle 2 to service
+11-27 22:54:38.572  7735  7793 D SessionLifecycleService: Activity backgrounding at 224197
+11-27 22:54:38.578  7735  7772 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-27 22:54:38.578  7735  7793 D SessionLifecycleService: Activity foregrounding at 224203.
+11-27 22:54:38.649  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@ce67edc
+11-27 22:54:38.696  7735  7735 D LocationUpdateManager: Request to stop location updates submitted
+11-27 22:54:38.696  7735  7735 D LocationUpdateManager: Request to stop location update honored
+11-27 22:54:38.754  7735  7735 D VRI[ImageCaptureActivity]: visibilityChanged oldVisibility=true newVisibility=false
+11-27 22:54:38.847  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@a2d5340
+11-27 22:54:38.847  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=android.app.Activity$$ExternalSyntheticLambda0@6b9344b
+11-27 22:54:38.862  7735  7735 D InsetsController: hide(ime(), fromIme=false)
+11-27 22:54:38.863  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:f33e7f29: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_BY_INSETS_API fromUser false
+11-27 22:54:38.863  7735  7735 I ImeTracker: org.greenstand.android.TreeTracker.debug:f33e7f29: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+11-27 22:54:39.754  7735  7788 D EGL_emulation: app_time_stats: avg=193.10ms min=18.00ms max=838.39ms count=6
+11-27 22:54:40.026  7735  7735 E FrameTracker: force finish cuj, time out: J<IME_INSETS_SHOW_ANIMATION::0@1@org.greenstand.android.TreeTracker.debug>
+11-27 22:54:40.844  7735  7788 D EGL_emulation: app_time_stats: avg=361.18ms min=3.63ms max=808.71ms count=3
+11-27 22:54:41.926  7735  7788 D EGL_emulation: app_time_stats: avg=355.37ms min=3.53ms max=1058.72ms count=3
+11-27 22:54:42.973  7735  7735 W StepCounter: StepCounter: No TYPE_STEP_COUNTER sensor available on this device
+11-27 22:54:42.973  7735  7735 D DeviceOrientation: DeviceOrientation - registering rotation vector sensor
+11-27 22:54:43.005  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,0.0,0.0,0.0,0.0,0.08280772,-0.9965656,0.0,0.0,0.9965656,0.08280772,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-6.2475337E-6,5.0002177E-6,0.0,5.5003666E-6,0.082803845,-0.996566,0.0,5.812041E-6,0.996566,0.082803845,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.561001E-5,1.18748885E-5,0.0,1.31265615E-5,0.08279574,-0.99656665,0.0,1.4573221E-5,0.99656665,0.08279574,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-2.1833386E-5,1.5620208E-5,0.0,1.7374163E-5,0.0827896,-0.9965671,0.0,2.0465242E-5,0.9965671,0.0827896,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-2.8661581E-5,1.9360223E-5,0.0,2.1666508E-5,0.08278459,-0.99656755,0.0,2.696047E-5,0.99656755,0.08278459,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-3.7958966E-5,2.4343406E-5,0.0,2.740209E-5,0.08277959,-0.996568,0.0,3.5813544E-5,0.996568,0.08277959,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.056  7735  7788 D EGL_emulation: app_time_stats: avg=372.16ms min=1.38ms max=1105.53ms count=3
+11-27 22:54:43.071  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-4.2853502E-5,2.744013E-5,0.0,3.0893152E-5,0.08277476,-0.9965684,0.0,4.043509E-5,0.9965684,0.08277476,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.077  7735  7745 W System  : A resource failed to call close. 
+11-27 22:54:43.077  7735  7745 W System  : A resource failed to call close. 
+11-27 22:54:43.079  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-4.7717087E-5,3.302646E-5,0.0,3.6862544E-5,0.08276683,-0.99656904,0.0,4.481987E-5,0.99656904,0.08276683,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.081  7735  7735 D ResolvedFeatureGroup: resolveFeatureGroup: sessionConfig = androidx.camera.core.LegacySessionConfig@8108c46, lensFacing = 1
+11-27 22:54:43.081  7735  7735 D CameraUseCaseAdapter: addUseCases: appUseCasesToAdd = [ImageCapture:androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3, Preview:androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc8], featureGroup = null
+11-27 22:54:43.085  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = ImageCapture:androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3
+11-27 22:54:43.085  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = Preview:androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc8
+11-27 22:54:43.086  7735  7735 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc8 to no compatible HDR dynamic ranges.
+11-27 22:54:43.086  7735  7735 D DynamicRangeResolver: DynamicRange@cee7aaf{encoding=UNSPECIFIED, bitDepth=0}
+11-27 22:54:43.086  7735  7735 D DynamicRangeResolver: ->
+11-27 22:54:43.086  7735  7735 D DynamicRangeResolver: DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}
+11-27 22:54:43.086  7735  7735 D SupportedSurfaceCombination: resolvedDynamicRanges = {androidx.camera.core.impl.PreviewConfig@753bb34=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, androidx.camera.core.impl.ImageCaptureConfig@ded3e07=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}}
+11-27 22:54:43.086  7735  7735 D SupportedSurfaceCombination: getSuggestedStreamSpecifications: isPreviewStabilizationOn = false, mIsPreviewStabilizationSupported = true, isFeatureComboInvocation = false
+11-27 22:54:43.086  7735  7735 D SupportedSurfaceCombination: resolveSpecsByCheckingMethod: checkingMethod = WITHOUT_FEATURE_COMBO
+11-27 22:54:43.086  7735  7735 D SupportedSurfaceCombination: resolveSpecsBySettings: featureSettings = FeatureSettings{getCameraMode=0, hasVideoCapture=false, getRequiredMaxBitDepth=8, isPreviewStabilizationOn=false, isUltraHdrOn=false, isHighSpeedOn=false, isFeatureComboInvocation=false, requiresFeatureComboQuery=false, getTargetFpsRange=[0, 0], isStrictFpsRequired=false}
+11-27 22:54:43.087  7735  7735 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:43.087  7735  7735 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:43.087  7735  7735 D SupportedSurfaceCombination: orderedSurfaceConfigListForStreamUseCase = [SurfaceConfig(configType=JPEG, configSize=MAXIMUM, streamUseCase=STILL_CAPTURE), SurfaceConfig(configType=PRIV, configSize=PREVIEW, streamUseCase=PREVIEW)]
+11-27 22:54:43.087  7735  7735 D SupportedSurfaceCombination: resolveSpecsBySettings: bestSizesAndFps = BestSizesAndMaxFpsForConfigs{bestSizes=[1280x720, 320x240], bestSizesForStreamUseCase=[1280x720, 320x240], maxFpsForBestSizes=30, maxFpsForStreamUseCase=30, maxFpsForAllSizes=2147483647}
+11-27 22:54:43.087  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = ImageCapture:androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3
+11-27 22:54:43.088  7735  7735 D ImageCapture: onSuggestedStreamSpecUpdated: primaryStreamSpec = StreamSpec{resolution=1280x720, originalConfiguredResolution=1280x720, dynamicRange=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@2b926d2, zslDisabled=false}, secondaryStreamSpec null
+11-27 22:54:43.088  7735  7735 D ImageCapture: createPipeline(cameraId: 0, streamSpec: StreamSpec{resolution=1280x720, originalConfiguredResolution=1280x720, dynamicRange=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@2b926d2, zslDisabled=false})
+11-27 22:54:43.088  7735  7735 D DeferrableSurface: Surface created[total_surfaces=1, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@b15b3a3}
+11-27 22:54:43.089  7735  7735 D UseCase : applyFeaturesToConfig: mFeatureGroup = null, this = Preview:androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc8
+11-27 22:54:43.089  7735  7735 D Preview : onSuggestedStreamSpecUpdated: primaryStreamSpec = StreamSpec{resolution=320x240, originalConfiguredResolution=320x240, dynamicRange=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}, sessionType=0, expectedFrameRateRange=[0, 0], implementationOptions=androidx.camera.camera2.impl.Camera2ImplConfig@f8d259, zslDisabled=false}, secondaryStreamSpec null
+11-27 22:54:43.089  7735  7735 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](androidx.camera.core.processing.SurfaceEdge$SettableSurface@3dede1e}
+11-27 22:54:43.089  7735  7735 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@116be2a}
+11-27 22:54:43.089  7735  7735 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@116be2a}
+11-27 22:54:43.089  7735  7735 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.SurfaceRequest$2@116be2a
+11-27 22:54:43.090  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196 ACTIVE
+11-27 22:54:43.091  7735  7735 D ImageCapture: onCameraControlReady
+11-27 22:54:43.091  7735  7735 D Camera2CameraControlImp: setFlashMode: mFlashMode = 2
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: surface closed,  useCount=1 closed=true androidx.camera.core.SurfaceRequest$2@116be2a
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.processing.SurfaceEdge$SettableSurface@3dede1e
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: Surface terminated[total_surfaces=2, used_surfaces=1](androidx.camera.core.processing.SurfaceEdge$SettableSurface@3dede1e}
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.SurfaceRequest$2@116be2a
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: Surface no longer in use[total_surfaces=2, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@116be2a}
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: Surface terminated[total_surfaces=1, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@116be2a}
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: Surface created[total_surfaces=2, used_surfaces=0](androidx.camera.core.processing.SurfaceEdge$SettableSurface@daacb93}
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: Surface created[total_surfaces=3, used_surfaces=0](androidx.camera.core.SurfaceRequest$2@92c8def}
+11-27 22:54:43.091  7735  7735 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@92c8def}
+11-27 22:54:43.092  7735  7735 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.SurfaceRequest$2@92c8def
+11-27 22:54:43.092  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-5.2545856E-5,3.859676E-5,0.0,4.2813004E-5,0.08275896,-0.9965697,0.0,4.917137E-5,0.9965697,0.08275896,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.095  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:43.096  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196 ACTIVE
+11-27 22:54:43.097  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:43.098  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757 INACTIVE
+11-27 22:54:43.101  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:43.101  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:43.101  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use cases [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757] now ATTACHED
+11-27 22:54:43.105  7735  7980 D Camera2CameraControlImp: setActive: isActive = true
+11-27 22:54:43.105  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757] for camera: 0
+11-27 22:54:43.105  7735  7980 D MeteringRepeating: MeteringSession SurfaceTexture size: 320x240
+11-27 22:54:43.111  7735  7980 D DeferrableSurface: Surface created[total_surfaces=4, used_surfaces=1](androidx.camera.core.impl.ImmediateSurface@437c37e}
+11-27 22:54:43.113  7735  7980 D DynamicRangeResolver: Resolved dynamic range for use case androidx.camera.camera2.internal.MeteringRepeatingSession-02cda415-8df2-4941-b10e-a85982df7daa to no compatible HDR dynamic ranges.
+11-27 22:54:43.113  7735  7980 D DynamicRangeResolver: DynamicRange@cee7aaf{encoding=UNSPECIFIED, bitDepth=0}
+11-27 22:54:43.113  7735  7980 D DynamicRangeResolver: ->
+11-27 22:54:43.113  7735  7980 D DynamicRangeResolver: DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}
+11-27 22:54:43.115  7735  7980 D SupportedSurfaceCombination: resolvedDynamicRanges = {androidx.camera.camera2.internal.MeteringRepeatingSession$MeteringRepeatingConfig@a87e7f5=DynamicRange@ba3b28e{encoding=SDR, bitDepth=8}}
+11-27 22:54:43.115  7735  7980 D SupportedSurfaceCombination: getSuggestedStreamSpecifications: isPreviewStabilizationOn = false, mIsPreviewStabilizationSupported = true, isFeatureComboInvocation = false
+11-27 22:54:43.116  7735  7980 D SupportedSurfaceCombination: resolveSpecsByCheckingMethod: checkingMethod = WITHOUT_FEATURE_COMBO
+11-27 22:54:43.116  7735  7980 D SupportedSurfaceCombination: resolveSpecsBySettings: featureSettings = FeatureSettings{getCameraMode=0, hasVideoCapture=false, getRequiredMaxBitDepth=8, isPreviewStabilizationOn=false, isUltraHdrOn=false, isHighSpeedOn=false, isFeatureComboInvocation=false, requiresFeatureComboQuery=false, getTargetFpsRange=[0, 0], isStrictFpsRequired=false}
+11-27 22:54:43.116  7735  7980 D CameraQuirks: camera2 CameraQuirks = 
+11-27 22:54:43.118  7735  7980 D SupportedSurfaceCombination: orderedSurfaceConfigListForStreamUseCase = [SurfaceConfig(configType=JPEG, configSize=MAXIMUM, streamUseCase=STILL_CAPTURE), SurfaceConfig(configType=PRIV, configSize=PREVIEW, streamUseCase=PREVIEW)]
+11-27 22:54:43.118  7735  7980 D SupportedSurfaceCombination: resolveSpecsBySettings: bestSizesAndFps = BestSizesAndMaxFpsForConfigs{bestSizes=[320x240], bestSizesForStreamUseCase=[320x240], maxFpsForBestSizes=30, maxFpsForStreamUseCase=30, maxFpsForAllSizes=2147483647}
+11-27 22:54:43.118  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Surface combination with metering repeating supported!
+11-27 22:54:43.118  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, MeteringRepeating17340810] for camera: 0
+11-27 22:54:43.119  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Resetting Capture Session
+11-27 22:54:43.119  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Skipping Capture Session state check due to current camera state: INITIALIZED and previous session status: false
+11-27 22:54:43.119  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Releasing session in state INITIALIZED
+11-27 22:54:43.119  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Attempting to force open the camera.
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: tryOpenCamera(Camera@cba87ce[id=0]) [Available Cameras: 1, Already Open: false (Previous state: null)] --> SUCCESS
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         OPENING               
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         CLOSED                
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:43.119  7735  7980 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-27 22:54:43.119  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Opening camera.
+11-27 22:54:43.119  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Transitioning camera internal state: INITIALIZED --> OPENING
+11-27 22:54:43.119  7735  7980 D CameraStateMachine: New public camera state CameraState{type=OPENING, error=null} from OPENING and null
+11-27 22:54:43.119  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=OPENING, error=null}
+11-27 22:54:43.119  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757, MeteringRepeating17340810] for camera: 0
+11-27 22:54:43.124  7735  7976 D Camera2PresenceSrc: System onCameraUnavailable: 0
+11-27 22:54:43.124  7735  7976 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:43.136  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196 ACTIVE
+11-27 22:54:43.136  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, MeteringRepeating17340810] for camera: 0
+11-27 22:54:43.137  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757 INACTIVE
+11-27 22:54:43.137  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, MeteringRepeating17340810] for camera: 0
+11-27 22:54:43.137  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757 RESET
+11-27 22:54:43.137  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757, MeteringRepeating17340810] for camera: 0
+11-27 22:54:43.137  7735  7980 D MeteringRepeating: MeteringRepeating clear!
+11-27 22:54:43.137  7735  7980 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.impl.ImmediateSurface@437c37e
+11-27 22:54:43.138  7735  7980 D DeferrableSurface: Surface terminated[total_surfaces=3, used_surfaces=1](androidx.camera.core.impl.ImmediateSurface@437c37e}
+11-27 22:54:43.138  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Resetting Capture Session
+11-27 22:54:43.138  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Skipping Capture Session state check due to current camera state: OPENING and previous session status: false
+11-27 22:54:43.138  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Releasing session in state OPENING
+11-27 22:54:43.140  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196] for camera: 0
+11-27 22:54:43.140  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use case androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757 ACTIVE
+11-27 22:54:43.140  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757] for camera: 0
+11-27 22:54:43.140  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} CameraDevice.onOpened()
+11-27 22:54:43.140  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Transitioning camera internal state: OPENING --> OPENED
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         OPEN                  
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         CLOSED                
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:43.140  7735  7980 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-27 22:54:43.141  7735  7980 D CameraStateMachine: New public camera state CameraState{type=OPEN, error=null} from OPEN and null
+11-27 22:54:43.141  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=OPEN, error=null}
+11-27 22:54:43.141  7735  7980 D UseCaseAttachState: All use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757] for camera: 0
+11-27 22:54:43.141  7735  7980 D StreamUseCaseUtil: populateSurfaceToStreamUseCaseMapping() - streamUseCaseMap = {androidx.camera.core.SurfaceRequest$2@92c8def=1, androidx.camera.core.impl.ImmediateSurface@b15b3a3=2}
+11-27 22:54:43.142  7735  7980 D UseCaseAttachState: Active and attached use case: [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757] for camera: 0
+11-27 22:54:43.299  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-5.6089826E-5,4.0397983E-5,0.0,4.490099E-5,0.08275229,-0.9965702,0.0,5.2554413E-5,0.9965702,0.08275229,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.299  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-5.9597365E-5,4.3435753E-5,0.0,4.8218233E-5,0.08274585,-0.99657065,0.0,5.5798857E-5,0.99657065,0.08274585,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.299  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-6.368869E-5,4.8331563E-5,0.0,5.343537E-5,0.08273876,-0.9965713,0.0,5.9471426E-5,0.9965713,0.08273876,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-7.022332E-5,5.3205105E-5,0.0,5.8832356E-5,0.082731,-0.99657196,0.0,6.558088E-5,0.99657196,0.08273101,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-7.421064E-5,5.9301612E-5,0.0,6.523741E-5,0.08272468,-0.9965725,0.0,6.905058E-5,0.9965725,0.08272469,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-8.0013364E-5,6.724216E-5,0.0,7.3630574E-5,0.08272212,-0.9965727,0.0,7.4176714E-5,0.9965727,0.08272213,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-8.823484E-5,7.139386E-5,0.0,7.844782E-5,0.082718246,-0.996573,0.0,8.202688E-5,0.996573,0.08271825,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-9.450754E-5,7.5513606E-5,0.0,8.307167E-5,0.082710795,-0.9965736,0.0,8.7937915E-5,0.9965736,0.0827108,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-9.946208E-5,8.022467E-5,0.0,8.817582E-5,0.082704656,-0.99657416,0.0,9.248636E-5,0.99657416,0.08270466,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.0558689E-4,8.489935E-5,0.0,9.33408E-5,0.08270227,-0.9965744,0.0,9.8203804E-5,0.9965744,0.08270228,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.1225066E-4,9.266016E-5,0.0,1.0162607E-4,0.082701795,-0.9965744,0.0,1.04202954E-4,0.9965744,0.0827018,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.1510384E-4,1.0098933E-4,0.0,1.10162444E-4,0.08269952,-0.9965746,0.0,1.0635778E-4,0.9965746,0.08269954,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.178959E-4,1.0925904E-4,0.0,1.1863448E-4,0.08269738,-0.9965747,0.0,1.0845663E-4,0.9965747,0.08269739,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.2434206E-4,1.1496897E-4,0.0,1.2485775E-4,0.08269565,-0.99657494,0.0,1.1440872E-4,0.99657494,0.08269566,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.2945029E-4,1.1937399E-4,0.0,1.2966985E-4,0.08269338,-0.9965752,0.0,1.1913547E-4,0.9965752,0.0826934,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.3446993E-4,1.2435444E-4,0.0,1.3504816E-4,0.08269207,-0.9965752,0.0,1.2372626E-4,0.9965752,0.08269209,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.4187442E-4,1.2865782E-4,0.0,1.3994888E-4,0.08269064,-0.9965753,0.0,1.3074974E-4,0.9965753,0.082690656,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.4482986E-4,1.335299E-4,0.0,1.4504816E-4,0.08268676,-0.9965757,0.0,1.3329273E-4,0.9965757,0.08268678,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.300  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.483291E-4,1.3709582E-4,0.0,1.4889089E-4,0.082684316,-0.9965759,0.0,1.3648548E-4,0.9965759,0.08268434,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.301  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.5360309E-4,1.4186287E-4,0.0,1.5407708E-4,0.08268014,-0.9965762,0.0,1.4134793E-4,0.9965762,0.082680166,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.301  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.6001405E-4,1.4907074E-4,0.0,1.6178997E-4,0.0826777,-0.99657637,0.0,1.4714139E-4,0.99657637,0.08267772,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.301  7735  7735 D PreviewView: Surface requested by Preview.
+11-27 22:54:43.319  7735  7735 D TextureViewImpl: SurfaceTexture available. Size: 320x240
+11-27 22:54:43.319  7735  7735 D TextureViewImpl: Surface set on Preview.
+11-27 22:54:43.320  7735  7976 D SyncCaptureSessionBase: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@f93c9c7] getSurface done with results: [Surface(name=android.graphics.SurfaceTexture@69979eb mNativeObject=134011696093248)/@0x940b348, Surface(name=null mNativeObject=134011696058368)/@0xeceef06]
+11-27 22:54:43.320  7735  7976 D CaptureSession: Opening capture session.
+11-27 22:54:43.320  7735  7976 D Camera2CaptureRequestBuilder: template type = 1
+11-27 22:54:43.323  7735  7976 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-27 22:54:43.323  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.67543E-4,1.543278E-4,0.0,1.6765097E-4,0.082674004,-0.9965768,0.0,1.5421052E-4,0.9965768,0.08267403,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.323  7735  7976 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@f93c9c7] start openCaptureSession
+11-27 22:54:43.323  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.7308617E-4,1.6014044E-4,0.0,1.739014E-4,0.08267042,-0.9965771,0.0,1.5925478E-4,0.9965771,0.08267045,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.323  7735  7976 D DeferrableSurface: use count+1, useCount=2 androidx.camera.core.SurfaceRequest$2@92c8def
+11-27 22:54:43.323  7735  7976 D DeferrableSurface: New surface in use[total_surfaces=3, used_surfaces=2](androidx.camera.core.impl.ImmediateSurface@b15b3a3}
+11-27 22:54:43.323  7735  7976 D DeferrableSurface: use count+1, useCount=1 androidx.camera.core.impl.ImmediateSurface@b15b3a3
+11-27 22:54:43.324  7735  7735 D PreviewView: Preview transformation info updated. TransformationInfo{getCropRect=Rect(0, 0 - 320, 240), getRotationDegrees=90, getTargetRotation=0, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[0.17241378, 0.0, -0.0][0.0, 0.17241378, -0.0][0.0, 0.0, 1.0]}, isMirroring=false}
+11-27 22:54:43.325  7735  7735 D PreviewTransform: Transformation info set: TransformationInfo{getCropRect=Rect(0, 0 - 320, 240), getRotationDegrees=90, getTargetRotation=0, hasCameraTransform=true, getSensorToBufferTransform=Matrix{[0.17241378, 0.0, -0.0][0.0, 0.17241378, -0.0][0.0, 0.0, 1.0]}, isMirroring=false} 320x240 false
+11-27 22:54:43.327  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [1.0,-1.7851563E-4,1.6338039E-4,0.0,1.7757896E-4,0.08266947,-0.99657714,0.0,1.6439798E-4,0.99657714,0.0826695,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.328  7735  7976 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@f93c9c7] Session onConfigured()
+11-27 22:54:43.328  7735  7976 D CaptureSession: Attempting to send capture request onConfigured
+11-27 22:54:43.328  7735  7976 D CaptureSession: Issuing request for session.
+11-27 22:54:43.328  7735  7976 D Camera2CaptureRequestBuilder: createCaptureRequest
+11-27 22:54:43.328  7735  7976 D Camera2CaptureRequestBuilder: applyAeFpsRange: expectedFrameRateRange = [0, 0]
+11-27 22:54:43.329  7735  7976 D Camera2CaptureRequestBuilder: applyVideoStabilization: mode = null
+11-27 22:54:43.336  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-1.8568311E-4,1.6594127E-4,0.0,1.8072291E-4,0.08266541,-0.99657744,0.0,1.7132996E-4,0.99657744,0.08266544,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.342  7735  7976 D CaptureSession: CameraCaptureSession.onConfigured() mState=OPENED
+11-27 22:54:43.342  7735  7976 D CaptureSession: CameraCaptureSession.onReady() OPENED
+11-27 22:54:43.346  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-1.8962989E-4,1.7157014E-4,0.0,1.8665822E-4,0.082662195,-0.99657774,0.0,1.7479851E-4,0.99657774,0.082662225,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.549  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-1.9163071E-4,1.7899642E-4,0.0,1.9422433E-4,0.08266153,-0.9965777,0.0,1.7617876E-4,0.9965777,0.08266157,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.549  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-1.9294355E-4,1.863327E-4,0.0,2.01644E-4,0.08266135,-0.9965777,0.0,1.7688071E-4,0.9965777,0.08266139,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.549  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-1.9665774E-4,1.8983199E-4,0.0,2.0543796E-4,0.082659446,-0.9965778,0.0,1.8029335E-4,0.9965778,0.08265948,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.549  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.0397369E-4,1.9077188E-4,0.0,2.0697904E-4,0.08265748,-0.99657804,0.0,1.8750696E-4,0.99657804,0.082657516,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.556  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.1114515E-4,1.9416539E-4,0.0,2.1095359E-4,0.082656816,-0.99657804,0.0,1.9437351E-4,0.99657804,0.08265686,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.556  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.1817163E-4,1.98743E-4,0.0,2.1609617E-4,0.08265622,-0.9965781,0.0,2.0099773E-4,0.9965781,0.082656264,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.557  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.2505132E-4,2.019942E-4,0.0,2.19905E-4,0.082656816,-0.996578,0.0,2.0758502E-4,0.996578,0.08265686,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.557  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.3178513E-4,2.0517924E-4,0.0,2.2363586E-4,0.08265735,-0.99657804,0.0,2.1403239E-4,0.99657804,0.0826574,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.559  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.3837361E-4,2.0829805E-4,0.0,2.2728872E-4,0.08265794,-0.9965779,0.0,2.203404E-4,0.9965779,0.08265799,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.559  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.4481758E-4,2.113507E-4,0.0,2.3086376E-4,0.0826586,-0.996578,0.0,2.2650979E-4,0.996578,0.08265865,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.559  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.4249E-4,2.0932853E-4,0.0,2.2865491E-4,0.08265329,-0.99657845,0.0,2.2435856E-4,0.99657845,0.08265334,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.564  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7303546E-4,2.4833015E-4,0.0,2.7004807E-4,0.08265459,-0.9965782,0.0,2.5157558E-4,0.9965782,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.564  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7303546E-4,2.4833015E-4,0.0,2.7004807E-4,0.08265459,-0.9965782,0.0,2.5157558E-4,0.9965782,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.567  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7303546E-4,2.4833015E-4,0.0,2.7004807E-4,0.08265459,-0.9965782,0.0,2.5157558E-4,0.9965782,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.567  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7303546E-4,2.4833015E-4,0.0,2.7004807E-4,0.08265459,-0.9965782,0.0,2.5157558E-4,0.9965782,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.567  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7303546E-4,2.4833015E-4,0.0,2.7004807E-4,0.08265459,-0.9965782,0.0,2.5157558E-4,0.9965782,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.567  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7303546E-4,2.4833015E-4,0.0,2.7004807E-4,0.08265459,-0.9965782,0.0,2.5157558E-4,0.9965782,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.567  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8402082E-4,2.629521E-4,0.0,2.8552845E-4,0.08265631,-0.99657816,0.0,2.6131424E-4,0.99657816,0.08265638,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.568  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8402082E-4,2.629521E-4,0.0,2.8552845E-4,0.08265631,-0.99657816,0.0,2.6131424E-4,0.99657816,0.08265638,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.568  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8870156E-4,2.6821723E-4,0.0,2.9116205E-4,0.08265488,-0.9965782,0.0,2.6554422E-4,0.9965782,0.08265495,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.628  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.9018632E-4,2.696342E-4,0.0,2.9269652E-4,0.08265344,-0.9965783,0.0,2.6690718E-4,0.9965783,0.08265352,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.633  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8914542E-4,2.6911972E-4,0.0,2.92098E-4,0.08265422,-0.99657834,0.0,2.6591212E-4,0.99657834,0.0826543,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.633  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8808217E-4,2.6857512E-4,0.0,2.9146764E-4,0.08265518,-0.9965782,0.0,2.6489727E-4,0.9965782,0.08265525,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.634  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8699852E-4,2.6800166E-4,0.0,2.908068E-4,0.08265619,-0.9965781,0.0,2.6386444E-4,0.9965781,0.082656264,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.635  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8589636E-4,2.6740058E-4,0.0,2.9011694E-4,0.08265714,-0.996578,0.0,2.6281545E-4,0.996578,0.08265722,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.660  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8477752E-4,2.667731E-4,0.0,2.8939938E-4,0.08265792,-0.99657804,0.0,2.6175205E-4,0.99657804,0.08265799,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.660  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8364357E-4,2.661203E-4,0.0,2.886553E-4,0.08265893,-0.9965779,0.0,2.6067568E-4,0.9965779,0.082659006,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.660  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8249627E-4,2.6544335E-4,0.0,2.8788607E-4,0.082659885,-0.99657774,0.0,2.59588E-4,0.99657774,0.08265996,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.660  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8011083E-4,2.6599146E-4,0.0,2.8823534E-4,0.08266084,-0.9965776,0.0,2.5716514E-4,0.9965776,0.08266091,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.668  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7305481E-4,2.7855154E-4,0.0,3.00169E-4,0.082659885,-0.9965779,0.0,2.4909526E-4,0.9965779,0.08265996,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.668  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7305481E-4,2.7855154E-4,0.0,3.00169E-4,0.082659885,-0.9965779,0.0,2.4909526E-4,0.9965779,0.08265996,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.668  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7305481E-4,2.7855154E-4,0.0,3.00169E-4,0.082659885,-0.9965779,0.0,2.4909526E-4,0.9965779,0.08265996,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.668  7735  7735 D StreamStateObserver: Update Preview stream state to STREAMING
+11-27 22:54:43.711  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7073233E-4,2.7946214E-4,0.0,3.008846E-4,0.08266036,-0.99657774,0.0,2.4670537E-4,0.99657774,0.08266044,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.711  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6842256E-4,2.7721023E-4,0.0,2.9844968E-4,0.082661316,-0.9965776,0.0,2.4458938E-4,0.9965776,0.08266139,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.711  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6612938E-4,2.7495832E-4,0.0,2.9601617E-4,0.08266215,-0.9965777,0.0,2.4248991E-4,0.9965777,0.082662225,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.711  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.650872E-4,2.777097E-4,0.0,2.9867122E-4,0.08265893,-0.9965779,0.0,2.4122486E-4,0.9965779,0.082659006,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.677225E-4,2.7853294E-4,0.0,2.9970895E-4,0.082656965,-0.99657804,0.0,2.4378367E-4,0.99657804,0.08265704,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7089834E-4,2.7744344E-4,0.0,2.9888522E-4,0.08265506,-0.9965782,0.0,2.4703925E-4,0.9965782,0.08265513,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7215315E-4,2.763348E-4,0.0,2.9788408E-4,0.08265488,-0.99657834,0.0,2.4838143E-4,0.99657834,0.08265495,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7336317E-4,2.752131E-4,0.0,2.968662E-4,0.08265488,-0.9965782,0.0,2.4968007E-4,0.9965782,0.08265495,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7453E-4,2.7407944E-4,0.0,2.9583284E-4,0.0826547,-0.99657834,0.0,2.509366E-4,0.99657834,0.082654774,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7565478E-4,2.7293462E-4,0.0,2.947849E-4,0.0826547,-0.9965782,0.0,2.521522E-4,0.9965782,0.082654774,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.76739E-4,2.717797E-4,0.0,2.9372348E-4,0.08265458,-0.99657834,0.0,2.533282E-4,0.99657834,0.082654655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6771618E-4,2.8681327E-4,0.0,3.079584E-4,0.08264874,-0.99657875,0.0,2.4309548E-4,0.99657875,0.08264881,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6771618E-4,2.8681327E-4,0.0,3.079584E-4,0.08264874,-0.99657875,0.0,2.4309548E-4,0.99657875,0.08264881,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6771618E-4,2.8681327E-4,0.0,3.079584E-4,0.08264874,-0.99657875,0.0,2.4309548E-4,0.99657875,0.08264881,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6767395E-4,2.922755E-4,0.0,3.1339793E-4,0.082646474,-0.99657893,0.0,2.4260268E-4,0.99657893,0.08264655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:43.940  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.712982E-4,2.9702758E-4,0.0,3.1843272E-4,0.0826442,-0.9965791,0.0,2.4582248E-4,0.9965791,0.082644284,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7484057E-4,3.0169377E-4,0.0,3.2337516E-4,0.08264194,-0.99657935,0.0,2.4896782E-4,0.99657935,0.08264202,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.783026E-4,3.0627497E-4,0.0,3.2822628E-4,0.08263985,-0.9965795,0.0,2.520401E-4,0.9965795,0.08263993,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7984055E-4,3.0702027E-4,0.0,3.2909523E-4,0.08263645,-0.9965798,0.0,2.535123E-4,0.9965798,0.082636535,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.819468E-4,3.0648435E-4,0.0,3.2873475E-4,0.08263454,-0.9965799,0.0,2.556563E-4,0.9965799,0.08263463,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.8399864E-4,3.0593315E-4,0.0,3.2835445E-4,0.08263257,-0.99658,0.0,2.5774734E-4,0.99658,0.08263266,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8766025E-4,3.2731518E-4,0.0,3.499663E-4,0.08263417,-0.99657995,0.0,2.5962899E-4,0.99657995,0.08263427,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8766025E-4,3.2731518E-4,0.0,3.499663E-4,0.08263417,-0.99657995,0.0,2.5962899E-4,0.99657995,0.08263427,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8766025E-4,3.2731518E-4,0.0,3.499663E-4,0.08263417,-0.99657995,0.0,2.5962899E-4,0.99657995,0.08263427,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8766025E-4,3.2731518E-4,0.0,3.499663E-4,0.08263417,-0.99657995,0.0,2.5962899E-4,0.99657995,0.08263427,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8766025E-4,3.2731518E-4,0.0,3.499663E-4,0.08263417,-0.99657995,0.0,2.5962899E-4,0.99657995,0.08263427,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.020  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8648286E-4,3.3073762E-4,0.0,3.5327958E-4,0.0826334,-0.99657995,0.0,2.581731E-4,0.99657995,0.082633495,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.834765E-4,3.3159563E-4,0.0,3.538854E-4,0.08263012,-0.99658024,0.0,2.5510727E-4,0.99658024,0.08263022,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8296802E-4,3.2993176E-4,0.0,3.5218502E-4,0.082629345,-0.99658036,0.0,2.5473823E-4,0.99658036,0.08262944,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.849105E-4,3.276521E-4,0.0,3.5007438E-4,0.08263227,-0.9965802,0.0,2.5686144E-4,0.9965802,0.08263236,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.868042E-4,3.2538467E-4,0.0,3.4797195E-4,0.082635134,-0.9965799,0.0,2.5893503E-4,0.9965799,0.082635224,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.886503E-4,3.2313008E-4,0.0,3.4587833E-4,0.082637936,-0.9965797,0.0,2.6096017E-4,0.9965797,0.082638025,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9044997E-4,3.2088874E-4,0.0,3.437941E-4,0.08264068,-0.99657947,0.0,2.6293795E-4,0.99657947,0.08264077,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9220432E-4,3.1866098E-4,0.0,3.4171971E-4,0.08264354,-0.9965791,0.0,2.6486942E-4,0.9965791,0.08264363,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.939146E-4,3.1644752E-4,0.0,3.3965587E-4,0.08264616,-0.996579,0.0,2.6675587E-4,0.996579,0.08264625,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.021  7735  7735 E FrameTracker: force finish cuj, time out: J<IME_INSETS_HIDE_ANIMATION::1@1@org.greenstand.android.TreeTracker.debug>
+11-27 22:54:44.025  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9558258E-4,3.148736E-4,0.0,3.3822574E-4,0.08264807,-0.9965789,0.0,2.685476E-4,0.9965789,0.08264816,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.034  7735  7735 D LocationUpdateManager$locationUpdateListener: Posting location value Location[gps -3.500000,37.299998 hAcc=5.0 et=+3m49s643ms alt=0.0 vAcc=0.5 mslAlt=18.455229244980163 mslAltAcc=0.5682429 vel=0.0 sAcc=0.5 bear=0.0 bAcc=30.0 {Bundle[{satellites=0, maxCn0=0, meanCn0=0}]}]
+11-27 22:54:44.042  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9537658E-4,3.1705273E-4,0.0,3.4038053E-4,0.08264872,-0.9965788,0.0,2.6816197E-4,0.9965788,0.08264881,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.045  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9516872E-4,3.1981443E-4,0.0,3.4311519E-4,0.08264711,-0.9965789,0.0,2.6772713E-4,0.9965789,0.082647204,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.045  7735  7828 D LocationDataCapturer$locationObserver: Inserting new location data {"planterCheckInId":1,"latitude":-3.5,"longitude":37.299998333333335,"accuracy":5.0,"treeUuid":null,"convergenceStatus":null,"capturedAt":"2026-11-27T22:54:44.019Z"}
+11-27 22:54:44.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9679268E-4,3.2002918E-4,0.0,3.4346248E-4,0.08264371,-0.9965791,0.0,2.6932897E-4,0.9965791,0.08264381,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.069  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9776193E-4,3.1835045E-4,0.0,3.4186884E-4,0.08264097,-0.9965793,0.0,2.704346E-4,0.9965793,0.082641065,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.075  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9808888E-4,3.1480574E-4,0.0,3.383627E-4,0.08263888,-0.99657947,0.0,2.7105407E-4,0.99657947,0.08263898,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.076  7735  7788 D EGL_emulation: app_time_stats: avg=94.65ms min=1.83ms max=546.00ms count=10
+11-27 22:54:44.087  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9595688E-4,3.1504384E-4,0.0,3.3842327E-4,0.0826368,-0.9965797,0.0,2.6891037E-4,0.9965797,0.08263689,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.095  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9875676E-4,3.115281E-4,0.0,3.3515063E-4,0.08263579,-0.99657977,0.0,2.7199154E-4,0.99657977,0.08263588,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.105  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.941425E-4,3.0928582E-4,0.0,3.3253353E-4,0.08263126,-0.99658024,0.0,2.6757986E-4,0.99658024,0.08263135,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.115  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9696932E-4,3.083304E-4,0.0,3.318154E-4,0.08263293,-0.99658006,0.0,2.7047546E-4,0.99658006,0.08263302,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.160  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7917384E-4,3.2409924E-4,0.0,3.4605415E-4,0.08261046,-0.996582,0.0,2.5144554E-4,0.996582,0.08261055,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.160  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7917384E-4,3.2409924E-4,0.0,3.4605415E-4,0.08261046,-0.996582,0.0,2.5144554E-4,0.996582,0.08261055,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.160  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7917384E-4,3.2409924E-4,0.0,3.4605415E-4,0.08261046,-0.996582,0.0,2.5144554E-4,0.996582,0.08261055,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.160  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7917384E-4,3.2409924E-4,0.0,3.4605415E-4,0.08261046,-0.996582,0.0,2.5144554E-4,0.996582,0.08261055,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.165  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7861216E-4,3.260236E-4,0.0,3.4792422E-4,0.08260515,-0.9965824,0.0,2.5072874E-4,0.9965824,0.08260524,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.175  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7560315E-4,3.2353174E-4,0.0,3.451925E-4,0.08260593,-0.9965823,0.0,2.4793553E-4,0.9965823,0.08260602,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.188  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7264596E-4,3.1982164E-4,0.0,3.4124986E-4,0.082602054,-0.9965826,0.0,2.4529628E-4,0.9965826,0.08260214,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.195  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.746544E-4,3.2241645E-4,0.0,3.440013E-4,0.08260062,-0.99658275,0.0,2.4708398E-4,0.99658275,0.08260071,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.205  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7171237E-4,3.1995456E-4,0.0,3.4130533E-4,0.08260271,-0.9965825,0.0,2.4435468E-4,0.9965825,0.0826028,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.215  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7128277E-4,3.2252772E-4,0.0,3.4383408E-4,0.08260223,-0.9965826,0.0,2.4371415E-4,0.9965826,0.08260232,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.225  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.696356E-4,3.2630522E-4,0.0,3.474617E-4,0.08259836,-0.9965829,0.0,2.4176191E-4,0.9965829,0.08259845,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.237  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7168816E-4,3.2502873E-4,0.0,3.4635904E-4,0.082598,-0.9965829,0.0,2.4391302E-4,0.9965829,0.08259809,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.245  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7614002E-4,3.2126592E-4,0.0,3.429758E-4,0.08259413,-0.9965833,0.0,2.4866182E-4,0.9965833,0.082594216,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.257  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.7805238E-4,3.2129022E-4,0.0,3.4315643E-4,0.08258787,-0.9965839,0.0,2.5056774E-4,0.9965839,0.08258796,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.265  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8115453E-4,3.2505588E-4,0.0,3.471641E-4,0.08258286,-0.99658424,0.0,2.533501E-4,0.99658424,0.08258295,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.270  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@d1bb716
+11-27 22:54:44.278  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.841871E-4,3.237544E-4,0.0,3.4611847E-4,0.08258656,-0.99658394,0.0,2.564785E-4,0.99658394,0.082586646,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.288  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8592904E-4,3.2371125E-4,0.0,3.4621803E-4,0.08258155,-0.99658436,0.0,2.5821978E-4,0.99658436,0.08258164,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.295  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8702058E-4,3.2303287E-4,0.0,3.4563185E-4,0.08258042,-0.9965844,0.0,2.59364E-4,0.9965844,0.08258051,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.305  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8624784E-4,3.217292E-4,0.0,3.442679E-4,0.08257684,-0.9965847,0.0,2.5870276E-4,0.9965847,0.08257693,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.315  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8794407E-4,3.2419263E-4,0.0,3.4686233E-4,0.082574636,-0.99658483,0.0,2.6019063E-4,0.99658483,0.082574725,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.325  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8959574E-4,3.203614E-4,0.0,3.4318125E-4,0.0825772,-0.9965846,0.0,2.621521E-4,0.9965846,0.08257729,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.335  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9367316E-4,3.2533164E-4,0.0,3.4847125E-4,0.08257719,-0.9965846,0.0,2.6580523E-4,0.9965846,0.08257729,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.345  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.964387E-4,3.2771676E-4,0.0,3.5107654E-4,0.08257719,-0.9965846,0.0,2.6836433E-4,0.9965846,0.08257729,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.355  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9913484E-4,3.238102E-4,0.0,3.474047E-4,0.082572185,-0.99658513,0.0,2.7137558E-4,0.99658513,0.08257228,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.366  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.944362E-4,3.2743733E-4,0.0,3.5063087E-4,0.0825701,-0.9965852,0.0,2.6639426E-4,0.9965852,0.082570195,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.375  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.91049E-4,3.2476406E-4,0.0,3.4768766E-4,0.08257248,-0.9965851,0.0,2.6323844E-4,0.9965851,0.08257258,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.385  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9018807E-4,3.2963368E-4,0.0,3.5246904E-4,0.0825704,-0.9965852,0.0,2.6197915E-4,0.9965852,0.08257049,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.395  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8811774E-4,3.3192517E-4,0.0,3.545824E-4,0.08257284,-0.9965851,0.0,2.5972578E-4,0.9965851,0.08257294,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.405  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9098196E-4,3.3169135E-4,0.0,3.54585E-4,0.08256944,-0.99658537,0.0,2.6260072E-4,0.99658537,0.08256954,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.415  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9134136E-4,3.339472E-4,0.0,3.5686258E-4,0.08256861,-0.9965854,0.0,2.627729E-4,0.9965854,0.082568705,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.425  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8923093E-4,3.2991293E-4,0.0,3.5266628E-4,0.08256283,-0.99658585,0.0,2.610049E-4,0.99658585,0.08256292,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.435  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.859432E-4,3.296822E-4,0.0,3.5216467E-4,0.08256199,-0.99658585,0.0,2.5774777E-4,0.99658585,0.08256209,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.445  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.839446E-4,3.2945813E-4,0.0,3.517752E-4,0.08255746,-0.9965862,0.0,2.5577602E-4,0.9965862,0.08255756,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.455  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8689348E-4,3.3299127E-4,0.0,3.555408E-4,0.082561515,-0.99658597,0.0,2.5842173E-4,0.99658597,0.08256161,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.465  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9099983E-4,3.3396966E-4,0.0,3.5685342E-4,0.08255573,-0.99658656,0.0,2.624353E-4,0.99658656,0.08255583,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.475  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8767297E-4,3.3491116E-4,0.0,3.5751588E-4,0.08255132,-0.9965868,0.0,2.590437E-4,0.9965868,0.08255142,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.485  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.905414E-4,3.3834952E-4,0.0,3.6117813E-4,0.08254697,-0.99658716,0.0,2.6162E-4,0.99658716,0.08254707,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.495  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.9212038E-4,3.379779E-4,0.0,3.6093697E-4,0.08254262,-0.9965875,0.0,2.6322593E-4,0.9965875,0.08254272,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.505  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8877216E-4,3.4009622E-4,0.0,3.6277156E-4,0.082542144,-0.99658763,0.0,2.597144E-4,0.99658763,0.08254224,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.516  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.867101E-4,3.3843704E-4,0.0,3.609474E-4,0.082540534,-0.9965877,0.0,2.5779696E-4,0.9965877,0.08254063,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.525  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8959953E-4,3.4305782E-4,0.0,3.6579173E-4,0.082543574,-0.9965874,0.0,2.6029398E-4,0.9965874,0.08254367,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.535  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8629537E-4,3.4134445E-4,0.0,3.6381133E-4,0.0825431,-0.9965874,0.0,2.571427E-4,0.9965874,0.082543194,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.545  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.89182E-4,3.4091863E-4,0.0,3.6362448E-4,0.08254018,-0.9965877,0.0,2.6005573E-4,0.9965877,0.08254027,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.555  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8710812E-4,3.3923303E-4,0.0,3.6177336E-4,0.08253988,-0.9965877,0.0,2.5812816E-4,0.9965877,0.082539976,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.565  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8630925E-4,3.4257254E-4,0.0,3.6503634E-4,0.08254298,-0.9965874,0.0,2.5705525E-4,0.9965874,0.082543075,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.575  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8797425E-4,3.4461534E-4,0.0,3.6721007E-4,0.08254471,-0.99658734,0.0,2.585453E-4,0.99658734,0.0825448,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.585  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8347186E-4,3.4161392E-4,0.0,3.638468E-4,0.08254298,-0.9965874,0.0,2.5430668E-4,0.9965874,0.082543075,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.595  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8519615E-4,3.4616952E-4,0.0,3.6852903E-4,0.08254232,-0.99658763,0.0,2.556492E-4,0.99658763,0.08254242,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.605  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.844276E-4,3.4564943E-4,0.0,3.6794657E-4,0.0825394,-0.9965879,0.0,2.5492732E-4,0.9965879,0.0825395,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.616  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8123474E-4,3.5012883E-4,0.0,3.721479E-4,0.08254244,-0.9965876,0.0,2.5137447E-4,0.9965876,0.08254254,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.625  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8177135E-4,3.483013E-4,0.0,3.7037104E-4,0.08254298,-0.9965876,0.0,2.5205995E-4,0.9965876,0.082543075,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.635  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8106436E-4,3.4399756E-4,0.0,3.6602223E-4,0.082537614,-0.996588,0.0,2.5171257E-4,0.996588,0.08253771,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.645  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.803822E-4,3.472549E-4,0.0,3.692111E-4,0.08253344,-0.9965883,0.0,2.5076547E-4,0.9965883,0.08253354,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.655  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8338237E-4,3.4546797E-4,0.0,3.6767806E-4,0.0825341,-0.9965883,0.0,2.539026E-4,0.9965883,0.082534194,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.665  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.838719E-4,3.4494718E-4,0.0,3.6719936E-4,0.08253374,-0.9965883,0.0,2.5443357E-4,0.9965883,0.08253384,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.675  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8190314E-4,3.4567682E-4,0.0,3.6776392E-4,0.08253344,-0.9965883,0.0,2.5241144E-4,0.9965883,0.08253354,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.685  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8609007E-4,3.41407E-4,0.0,3.638544E-4,0.0825341,-0.9965883,0.0,2.569362E-4,0.9965883,0.082534194,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.695  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8162397E-4,3.4217752E-4,0.0,3.6425388E-4,0.08253487,-0.9965881,0.0,2.5242154E-4,0.9965881,0.08253497,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.705  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.821468E-4,3.4169853E-4,0.0,3.6382047E-4,0.08253809,-0.9965878,0.0,2.529809E-4,0.9965878,0.08253819,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.717  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8632605E-4,3.387324E-4,0.0,3.612087E-4,0.08253523,-0.99658805,0.0,2.573918E-4,0.99658805,0.08253533,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.725  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.830704E-4,3.3578955E-4,0.0,3.5800706E-4,0.08253487,-0.9965881,0.0,2.5439027E-4,0.9965881,0.08253497,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.735  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8479146E-4,3.4040026E-4,0.0,3.6274426E-4,0.08253553,-0.99658805,0.0,2.5572465E-4,0.99658805,0.082535625,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.745  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8647715E-4,3.4368783E-4,0.0,3.661603E-4,0.082537435,-0.996588,0.0,2.5713252E-4,0.996588,0.08253753,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.755  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.905666E-4,3.394271E-4,0.0,3.6225247E-4,0.08254071,-0.9965877,0.0,2.615585E-4,0.9965877,0.08254081,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.765  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8477208E-4,3.3520593E-4,0.0,3.575682E-4,0.08254375,-0.9965874,0.0,2.561311E-4,0.9965874,0.08254385,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.775  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8276528E-4,3.3106288E-4,0.0,3.5327228E-4,0.08253827,-0.99658793,0.0,2.5447505E-4,0.99658793,0.08253837,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.785  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8447603E-4,3.2948857E-4,0.0,3.5184342E-4,0.0825341,-0.9965883,0.0,2.563114E-4,0.9965883,0.082534194,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.795  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8616155E-4,3.3418258E-4,0.0,3.5665982E-4,0.082531296,-0.99658847,0.0,2.5760476E-4,0.99658847,0.08253139,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.805  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8167645E-4,3.30043E-4,0.0,3.5216383E-4,0.08252987,-0.9965885,0.0,2.534771E-4,0.9965885,0.08252996,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.816  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.785183E-4,3.3347117E-4,0.0,3.553193E-4,0.08252844,-0.9965886,0.0,2.5004736E-4,0.9965886,0.08252853,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.825  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7665083E-4,3.3685318E-4,0.0,3.5853527E-4,0.082526825,-0.9965888,0.0,2.4790768E-4,0.9965888,0.08252692,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.835  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7481897E-4,3.3768578E-4,0.0,3.592138E-4,0.082526654,-0.9965888,0.0,2.4601343E-4,0.9965888,0.08252674,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.845  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7180044E-4,3.3975623E-4,0.0,3.610268E-4,0.08252147,-0.9965893,0.0,2.4283618E-4,0.9965893,0.08252156,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.855  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6884011E-4,3.392988E-4,0.0,3.6032544E-4,0.08251646,-0.99658966,0.0,2.3992553E-4,0.99658966,0.08251655,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.865  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.708326E-4,3.3511003E-4,0.0,3.5631415E-4,0.082511455,-0.99659014,0.0,2.4225863E-4,0.99659014,0.082511544,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.875  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6911497E-4,3.3347102E-4,0.0,3.5453984E-4,0.08251503,-0.99658984,0.0,2.4068085E-4,0.99658984,0.08251512,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.885  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7356396E-4,3.3811876E-4,0.0,3.5953854E-4,0.08251372,-0.9965899,0.0,2.447316E-4,0.9965899,0.08251381,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.895  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7546202E-4,3.351861E-4,0.0,3.5677254E-4,0.08251372,-0.9965899,0.0,2.4686518E-4,0.9965899,0.08251381,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.905  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7243127E-4,3.3853436E-4,0.0,3.598593E-4,0.08251372,-0.9965899,0.0,2.435685E-4,0.9965899,0.08251381,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.917  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7190946E-4,3.3933987E-4,0.0,3.6061922E-4,0.08251467,-0.99658984,0.0,2.4298168E-4,0.99658984,0.08251476,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.925  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.701726E-4,3.4013184E-4,0.0,3.6126457E-4,0.08251229,-0.99659,0.0,2.4118627E-4,0.99659,0.08251238,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.935  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7213967E-4,3.3716985E-4,0.0,3.5847473E-4,0.08251098,-0.9965902,0.0,2.4339148E-4,0.9965902,0.08251107,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.945  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.740695E-4,3.3674785E-4,0.0,3.5821338E-4,0.08251116,-0.9965901,0.0,2.4534948E-4,0.9965901,0.082511246,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.955  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7473381E-4,3.363271E-4,0.0,3.578483E-4,0.08250871,-0.9965903,0.0,2.4604713E-4,0.9965903,0.0825088,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.965  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7904942E-4,3.3091815E-4,0.0,3.5281296E-4,0.08250502,-0.9965907,0.0,2.507956E-4,0.9965907,0.08250511,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.975  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.820555E-4,3.2807933E-4,0.0,3.5023244E-4,0.08250746,-0.99659055,0.0,2.5402475E-4,0.99659055,0.08250755,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.985  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8500526E-4,3.3027868E-4,0.0,3.5266706E-4,0.08250519,-0.9965907,0.0,2.5678382E-4,0.9965907,0.082505286,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:44.995  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8666217E-4,3.2618718E-4,0.0,3.487272E-4,0.082508884,-0.9965903,0.0,2.5877135E-4,0.9965903,0.08250898,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.005  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8706726E-4,3.2840238E-4,0.0,3.5096798E-4,0.08250775,-0.9965904,0.0,2.5899272E-4,0.9965904,0.08250785,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.016  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.837837E-4,3.2682795E-4,0.0,3.4912705E-4,0.082504064,-0.99659073,0.0,2.5585157E-4,0.99659073,0.08250415,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.025  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8302427E-4,3.2903286E-4,0.0,3.512624E-4,0.08250663,-0.99659044,0.0,2.5491192E-4,0.99659044,0.082506716,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.035  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.79826E-4,3.274511E-4,0.0,3.494231E-4,0.0825102,-0.9965902,0.0,2.5185378E-4,0.9965902,0.08251029,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.045  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8036104E-4,3.2340447E-4,0.0,3.454344E-4,0.08251032,-0.99659014,0.0,2.5272087E-4,0.99659014,0.08251041,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.055  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7599753E-4,3.2815893E-4,0.0,3.4981142E-4,0.082505316,-0.9965907,0.0,2.4798166E-4,0.9965907,0.082505405,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.065  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7416556E-4,3.2660144E-4,0.0,3.481078E-4,0.08250418,-0.9965907,0.0,2.4628482E-4,0.9965907,0.08250427,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.075  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7850084E-4,3.2882858E-4,0.0,3.5068532E-4,0.082505316,-0.9965907,0.0,2.5042117E-4,0.9965907,0.082505405,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.085  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7907858E-4,3.3350853E-4,0.0,3.553976E-4,0.08250794,-0.9965904,0.0,2.5060994E-4,0.9965904,0.08250803,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.095  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7964098E-4,3.3436666E-4,0.0,3.5630047E-4,0.08251294,-0.9965899,0.0,2.5109787E-4,0.9965899,0.082513034,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.100  7735  7788 D EGL_emulation: app_time_stats: avg=32.87ms min=8.97ms max=92.32ms count=31
+11-27 22:54:45.105  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8264656E-4,3.3896527E-4,0.0,3.6113168E-4,0.08251389,-0.9965899,0.0,2.5371334E-4,0.9965899,0.08251399,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.116  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.8313755E-4,3.3973568E-4,0.0,3.6194082E-4,0.08251741,-0.99658954,0.0,2.5413782E-4,0.99658954,0.082517505,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.125  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.799468E-4,3.4173683E-4,0.0,3.6367276E-4,0.082520805,-0.99658936,0.0,2.5079155E-4,0.99658936,0.0825209,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.135  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7682594E-4,3.4621177E-4,0.0,3.6787547E-4,0.08252307,-0.9965892,0.0,2.4731125E-4,0.9965892,0.08252317,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.145  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.798886E-4,3.4813554E-4,0.0,3.7004476E-4,0.08252051,-0.99658936,0.0,2.5020563E-4,0.99658936,0.082520604,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.155  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7920463E-4,3.437701E-4,0.0,3.6563713E-4,0.082517944,-0.9965896,0.0,2.4988517E-4,0.9965896,0.08251804,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.165  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.748703E-4,3.4571256E-4,0.0,3.6721554E-4,0.0825189,-0.9965896,0.0,2.4540498E-4,0.9965896,0.082518995,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.175  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7429886E-4,3.4763833E-4,0.0,3.6908724E-4,0.08251759,-0.99658966,0.0,2.4467707E-4,0.99658966,0.08251768,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.185  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7863108E-4,3.457954E-4,0.0,3.6760684E-4,0.08251258,-0.9965901,0.0,2.4914843E-4,0.9965901,0.08251268,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.195  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7429915E-4,3.4270878E-4,0.0,3.6417242E-4,0.082508884,-0.99659044,0.0,2.450873E-4,0.99659044,0.08250898,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.205  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7373078E-4,3.4093027E-4,0.0,3.6235218E-4,0.08250519,-0.99659073,0.0,2.4466895E-4,0.99659073,0.082505286,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.216  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7686066E-4,3.454319E-4,0.0,3.6709796E-4,0.082510196,-0.99659026,0.0,2.4741492E-4,0.99659026,0.08251029,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.225  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.737893E-4,3.411025E-4,0.0,3.6253044E-4,0.08251258,-0.9965901,0.0,2.447104E-4,0.9965901,0.08251268,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.235  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7078477E-4,3.405919E-4,0.0,3.6177394E-4,0.08251372,-0.99658996,0.0,2.417578E-4,0.99658996,0.08251381,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.245  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6906453E-4,3.4009622E-4,0.0,3.6113712E-4,0.082510024,-0.9965902,0.0,2.4008573E-4,0.9965902,0.08251011,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.255  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.722844E-4,3.433679E-4,0.0,3.646624E-4,0.08250632,-0.99659055,0.0,2.4302602E-4,0.99659055,0.08250642,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.265  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7421283E-4,3.4533354E-4,0.0,3.6677954E-4,0.082502745,-0.9965908,0.0,2.4478702E-4,0.9965908,0.08250284,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.275  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.712013E-4,3.4600863E-4,0.0,3.6720274E-4,0.08249792,-0.99659127,0.0,2.4173182E-4,0.99659127,0.082498014,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.285  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.7315013E-4,3.454346E-4,0.0,3.6679153E-4,0.082498215,-0.99659127,0.0,2.4372118E-4,0.99659127,0.08249831,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.295  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6770425E-4,3.4110408E-4,0.0,3.6202656E-4,0.08249858,-0.99659127,0.0,2.3865103E-4,0.99659127,0.08249867,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.305  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6483295E-4,3.4559838E-4,0.0,3.662693E-4,0.08250114,-0.9965911,0.0,2.354178E-4,0.9965911,0.08250123,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.315  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6813877E-4,3.462904E-4,0.0,3.6723173E-4,0.082501434,-0.996591,0.0,2.3865515E-4,0.996591,0.08250153,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.325  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6891753E-4,3.4196483E-4,0.0,3.6298402E-4,0.08249679,-0.9965913,0.0,2.3978984E-4,0.9965913,0.08249688,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.335  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6478304E-4,3.3894344E-4,0.0,3.5963167E-4,0.08249578,-0.9965914,0.0,2.3591907E-4,0.9965914,0.08249587,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.345  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.9999999,-2.6318888E-4,3.3972575E-4,0.0,3.6028042E-4,0.0824984,-0.99659127,0.0,2.3426482E-4,0.99659127,0.08249849,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.355  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6162097E-4,3.3800045E-4,0.0,3.5843055E-4,0.08249387,-0.99659157,0.0,2.3284627E-4,0.99659157,0.08249396,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.366  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.5885733E-4,3.338001E-4,0.0,3.540166E-4,0.08249417,-0.9965916,0.0,2.3043838E-4,0.9965916,0.08249426,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.375  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.573766E-4,3.321687E-4,0.0,3.522683E-4,0.08249274,-0.9965917,0.0,2.2909784E-4,0.9965917,0.08249283,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.385  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.5592028E-4,3.2806484E-4,0.0,3.4805725E-4,0.08248822,-0.99659204,0.0,2.279866E-4,0.99659204,0.0824883,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.395  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.5817737E-4,3.3027935E-4,0.0,3.504499E-4,0.08248613,-0.9965923,0.0,2.3005407E-4,0.9965923,0.08248621,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.405  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.6161835E-4,3.3370714E-4,0.0,3.5415113E-4,0.08249143,-0.9965918,0.0,2.3319868E-4,0.9965918,0.08249152,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.415  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.5886061E-4,3.345698E-4,0.0,3.5478311E-4,0.082490474,-0.9965919,0.0,2.3037949E-4,0.9965919,0.08249056,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.425  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.5738563E-4,3.354242E-4,0.0,3.5551356E-4,0.082493216,-0.99659175,0.0,2.2883806E-4,0.99659175,0.082493305,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.438  7735  7735 D DeviceOrientation$OrientationEventListener: DeviceOrientation - Rotation Matrix [0.99999994,-2.547211E-4,3.387648E-4,0.0,3.5862386E-4,0.08249727,-0.99659127,0.0,2.2590562E-4,0.99659127,0.08249736,0.0,0.0,0.0,0.0,1.0]
+11-27 22:54:45.443  7735  7828 D StepCounter: StepCounter: disable - unregister listener
+11-27 22:54:45.443  7735  7828 D DeviceOrientation: DeviceOrientation - unregistering rotation vector sensor
+11-27 22:54:45.444  7735  7735 D LocationUpdateManager: Request to stop location updates submitted
+11-27 22:54:45.444  7735  7735 D LocationUpdateManager: Request to stop location update honored
+11-27 22:54:45.445  7735  7735 D LocationDataCapturer: Convergence: Tree capture turned off
+11-27 22:54:45.454  7735  7735 W ScreenFlashWrapper: completePendingScreenFlashClear: none pending!
+11-27 22:54:45.454  7735  7735 W WindowOnBackDispatcher: sendCancelIfRunning: isInProgress=false callback=androidx.navigationevent.OnBackInvokedInput$createOnBackAnimationCallback$1@ce67edc
+11-27 22:54:45.455  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Use cases [androidx.camera.core.ImageCapture-cf0337ac-1893-4e0e-b974-afc0382cb1c3201815196, androidx.camera.core.Preview-7f9cacd8-8fb6-4557-9eca-4c49ecf9ccc822830757] now DETACHED for camera
+11-27 22:54:45.455  7735  7980 D UseCaseAttachState: All use case: [] for camera: 0
+11-27 22:54:45.455  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Resetting Capture Session
+11-27 22:54:45.455  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@f93c9c7] Session call close()
+11-27 22:54:45.455  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Releasing session in state OPENED
+11-27 22:54:45.455  7735  7980 D Camera2CameraControlImp: setActive: isActive = false
+11-27 22:54:45.456  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:45.456  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:45.456  7735  7980 D VideoUsageControl: resetDirectly: mVideoUsage reset!
+11-27 22:54:45.456  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Closing camera.
+11-27 22:54:45.456  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Transitioning camera internal state: OPENED --> CLOSING
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         CLOSING               
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         CLOSED                
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:45.456  7735  7980 D CameraStateRegistry: Open count: 1 (Max allowed: 1)
+11-27 22:54:45.456  7735  7980 D CameraStateMachine: New public camera state CameraState{type=CLOSING, error=null} from CLOSING and null
+11-27 22:54:45.456  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=CLOSING, error=null}
+11-27 22:54:45.456  7735  7735 D StreamStateObserver: Update Preview stream state to IDLE
+11-27 22:54:45.456  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Resetting Capture Session
+11-27 22:54:45.457  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Skipping Capture Session state check due to current camera state: CLOSING and previous session status: false
+11-27 22:54:45.457  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Releasing session in state CLOSING
+11-27 22:54:45.457  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@f93c9c7] Session call super.close()
+11-27 22:54:45.457  7735  7980 D UseCaseAttachState: Active and attached use case: [] for camera: 0
+11-27 22:54:45.458  7735  7980 D CaptureSession: onSessionFinished()
+11-27 22:54:45.458  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} closing camera
+11-27 22:54:45.494  7735  7735 W ScreenFlashWrapper: completePendingScreenFlashClear: none pending!
+11-27 22:54:45.494  7735  7735 D ImageCapture: clearPipeline
+11-27 22:54:45.494  7735  7735 D DeferrableSurface: surface closed,  useCount=1 closed=true androidx.camera.core.impl.ImmediateSurface@b15b3a3
+11-27 22:54:45.494  7735  7735 D DeferrableSurface: surface closed,  useCount=2 closed=true androidx.camera.core.SurfaceRequest$2@92c8def
+11-27 22:54:45.494  7735  7735 D DeferrableSurface: surface closed,  useCount=0 closed=true androidx.camera.core.processing.SurfaceEdge$SettableSurface@daacb93
+11-27 22:54:45.494  7735  7735 D DeferrableSurface: Surface terminated[total_surfaces=2, used_surfaces=2](androidx.camera.core.processing.SurfaceEdge$SettableSurface@daacb93}
+11-27 22:54:45.494  7735  7735 D DeferrableSurface: use count-1,  useCount=1 closed=true androidx.camera.core.SurfaceRequest$2@92c8def
+11-27 22:54:45.513  7735  7735 W LifecycleCameraRepository: Attempt to unbind use cases from an invalid camera.
+11-27 22:54:45.513  7735  7735 W LifecycleCameraRepository: Attempt to unbind use cases from an invalid camera.
+11-27 22:54:45.599  7735  7976 D Camera2PresenceSrc: System onCameraAvailable: 0
+11-27 22:54:45.600  7735  7976 D Camera2PresenceSrc: [FetchData] Refreshed camera list: CameraIdentifier{cameraIds=0}, CameraIdentifier{cameraIds=1}
+11-27 22:54:45.600  7735  7747 W eeTracker.debug: Long monitor contention with owner CameraX-core_camera_1 (7980) at void android.hardware.camera2.impl.CameraDeviceImpl.close()(CameraDeviceImpl.java:1549) waiters=0 in void android.hardware.camera2.impl.CameraDeviceImpl$CameraDeviceCallbacks.onCaptureStarted(android.hardware.camera2.impl.CaptureResultExtras, long) for 137ms
+11-27 22:54:45.600  7735  7980 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.SurfaceRequest$2@92c8def
+11-27 22:54:45.600  7735  7980 D DeferrableSurface: Surface no longer in use[total_surfaces=2, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@92c8def}
+11-27 22:54:45.600  7735  7980 D DeferrableSurface: Surface terminated[total_surfaces=1, used_surfaces=1](androidx.camera.core.SurfaceRequest$2@92c8def}
+11-27 22:54:45.601  7735  7980 D DeferrableSurface: use count-1,  useCount=0 closed=true androidx.camera.core.impl.ImmediateSurface@b15b3a3
+11-27 22:54:45.601  7735  7980 D DeferrableSurface: Surface no longer in use[total_surfaces=1, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@b15b3a3}
+11-27 22:54:45.601  7735  7980 D DeferrableSurface: Surface terminated[total_surfaces=0, used_surfaces=0](androidx.camera.core.impl.ImmediateSurface@b15b3a3}
+11-27 22:54:45.601  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} CameraDevice.onClosed()
+11-27 22:54:45.601  7735  7980 D Camera2CameraImpl: {Camera@cba87ce[id=0]} Transitioning camera internal state: CLOSING --> INITIALIZED
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: Recalculating open cameras:
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: Camera                                       State                 
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: Camera@cba87ce[id=0]                         CLOSED                
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: Camera@edce30b[id=1]                         CLOSED                
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: -------------------------------------------------------------------
+11-27 22:54:45.601  7735  7980 D CameraStateRegistry: Open count: 0 (Max allowed: 1)
+11-27 22:54:45.601  7735  7980 D CameraStateMachine: New public camera state CameraState{type=CLOSED, error=null} from CLOSED and null
+11-27 22:54:45.601  7735  7980 D CameraStateMachine: Publishing new public camera state CameraState{type=CLOSED, error=null}
+11-27 22:54:45.601  7735  7980 D SyncCaptureSessionImpl: [androidx.camera.camera2.internal.SynchronizedCaptureSessionImpl@f93c9c7] onClosed()
+11-27 22:54:45.601  7735  7735 D TextureViewImpl: Safe to release surface.
+11-27 22:54:45.601  7735  7735 D TextureViewImpl: SurfaceTexture about to manually be destroyed

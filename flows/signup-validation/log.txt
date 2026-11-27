@@ -1,0 +1,65 @@
+   0.000s tb 0.6.3: "A3 Signup validation" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-signup-validation.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.151s recording the screen to recording.mp4
+   0.151s ▶ Launch app "org.greenstand.android.TreeTracker.debug"  (.ci-signup-validation.yaml:8)
+   1.927s ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1775 ms
+   1.927s ▶ Wait until id: LanguageOption_ENGLISH is visible  (.ci-signup-validation.yaml:10)
+   2.271s   snapshot history: screen context changed; discarding 1 snapshots
+   3.710s   snapshot history: screen context changed; discarding 1 snapshots
+   3.710s   found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304], after 1783 ms and 4 reads
+   3.710s   the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 75
+   3.710s ✓ Wait until id: LanguageOption_ENGLISH is visible  1783 ms
+   3.710s ▶ Tap on id: LanguageOption_ENGLISH  (.ci-signup-validation.yaml:13)
+   3.737s   found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   3.889s   waited 151 ms for a still screen
+   3.905s   found id: LanguageOption_ENGLISH: View #LanguageOption_ENGLISH [82,224][238,304]
+   3.972s   tap at (160, 264): the screen changed (sent in 20 ms, waited 42 ms)
+   3.972s ✓ Tap on id: LanguageOption_ENGLISH  262 ms
+   3.972s   --annotate: holding the screen 930ms for the recording
+   4.905s ▶ Tap on id: ArrowForwardButton  (.ci-signup-validation.yaml:14)
+   4.920s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   4.974s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.029s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+   5.116s   tap at (264, 572): the screen changed (sent in 13 ms, waited 71 ms)
+   5.116s ✓ Tap on id: ArrowForwardButton  211 ms
+   5.116s   --annotate: holding the screen 910ms for the recording
+   6.030s ▶ Tap on id: PrivacyPolicyCloseButton  (.ci-signup-validation.yaml:15)
+   6.053s   snapshot history: screen context changed; discarding 2 snapshots
+   6.053s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.110s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.159s   found id: PrivacyPolicyCloseButton: View #PrivacyPolicyCloseButton [135,547][185,595]
+   6.214s   tap at (160, 571): the screen changed (sent in 7 ms, waited 45 ms)
+   6.214s ✓ Tap on id: PrivacyPolicyCloseButton  184 ms
+   6.214s   --annotate: holding the screen 950ms for the recording
+   7.160s ▶ Tap on id: PhoneField  (.ci-signup-validation.yaml:17)
+   7.172s   snapshot history: screen context changed; discarding 1 snapshots
+   7.172s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   7.222s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   7.273s   found id: PhoneField: EditText #PhoneField [24,285][296,341]
+   7.385s   tap at (160, 313): the screen changed (sent in 19 ms, waited 90 ms)
+   7.385s ✓ Tap on id: PhoneField  224 ms
+   7.385s   --annotate: holding the screen 890ms for the recording
+   8.273s ▶ Input text 123  (.ci-signup-validation.yaml:18)
+   8.274s   typing 3 characters
+   8.560s   typed with device verification: the screen changed (sent in 138 ms, waited 145 ms)
+   8.560s ✓ Input text 123  286 ms
+   8.560s   --annotate: holding the screen 710ms for the recording
+   9.275s ▶ Hide keyboard  (.ci-signup-validation.yaml:19)
+   9.343s   snapshot history: screen context changed; discarding 1 snapshots
+   9.343s ✓ Hide keyboard  68 ms
+   9.343s   --annotate: holding the screen 930ms for the recording
+  10.275s ▶ Tap on id: ArrowForwardButton  (.ci-signup-validation.yaml:20)
+  10.275s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.326s   found id: ArrowForwardButton: View #ArrowForwardButton [233,541][295,603]
+  10.364s   tap at (264, 572): the screen changed (sent in 4 ms, waited 31 ms)
+  10.364s ✓ Tap on id: ArrowForwardButton  88 ms
+  10.364s   --annotate: holding the screen 960ms for the recording
+  11.327s ▶ Assert that id: Snackbar is visible  (.ci-signup-validation.yaml:21)
+  11.339s   snapshot history: screen context changed; discarding 2 snapshots
+  11.339s   found id: Snackbar: View #Snackbar [0,147][320,223]
+  11.339s ✓ Assert that id: Snackbar is visible  11 ms
+  11.339s ▶ Take screenshot step-10-end-assertVisible-Snackbar  (.ci-signup-validation.yaml:22)
+  11.472s ✓ Take screenshot step-10-end-assertVisible-Snackbar  133 ms
+  11.622s --annotate: recording.mp4 is in sync (its frame times say so, within -6 ms)
+  12.037s --annotate: drew 11 captions and 5 touches on recording.mp4 in 415 ms
+  12.037s PASSED in 12.037s

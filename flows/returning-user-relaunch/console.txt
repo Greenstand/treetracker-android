@@ -1,0 +1,36 @@
+▶ E1-E2 Returning user and language on sdk gphone64 x86 64
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.9s
+    ✓ Wait until id: LanguageOption_ENGLISH is visible  1.8s
+    ✓ Tap on id: LanguageOption_ENGLISH  247ms
+    ✓ Tap on id: ArrowForwardButton  227ms
+    ✓ Tap on id: PrivacyPolicyCloseButton  168ms
+    ○ Run flow when "${CREDENTIAL == 'Email'}" is true  2ms
+      ✓ Tap on id: PhoneCredentialButton  1.1s
+      ✓ Tap on id: PhoneField  204ms
+    ✓ Run flow when "${CREDENTIAL != 'Email'}" is true  2.1s
+    ✓ Input text 5551230001  595ms
+    ✓ Hide keyboard  97ms
+    ✓ Tap on id: ArrowForwardButton  113ms
+    ✓ Tap on id: FirstNameField  146ms
+    ✓ Input text Ada  250ms
+    ✓ Tap on id: LastNameField  260ms
+    ✓ Input text Admin  323ms
+    ✓ Hide keyboard  64ms
+    ✓ Tap on id: ArrowForwardButton  155ms
+    ✓ Tap on id: TutorialDoneButton  606ms
+    ✓ Tap on id: CaptureButton  554ms
+    ✓ Wait until id: ApproveButton is visible  9ms
+    ✓ Tap on id: ApproveButton  128ms
+    ✓ Wait until id: TrackButton is visible  8ms
+  ✓ Run Sign up  20.5s
+  ✓ Stop app "org.greenstand.android.TreeTracker.debug"  222ms
+  ✓ Launch app "org.greenstand.android.TreeTracker.debug"  1.6s
+  ✓ Wait until id: TrackButton is visible  2.1s
+  ✓ Assert that id: LanguageOption_ENGLISH is not visible  119ms
+  ✓ Assert that id: PhoneField is not visible  15ms
+  ✓ Tap on id: TopBarLanguageButton  203ms
+  ✓ Take screenshot step-08-end-tapOn-TopBarLanguageButton  106ms
+✓ E1-E2 Returning user and language passed in 29.9s
+  video: build/flow-results/flows/returning-user-relaunch/tb/E1-E2_Returning_user_and_language/recording.mp4
+
+1 passed in 31.1s

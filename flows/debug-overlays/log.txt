@@ -1,0 +1,51 @@
+   0.000s tb 0.6.3: "I2 Debug overlays" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-debug-overlays.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.733s recording the screen to recording.mp4
+   0.733s ▶ Stop app "org.greenstand.android.TreeTracker.debug"  (.ci-debug-overlays.yaml:7)
+   1.385s ✓ Stop app "org.greenstand.android.TreeTracker.debug"  651 ms
+   1.385s   --annotate: holding the screen 350ms for the recording
+   1.734s ▶ Open treetracker-e2e://dev-options  (.ci-debug-overlays.yaml:8)
+   4.078s ✓ Open treetracker-e2e://dev-options  2344 ms
+   4.079s ▶ Tap on id: SyncOverlaySwitch  (.ci-debug-overlays.yaml:9)
+   6.114s   snapshot history: screen context changed; discarding 1 snapshots
+   6.114s   found id: SyncOverlaySwitch: View #SyncOverlaySwitch [256,76][304,124], after 2035 ms and 2 reads
+   6.229s   waited 114 ms for a still screen
+   6.250s   found id: SyncOverlaySwitch: View #SyncOverlaySwitch [256,76][304,124]
+   6.427s   tap at (280, 100): the screen changed (sent in 110 ms, waited 23 ms)
+   6.427s   the device's window list had no readable app window (0 windows without a root); a read past the accessibility cache found app window 10
+   6.427s ✓ Tap on id: SyncOverlaySwitch  2348 ms
+   6.427s   --annotate: holding the screen 820ms for the recording
+   7.251s ▶ Tap on id: SensorOverlaySwitch  (.ci-debug-overlays.yaml:10)
+   7.279s   snapshot history: screen context changed; discarding 1 snapshots
+   7.279s   found id: SensorOverlaySwitch: View #SensorOverlaySwitch [256,140][304,188]
+   7.336s   found id: SensorOverlaySwitch: View #SensorOverlaySwitch [256,140][304,188]
+   7.390s   found id: SensorOverlaySwitch: View #SensorOverlaySwitch [256,140][304,188]
+   7.402s   tap at (280, 164): the screen changed (sent in 5 ms, waited 2 ms)
+   7.402s ✓ Tap on id: SensorOverlaySwitch  150 ms
+   7.402s   --annotate: holding the screen 990ms for the recording
+   8.391s ▶ Assert that id: SyncOverlaySwitch, checked: true is visible  (.ci-debug-overlays.yaml:11)
+   8.412s   snapshot history: screen context changed; discarding 1 snapshots
+   8.412s   found id: SyncOverlaySwitch, checked: true: View #SyncOverlaySwitch [256,76][304,124]
+   8.412s ✓ Assert that id: SyncOverlaySwitch, checked: true is visible  21 ms
+   8.412s ▶ Assert that id: SensorOverlaySwitch, checked: true is visible  (.ci-debug-overlays.yaml:12)
+   8.425s   found id: SensorOverlaySwitch, checked: true: View #SensorOverlaySwitch [256,140][304,188]
+   8.425s ✓ Assert that id: SensorOverlaySwitch, checked: true is visible  13 ms
+   8.425s ▶ Tap on id: ArrowBackButton  (.ci-debug-overlays.yaml:13)
+   8.426s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+   8.480s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+   8.533s   found id: ArrowBackButton: View #ArrowBackButton [25,541][87,603]
+   8.716s   tap at (56, 572): the screen changed (sent in 6 ms, waited 132 ms)
+   8.716s ✓ Tap on id: ArrowBackButton  290 ms
+   8.716s   --annotate: holding the screen 820ms for the recording
+   9.534s ▶ Assert that id: SyncOverlay is visible  (.ci-debug-overlays.yaml:14)
+   9.548s   snapshot history: screen context changed; discarding 1 snapshots
+   9.548s   found id: SyncOverlay: View #SyncOverlay [0,24][280,301]
+   9.548s ✓ Assert that id: SyncOverlay is visible  14 ms
+   9.548s ▶ Assert that id: SensorOverlay is visible  (.ci-debug-overlays.yaml:15)
+   9.562s   found id: SensorOverlay: View #SensorOverlay [60,24][320,228]
+   9.562s ✓ Assert that id: SensorOverlay is visible  13 ms
+   9.562s ▶ Take screenshot step-09-end-assertVisible-SensorOverlay  (.ci-debug-overlays.yaml:16)
+   9.679s ✓ Take screenshot step-09-end-assertVisible-SensorOverlay  117 ms
+   9.903s --annotate: recording.mp4 is in sync (its frame times say so, within -79 ms)
+  10.481s --annotate: drew 10 captions and 3 touches on recording.mp4 in 577 ms
+  10.481s PASSED in 10.481s
