@@ -1,4 +1,4 @@
-# Task 118 - Double-tap guard drops a quick first tap after signup (#1450)
+# Task 121 - Double-tap guard drops a quick first tap after signup (#1450)
 
 ## Bug
 
