@@ -92,6 +92,12 @@ class CaptureFlowNavigationController(
         }
     }
 
+    fun leaveToSetup(navigator: Navigator) {
+        if (navigator.throttledPopBackStack()) {
+            endSession(closeSetupScope = false)
+        }
+    }
+
     /**
      * Picks the capture flow up at [route] after Android killed the app there: points the flow at
      * that step and restarts the session [sessionId] and the sensors that only lived in memory.
@@ -134,10 +140,12 @@ class CaptureFlowNavigationController(
         }
     }
 
-    private fun endSession() {
+    private fun endSession(closeSetupScope: Boolean = true) {
         treeCapturer.discardPendingTree()
         CaptureFlowScopeManager.close()
-        CaptureSetupScopeManager.close()
+        if (closeSetupScope) {
+            CaptureSetupScopeManager.close()
+        }
         scope.launch {
             try {
                 sessionTracker.endSession()

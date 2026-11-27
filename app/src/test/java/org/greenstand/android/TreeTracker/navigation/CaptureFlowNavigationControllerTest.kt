@@ -49,6 +49,7 @@ import org.junit.Test
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import java.util.concurrent.atomic.AtomicInteger
 
 @ExperimentalCoroutinesApi
 class CaptureFlowNavigationControllerTest {
@@ -60,6 +61,8 @@ class CaptureFlowNavigationControllerTest {
     private val locationDataCapturer = mockk<LocationDataCapturer>(relaxed = true)
     private val treeCapturer = mockk<TreeCapturer>(relaxed = true)
     private val deviceOrientation = mockk<DeviceOrientation>(relaxed = true)
+
+    private val sessionEndsInFlight = AtomicInteger(0)
 
     private val clock = FakeClock()
     private val capture = TreeCaptureRoute(profilePicUrl = "/photos/ada.jpg")
@@ -92,13 +95,20 @@ class CaptureFlowNavigationControllerTest {
         every { tree.photoPath } returns "/trees/1.jpg"
         every { treeCapturer.currentTree } returns tree
         coEvery { treeCapturer.saveTree() } returns true
+        every { treeCapturer.discardPendingTree() } answers { sessionEndsInFlight.incrementAndGet().let {} }
+        every { locationDataCapturer.turnOffTreeCaptureMode() } answers { sessionEndsInFlight.decrementAndGet().let {} }
     }
 
     @After
     fun tearDown() {
+        val deadline = System.currentTimeMillis() + SESSION_END_TIMEOUT_MS
+        while (sessionEndsInFlight.get() > 0 && System.currentTimeMillis() < deadline) {
+            Thread.sleep(10)
+        }
         CaptureFlowScopeManager.close()
         CaptureSetupScopeManager.close()
         stopKoin()
+        assertEquals("Session ends still running after the test", 0, sessionEndsInFlight.get())
     }
 
     private fun controllerFor(captureFlow: List<Destination>) =
@@ -587,7 +597,10 @@ class CaptureFlowNavigationControllerTest {
 
     @Test
     fun `goToDashboard still navigates when ending the session fails`() {
-        coEvery { sessionTracker.endSession() } throws IllegalStateException("db closed")
+        coEvery { sessionTracker.endSession() } answers {
+            sessionEndsInFlight.decrementAndGet()
+            throw IllegalStateException("db closed")
+        }
         val controller = controllerFor(standardFlow)
         val navigator = fakeNavigator(DashboardRoute, capture, clock = clock)
 
@@ -628,6 +641,43 @@ class CaptureFlowNavigationControllerTest {
         assertFalse(CaptureFlowScopeManager.isOpen)
         assertFalse(CaptureSetupScopeManager.isOpen)
         verifySessionEnded()
+    }
+
+    @Test
+    fun `leaveToSetup pops back to the last setup step`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, AddOrgRoute, capture, clock = clock)
+
+        controller.leaveToSetup(navigator)
+
+        assertEquals(listOf<Any>(DashboardRoute, AddOrgRoute), navigator.backStack)
+        verifySessionEnded()
+    }
+
+    @Test
+    fun `leaveToSetup ends the session and closes the capture scope but keeps the setup scope`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, AddOrgRoute, capture, clock = clock)
+
+        controller.leaveToSetup(navigator)
+
+        assertFalse(CaptureFlowScopeManager.isOpen)
+        assertTrue(CaptureSetupScopeManager.isOpen)
+        verifySessionEnded()
+    }
+
+    @Test
+    fun `leaveToSetup ends nothing when the pop is throttled`() {
+        val controller = controllerFor(standardFlow)
+        val navigator = fakeNavigator(DashboardRoute, AddOrgRoute, clock = clock)
+        navigator.throttledNavigate(capture)
+
+        controller.leaveToSetup(navigator)
+
+        assertEquals(listOf<Any>(DashboardRoute, AddOrgRoute, capture), navigator.backStack)
+        assertTrue(CaptureFlowScopeManager.isOpen)
+        assertTrue(CaptureSetupScopeManager.isOpen)
+        coVerify(exactly = 0) { sessionTracker.endSession() }
     }
 
     private companion object {
