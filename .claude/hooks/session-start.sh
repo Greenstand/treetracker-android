@@ -51,7 +51,10 @@ if [ ! -x "$SDKMANAGER" ]; then
 fi
 
 sdk_install() {
-  yes 2>/dev/null | sudo_if_needed env JAVA_HOME="$JAVA_HOME" "$SDKMANAGER" --sdk_root="$ANDROID_HOME" "$@" >/dev/null
+  # `yes` answers the license prompts. Fed through process substitution, not a pipe: under
+  # pipefail, `yes` dying of SIGPIPE would otherwise fail every successful install.
+  sudo_if_needed env JAVA_HOME="$JAVA_HOME" "$SDKMANAGER" --sdk_root="$ANDROID_HOME" "$@" \
+    < <(yes 2>/dev/null) >/dev/null
 }
 
 if ! compgen -G "$ANDROID_HOME/platforms/android-$COMPILE_SDK*" >/dev/null; then
