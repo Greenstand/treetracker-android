@@ -1,0 +1,37 @@
+appId: ${APP_ID || 'org.greenstand.android.TreeTracker.dev'}
+name: Capture a tree with a unique note and upload it
+env:
+  FINGERPRINT: ${FINGERPRINT || 'e2e-local'}
+---
+- launchApp: {clearState: true}
+- runFlow:
+    file: ../flows/subflows/signup.yaml
+    env: {CREDENTIAL: Phone, IDENTIFIER: "1234567890", FIRST_NAME: Test, LAST_NAME: User}
+- runFlow:
+    file: ../flows/subflows/start-capture.yaml
+    env: {WALLET: "1234567890"}
+- tapOn: {id: CaptureButton}
+- extendedWaitUntil:
+    visible: {id: TutorialDoneButton}
+    timeout: 30000
+- tapOn: {id: TutorialDoneButton}
+- tapOn: {id: NoteButton}
+- tapOn: {id: DialogTextField}
+- inputText: ${FINGERPRINT}
+- hideKeyboard
+- tapOn: {id: DialogPositiveButton}
+- tapOn: {id: ApproveButton}
+- extendedWaitUntil:
+    visible: {id: CaptureButton}
+    timeout: 15000
+- tapOn: {id: ArrowBackButton}
+- extendedWaitUntil:
+    visible: {id: UploadButton}
+    timeout: 15000
+- assertVisible: {id: TreesToSyncCount, text: "1"}
+- assertVisible: {id: TreesSyncedCount, text: "0"}
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: TreesToSyncCount, text: "0"}
+    timeout: 180000
+- assertVisible: {id: TreesSyncedCount, text: "1"}

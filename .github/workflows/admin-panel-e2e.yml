@@ -1,0 +1,260 @@
+name: Admin panel end-to-end
+
+on:
+  workflow_dispatch:
+    inputs:
+      verify_timeout_seconds:
+        description: "How long the admin panel check polls for the capture, in seconds"
+        type: string
+        required: false
+        default: "360"
+      check_unknown_note:
+        description: "Also prove the admin check fails for a note that was never uploaded (adds about 2 minutes)"
+        type: boolean
+        default: false
+  pull_request:
+    types: [labeled]
+
+concurrency:
+  group: admin-panel-e2e
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  admin-panel-e2e:
+    name: capture, upload, admin panel (dev)
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'run-admin-e2e'
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      API_LEVEL: "35"
+      TESTBUDDY_REF: 447f360efb307b348925825c434b1e4cf3271ebb
+      OUT: build/admin-panel
+      APP_ID: org.greenstand.android.TreeTracker.dev
+      ADMIN_URL: https://dev-admin.treetracker.org
+    steps:
+      - name: Secrets are set
+        env:
+          ADMIN_USER: ${{ secrets.ADMIN_PANEL_DEV_LOGIN }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PANEL_DEV_PASSWORD }}
+          S3_DEV_IDENTITY_POOL_ID: ${{ secrets.S3_DEV_IDENTITY_POOL_ID }}
+        run: |
+          MISSING=()
+          [[ -n $ADMIN_USER ]] || MISSING+=(ADMIN_PANEL_DEV_LOGIN)
+          [[ -n $ADMIN_PASSWORD ]] || MISSING+=(ADMIN_PANEL_DEV_PASSWORD)
+          [[ -n $S3_DEV_IDENTITY_POOL_ID ]] || MISSING+=(S3_DEV_IDENTITY_POOL_ID)
+          if (( ${#MISSING[@]} )); then
+            echo "::error::Missing repository secrets: ${MISSING[*]} (Settings > Secrets and variables > Actions). A PR from a fork gets no secrets: run it from a branch of this repository."
+            exit 1
+          fi
+
+      - name: Settings for this run
+        id: cfg
+        env:
+          TIMEOUT: ${{ inputs.verify_timeout_seconds || '360' }}
+        run: |
+          if [[ ! $TIMEOUT =~ ^[0-9]+$ ]]; then echo "::error::verify_timeout_seconds must be a number of seconds"; exit 1; fi
+          {
+            echo "timeout=$TIMEOUT"
+            echo "fingerprint=e2e-gh-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$(date +%s)"
+          } >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: tb cache
+        id: tb-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: bin/tb
+          key: tb-${{ env.TESTBUDDY_REF }}-linux-x64
+      - name: Check out Test Buddy
+        if: steps.tb-cache.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: Elforama/testbuddy
+          ref: ${{ env.TESTBUDDY_REF }}
+          path: .testbuddy
+          persist-credentials: false
+      - if: steps.tb-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - if: steps.tb-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: .testbuddy/go.mod
+          cache-dependency-path: .testbuddy/go.sum
+      - name: Build tb
+        if: steps.tb-cache.outputs.cache-hit != 'true'
+        working-directory: .testbuddy
+        run: |
+          (cd agents/android && ./gradlew assembleDebug)
+          cp agents/android/app/build/outputs/apk/debug/app-debug.apk internal/driver/android/assets/tb-agent.apk
+          go build -o "$GITHUB_WORKSPACE/bin/tb" ./cmd/tb
+      - name: Save the tb cache
+        if: steps.tb-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: bin/tb
+          key: tb-${{ env.TESTBUDDY_REF }}-linux-x64
+
+      - name: Check the flows
+        run: bin/tb check --lint e2e/admin-panel/
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: 25
+          distribution: temurin
+          cache: gradle
+      - name: Property file with the real dev keys
+        env:
+          S3_DEV_IDENTITY_POOL_ID: ${{ secrets.S3_DEV_IDENTITY_POOL_ID }}
+          TREETRACKER_CLIENT_ID: ${{ secrets.TREETRACKER_CLIENT_ID }}
+          TREETRACKER_CLIENT_SECRET: ${{ secrets.TREETRACKER_CLIENT_SECRET }}
+        run: |
+          {
+            echo "#Treetracker API Keys"
+            echo "s3_dev_identity_pool_id=${S3_DEV_IDENTITY_POOL_ID}"
+            echo "treetracker_client_id=${TREETRACKER_CLIENT_ID}"
+            echo "treetracker_client_secret=${TREETRACKER_CLIENT_SECRET}"
+            echo "dev_treetracker_client_id=${TREETRACKER_CLIENT_ID}"
+            echo "dev_treetracker_client_secret=${TREETRACKER_CLIENT_SECRET}"
+          } > treetracker.keys.properties
+
+      - name: Build the dev app
+        run: |
+          bash ./gradlew :app:assembleDev --stacktrace
+          rm -f treetracker.keys.properties
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Emulator snapshot cache
+        uses: actions/cache/restore@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
+      - name: Create the emulator snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: echo "snapshot saved"
+      - name: Save the emulator snapshot
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ env.API_LEVEL }}-google_apis-x86_64-cameras
+
+      - name: Capture and upload a tree in the app
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          FINGERPRINT: ${{ steps.cfg.outputs.fingerprint }}
+        with:
+          api-level: ${{ env.API_LEVEL }}
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back emulated -camera-front emulated
+          disable-animations: true
+          script: |
+            mkdir -p "$OUT"
+            adb install -r app/build/outputs/apk/dev/app-dev.apk
+            adb emu geo fix 37.3 -3.5
+            bin/tb test e2e/admin-panel/capture-upload.yaml -p android --device "$(adb get-serialno)" -e APP_ID="$APP_ID" -e FINGERPRINT="$FINGERPRINT" --record --annotate --format junit --output "$OUT/app.xml" --debug-output "$OUT/app"; echo $? > "$OUT/app-exit"
+            adb logcat -d > "$OUT/app/logcat.txt" 2>/dev/null || true
+            adb shell am force-stop "$APP_ID" || true
+
+      - name: The app uploaded the tree
+        run: |
+          CODE=$(cat "$OUT/app-exit" 2>/dev/null || echo 1)
+          [[ $CODE == 0 ]] || { echo "::error::The capture or the upload failed (tb exit $CODE): see the app report in the artifact"; exit 1; }
+
+      - name: The admin panel shows the capture
+        env:
+          ADMIN_USER: ${{ secrets.ADMIN_PANEL_DEV_LOGIN }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PANEL_DEV_PASSWORD }}
+          FINGERPRINT: ${{ steps.cfg.outputs.fingerprint }}
+          VERIFY_TIMEOUT_SECONDS: ${{ steps.cfg.outputs.timeout }}
+        run: |
+          bin/tb test e2e/admin-panel/verify-capture.yaml -p web --headless --record \
+            -e ADMIN_URL="$ADMIN_URL" -e ADMIN_USER="$ADMIN_USER" -e ADMIN_PASSWORD="$ADMIN_PASSWORD" \
+            -e FINGERPRINT="$FINGERPRINT" -e VERIFY_TIMEOUT_SECONDS="$VERIFY_TIMEOUT_SECONDS" \
+            --format junit --output "$OUT/admin.xml" --debug-output "$OUT/admin"
+
+      - name: The admin check fails for a note that was never uploaded
+        if: inputs.check_unknown_note || github.event_name == 'pull_request'
+        env:
+          ADMIN_USER: ${{ secrets.ADMIN_PANEL_DEV_LOGIN }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PANEL_DEV_PASSWORD }}
+        run: |
+          UNKNOWN="e2e-never-uploaded-$GITHUB_RUN_ID-$RANDOM"
+          set +e
+          bin/tb test e2e/admin-panel/verify-capture.yaml -p web --headless --record \
+            -e ADMIN_URL="$ADMIN_URL" -e ADMIN_USER="$ADMIN_USER" -e ADMIN_PASSWORD="$ADMIN_PASSWORD" \
+            -e FINGERPRINT="$UNKNOWN" -e VERIFY_TIMEOUT_SECONDS=60 \
+            --format junit --output "$OUT/admin-unknown.xml" --debug-output "$OUT/admin-unknown"
+          CODE=$?
+          set -e
+          if [[ $CODE != 1 ]]; then
+            echo "::error::The admin check should fail (exit 1) for $UNKNOWN, a note nobody uploaded; it exited $CODE"
+            exit 1
+          fi
+          echo "The admin check failed for $UNKNOWN, as it should."
+
+      - name: Remove the admin password from the results
+        if: always()
+        env:
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PANEL_DEV_PASSWORD }}
+        run: |
+          [[ -d $OUT ]] || exit 0
+          python3 e2e/admin-panel/scrub.py "$OUT"
+
+      - name: Summary
+        if: always()
+        env:
+          FINGERPRINT: ${{ steps.cfg.outputs.fingerprint }}
+        run: |
+          {
+            echo "### Admin panel end-to-end (dev)"
+            echo
+            echo "- App: \`$APP_ID\`"
+            echo "- Admin panel: $ADMIN_URL"
+            echo "- Tree note (fingerprint): \`$FINGERPRINT\`"
+            echo
+            echo "Reports, videos and failure screenshots: the \`admin-panel-e2e-$GITHUB_RUN_ID\` artifact."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-panel-e2e-${{ github.run_id }}
+          path: build/admin-panel/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Delete the property file
+        if: always()
+        run: rm -f treetracker.keys.properties
