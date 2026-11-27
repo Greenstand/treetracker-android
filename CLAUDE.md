@@ -21,6 +21,7 @@ fails before the change and passes after it, with both annotated videos in the P
 - [Environment Setup](docs/getting-started/environment-setup.md)
 - [Build Variants](docs/getting-started/build-variants.md)
 - [Common Commands](docs/getting-started/common-commands.md)
+- [Cloud Sessions](docs/getting-started/cloud-sessions.md): the SessionStart hook that sets up JDK 25, the Android SDK and Gradle caches
 
 ### Product
 

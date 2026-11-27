@@ -20,4 +20,7 @@
 4. Connect a device or start an emulator.
 5. Run the app from Android Studio or use Gradle commands from [Common Commands](common-commands.md).
 
+In a Claude Code cloud session the toolchain, `local.properties` and dummy keys are set up for
+you; see [Cloud Sessions](cloud-sessions.md).
+
 See also: [Prerequisites](prerequisites.md), [Build Variants](build-variants.md).

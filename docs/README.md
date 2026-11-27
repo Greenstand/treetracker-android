@@ -9,6 +9,7 @@ This is the primary documentation system for the repository.
 - [Environment Setup](getting-started/environment-setup.md)
 - [Build Variants](getting-started/build-variants.md)
 - [Common Commands](getting-started/common-commands.md)
+- [Cloud Sessions](getting-started/cloud-sessions.md)
 
 ## Product
 
