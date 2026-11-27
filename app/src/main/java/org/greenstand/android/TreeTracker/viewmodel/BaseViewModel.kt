@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.greenstand.android.TreeTracker.navigation.NavOptions
 
 /**
@@ -52,8 +53,9 @@ abstract class BaseViewModel<S, A : Action>(
 
     protected val currentState: S get() = _state.value
 
+    /** Atomic, so it is safe from any thread: no hop to the main dispatcher is needed first. */
     protected fun updateState(update: S.() -> S) {
-        _state.value = _state.value.update()
+        _state.update { it.update() }
     }
 
     protected fun sendEvent(event: UiEvent) {
