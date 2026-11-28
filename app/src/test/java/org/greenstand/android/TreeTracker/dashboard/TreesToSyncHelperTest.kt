@@ -99,8 +99,8 @@ class TreesToSyncHelperTest {
     @Test
     fun `WHEN refreshTreeCountToSync called THEN writes under the tree count key and commits`() =
         runTest {
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 1
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 2
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returns 1
+            coEvery { dao.getNonUploadedTreeCount() } returns 2
 
             treesToSyncHelper.refreshTreeCountToSync()
 
@@ -114,8 +114,8 @@ class TreesToSyncHelperTest {
     @Test
     fun `WHEN nothing is left to sync THEN stores zero`() =
         runTest {
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 0
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 0
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returns 0
+            coEvery { dao.getNonUploadedTreeCount() } returns 0
 
             treesToSyncHelper.refreshTreeCountToSync()
 

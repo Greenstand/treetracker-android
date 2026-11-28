@@ -65,14 +65,14 @@ class DashboardScreenUiTest : RootScreenUiTest() {
     fun setUp() {
         every { workManager.getWorkInfosForUniqueWorkLiveData(any()) } returns MutableLiveData<List<WorkInfo>>()
         coEvery { checkForInternetUseCase.execute(Unit) } returns false
-        every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(0)
-        every { dao.getUploadedTreeImageCountFlow() } returns flowOf(0)
-        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(0)
+        every { dao.getUploadedTreeCaptureCountFlow() } returns flowOf(0)
+        every { dao.getUploadedTreeCountFlow() } returns flowOf(0)
+        every { dao.getNonUploadedTreeCaptureCountFlow() } returns flowOf(0)
         startKoinWith(languageButtonModule())
     }
 
     private fun launchDashboard(treesToUpload: Int): DashboardViewModel {
-        every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(treesToUpload)
+        every { dao.getNonUploadedTreeCountFlow() } returns flowOf(treesToUpload)
         val viewModel =
             DashboardViewModel(
                 dao = dao,

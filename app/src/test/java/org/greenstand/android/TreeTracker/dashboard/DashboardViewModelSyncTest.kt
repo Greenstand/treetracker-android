@@ -91,10 +91,10 @@ class DashboardViewModelSyncTest {
         mockkObject(FeatureFlags)
         every { FeatureFlags.DEBUG_ENABLED } returns false
         // 3 + 5 = 8 synced, 2 + 4 = 6 remaining
-        every { dao.getUploadedLegacyTreeImageCountFlow() } returns flowOf(3)
-        every { dao.getUploadedTreeImageCountFlow() } returns flowOf(5)
-        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(2)
-        every { dao.getNonUploadedTreeImageCountFlow() } returns nonUploadedTrees
+        every { dao.getUploadedTreeCaptureCountFlow() } returns flowOf(3)
+        every { dao.getUploadedTreeCountFlow() } returns flowOf(5)
+        every { dao.getNonUploadedTreeCaptureCountFlow() } returns flowOf(2)
+        every { dao.getNonUploadedTreeCountFlow() } returns nonUploadedTrees
         every { workManager.getWorkInfosForUniqueWorkLiveData(any()) } returns workInfoLiveData
         every { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) } returns mockk()
         coEvery { orgRepo.getOrgs() } returns FakeFileGenerator.fakeOrganizationList
@@ -157,8 +157,8 @@ class DashboardViewModelSyncTest {
     @Test
     fun `sync reminder dialog stays hidden just below the threshold`() =
         runTest {
-            every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(999)
-            every { dao.getNonUploadedTreeImageCountFlow() } returns flowOf(1000)
+            every { dao.getNonUploadedTreeCaptureCountFlow() } returns flowOf(999)
+            every { dao.getNonUploadedTreeCountFlow() } returns flowOf(1000)
 
             val vm = createViewModel()
 
@@ -209,7 +209,7 @@ class DashboardViewModelSyncTest {
     @Test
     fun `Sync with nothing to sync shows a snackbar and does not enqueue work`() {
         nonUploadedTrees.value = 0
-        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(0)
+        every { dao.getNonUploadedTreeCaptureCountFlow() } returns flowOf(0)
         val vm = createViewModel()
 
         vm.handleAction(DashboardAction.Sync)
@@ -223,7 +223,7 @@ class DashboardViewModelSyncTest {
     fun `Sync in debug builds enqueues work even with nothing to sync`() {
         every { FeatureFlags.DEBUG_ENABLED } returns true
         nonUploadedTrees.value = 0
-        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(0)
+        every { dao.getNonUploadedTreeCaptureCountFlow() } returns flowOf(0)
         val vm = createViewModel()
 
         vm.handleAction(DashboardAction.Sync)

@@ -59,8 +59,8 @@ class TreesToSyncHelperPreferencesTest {
     @Test
     fun `refreshed tree count can be read back`() =
         runTest {
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 4
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 6
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returns 4
+            coEvery { dao.getNonUploadedTreeCount() } returns 6
 
             treesToSyncHelper.refreshTreeCountToSync()
 
@@ -70,8 +70,8 @@ class TreesToSyncHelperPreferencesTest {
     @Test
     fun `refreshing again replaces the stored count`() =
         runTest {
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returnsMany listOf(4, 0)
-            coEvery { dao.getNonUploadedTreeImageCount() } returnsMany listOf(6, 1)
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returnsMany listOf(4, 0)
+            coEvery { dao.getNonUploadedTreeCount() } returnsMany listOf(6, 1)
 
             treesToSyncHelper.refreshTreeCountToSync()
             treesToSyncHelper.refreshTreeCountToSync()
