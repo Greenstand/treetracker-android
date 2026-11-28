@@ -1,0 +1,31 @@
+# D3: stop a sync part-way. 120 more trees make 122, which upload in bundles of 50, and
+# storage=slow keeps each upload at 1.5 s so there is time to stop after the first bundle. The
+# partial count is kept and does not move once the sync is stopped.
+appId: org.greenstand.android.TreeTracker.debug
+name: D3 Stop sync
+tags: [sync]
+---
+- stopApp
+- openLink: treetracker-e2e://dashboard?storage=slow&delayMs=1500&trees=120
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 90000
+- assertVisible: {id: TreesToSyncCount, text: "122"}
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: TreesSyncedCount, text: "50"}
+    timeout: 90000
+# The button now stops the sync.
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Sync Stopped"}
+    timeout: 15000
+- extendedWaitUntil:
+    notVisible: {id: Snackbar}
+    timeout: 15000
+# The synced count counts uploaded photos, and a bundle's photos upload in parallel, so photos that
+# were already in flight may still land. Anything from 50 up to, but not all, of the 122 is kept.
+- assertVisible: {id: TreesSyncedCount, text: "([5-9][0-9]|1[01][0-9]|12[01])"}
+- assertNotVisible: {id: TreesToSyncCount, text: "0"}
+- takeScreenshot: sync-stopped
+- stopApp

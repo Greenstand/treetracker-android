@@ -193,11 +193,11 @@ run_once() {
   local setup_ok=1 variant
   SETUP_FAILED=0
   # Org-config flows need their org seeded (the variant run-org.sh uses for the flow); dev-tools
-  # flows need the seeded user and trees from setup-device.sh.
+  # and sync flows need the seeded user and trees from setup-device.sh.
   variant=$(awk -v f="$NAME.yaml" '$2 == f {print $1}' e2e/run-org.sh)
   if [[ -n $variant ]]; then
     bash e2e/seed-org.sh -s "$SERIAL" "$variant" </dev/null > "$DIR/setup.txt" 2>&1 || setup_ok=0
-  elif has_tag "$FLOW" dev-tools; then
+  elif has_tag "$FLOW" dev-tools || has_tag "$FLOW" sync; then
     bash e2e/setup-device.sh -s "$SERIAL" </dev/null > "$DIR/setup.txt" 2>&1 || setup_ok=0
   fi
 

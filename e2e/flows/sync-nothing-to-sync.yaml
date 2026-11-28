@@ -1,0 +1,26 @@
+# D2: nothing to sync. Debug builds skip this check, so syncChecks=release turns it on. The two
+# seeded trees are synced first (storage=ok), leaving none; tapping Upload again says so.
+appId: org.greenstand.android.TreeTracker.debug
+name: D2 Nothing to sync
+tags: [sync]
+---
+- stopApp
+- openLink: treetracker-e2e://dashboard?storage=ok&syncChecks=release
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Sync Successful"}
+    timeout: 60000
+- assertVisible: {id: TreesToSyncCount, text: "0"}
+- extendedWaitUntil:
+    notVisible: {id: Snackbar}
+    timeout: 15000
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Nothing to Sync"}
+    timeout: 15000
+- assertVisible: {id: TreesSyncedCount, text: "2"}
+- takeScreenshot: nothing-to-sync
+- stopApp

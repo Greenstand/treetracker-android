@@ -30,8 +30,8 @@ Selectors, space or comma separated, in any of the ways below:
 - a flow that isn't committed: `--inline my-flow.yaml` (run) or the `inline_flow` input. It runs
   as `e2e/flows/inline.yaml`, so `runFlow: {file: subflows/signup.yaml}` works.
 
-Org-config flows get their org seeded and dev-tools flows get `setup-device.sh`'s user and trees,
-as in `run.sh`. Flows run offline, as in `run.sh`, and with a GPS fix near the seeded trees.
+Org-config flows get their org seeded and dev-tools and sync flows get `setup-device.sh`'s user and
+trees, as in `run.sh`. Flows run offline, as in `run.sh`, and with a GPS fix near the seeded trees.
 
 ## From a cloud session
 
@@ -122,7 +122,7 @@ How a change is traced to a flow, through the `TestTags` ids flows and screens s
 | Build files, tests, docs, code no screen reaches | nothing (the full check covers them) |
 
 Navigation hubs (`Host.kt`) are not screens, and the search for screens does not go through them.
-Org-config and dev-tools flows count 5 extra steps for their seeding. `known-bug` flows are only run
+Org-config, dev-tools and sync flows count 5 extra steps for their seeding. `known-bug` flows are only run
 when the PR edits them.
 
 Screens built only from shared components (user cards, the capture button) can't be told apart by

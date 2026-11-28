@@ -1,0 +1,23 @@
+# D5: the sync reminder. With 2000 or more unsynced trees, Track shows a dialog first; confirming
+# it goes on to user select. 2000 more trees make 2002 (the link adds them in batches of 500).
+appId: org.greenstand.android.TreeTracker.debug
+name: D5 Sync reminder
+tags: [sync]
+---
+- stopApp
+- openLink: treetracker-e2e://dashboard?trees=2000
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 300000
+- assertVisible: {id: TreesToSyncCount, text: "2002"}
+- tapOn: {id: TrackButton}
+- extendedWaitUntil:
+    visible: {id: DialogTitle}
+    timeout: 15000
+- assertNotVisible: {id: "UserButton_5551230001"}
+- takeScreenshot: sync-reminder
+- tapOn: {id: DialogPositiveButton}
+- extendedWaitUntil:
+    visible: {id: "UserButton_5551230001"}
+    timeout: 15000
+- stopApp

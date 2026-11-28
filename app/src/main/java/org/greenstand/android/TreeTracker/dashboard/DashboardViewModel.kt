@@ -156,7 +156,7 @@ class DashboardViewModel(
     private fun toggleSync() {
         viewModelScope.launch {
             if (_isSyncing == false) {
-                if (!FeatureFlags.DEBUG_ENABLED) {
+                if (!FeatureFlags.DEBUG_ENABLED || FeatureFlags.releaseSyncChecks) {
                     val treesToSync = currentState.treesRemainingToSync
                     when (treesToSync) {
                         0 -> triggerSnackBar(R.string.nothing_to_sync)

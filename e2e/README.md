@@ -23,6 +23,10 @@ YAML and drives the installed debug app on an emulator or device.
   start with a plain `launchApp`.
 - `flows/dev-options.yaml`, `flows/debug-overlays.yaml` (tag `dev-tools`): run after
   `setup-device.sh` seeds a user and two trees.
+- `flows/sync-*.yaml` (tag `sync`): sync and upload, D1–D5. Each changes the data it
+  syncs, so `run-sync.sh` resets and seeds the device before every flow, as `run-org.sh` does for
+  org flows. CI has no working storage, so the flows swap S3 for `FakeObjectStorage` through
+  their link (see the parameters below).
 
 Sub-flows in `flows/subflows/` have no `tags` and are only run through `runFlow`.
 - `flows/dev-options.yaml`: I1, change a developer parameter and verify persistence
@@ -75,6 +79,16 @@ The `treetracker-e2e://` links exist only in debug/dev builds:
 | `treetracker-e2e://dev-options` | Dev options, with Dashboard under it for Back |
 | `treetracker-e2e://capture` | Capture with a real session for the admin, with Dashboard under it |
 | `treetracker-e2e://setup` | API 35/36 fixture fallback; used by the script after reset |
+
+The screen links take three optional parameters. All finish before the screen renders, so a flow
+only has to wait for the screen. Only debug builds accept them; dev builds, which reach testers,
+ignore them:
+
+| Parameter | Effect |
+| --- | --- |
+| `trees=N` | Adds N more trees for the admin (in batches of 500, the AppFunctions limit) |
+| `storage=ok` or `storage=slow` | Replaces S3 with `FakeObjectStorage` until the app process dies: every upload succeeds without a network. `slow` waits `delayMs` (default 1000) per upload, so a sync can be stopped part-way |
+| `syncChecks=release` | Runs the sync checks only release builds do, such as "Nothing to Sync", until the app process dies |
 
 The screen links render the real app Host and initialize the org, device config
 and capture session before rendering a screen. They do not emulate screen

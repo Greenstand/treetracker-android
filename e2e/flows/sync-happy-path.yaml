@@ -1,0 +1,25 @@
+# D1: sync happy path. storage=slow swaps S3 for FakeObjectStorage, so the upload succeeds without
+# a network and takes long enough to see "Sync Started". The two seeded trees move from "to sync"
+# to "synced".
+appId: org.greenstand.android.TreeTracker.debug
+name: D1 Sync happy path
+tags: [sync]
+---
+- stopApp
+- openLink: treetracker-e2e://dashboard?storage=slow&delayMs=500
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- assertVisible: {id: TreesToSyncCount, text: "2"}
+- assertVisible: {id: TreesSyncedCount, text: "0"}
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Sync Started, please wait"}
+    timeout: 30000
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Sync Successful"}
+    timeout: 60000
+- assertVisible: {id: TreesToSyncCount, text: "0"}
+- assertVisible: {id: TreesSyncedCount, text: "2"}
+- takeScreenshot: sync-done
+- stopApp

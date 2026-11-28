@@ -43,6 +43,7 @@ object TestTags {
     const val TOP_BAR_LOGO = "TopBarLogo"
     const val TOP_BAR_LANGUAGE_BUTTON = "TopBarLanguageButton"
     const val SNACKBAR = "Snackbar"
+    const val SNACKBAR_MESSAGE = "SnackbarMessage"
 
     // Dialogs (CustomDialog, tutorials, privacy policy)
     const val DIALOG_TITLE = "DialogTitle"

@@ -50,13 +50,13 @@ TEST_TAGS = "app/src/main/java/org/greenstand/android/TreeTracker/view/TestTags.
 MAX_HOPS = 3
 # A flow shows a screen from the first step on it through at most this many more steps on it.
 MAX_EXTRA_STEPS = 3
-# Org-config and dev-tools flows are seeded before they run (run-flows.sh), which costs about as
-# much as this many steps; it counts when comparing flows.
+# Org-config, dev-tools and sync flows are seeded before they run (run-flows.sh), which costs about
+# as much as this many steps; it counts when comparing flows.
 SETUP_COST = 5
 HUB_MIN_COMPONENTS = 10
 MAX_REASONS = 4
 MAX_LISTED = 50
-SEEDED_TAGS = {"org-config", "dev-tools"}
+SEEDED_TAGS = {"org-config", "dev-tools", "sync"}
 # A tag used by more files than this (shared buttons, dialogs) doesn't say which screen a flow is
 # on, when the screen file has tags of its own.
 SPECIFIC_MAX_FILES = 2

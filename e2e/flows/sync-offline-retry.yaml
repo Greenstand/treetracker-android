@@ -1,0 +1,33 @@
+# D4: offline sync, then online. The first sync uses the real S3 client with dummy keys and no
+# network (airplane mode, as e2e/run.sh sets), so it fails and the trees stay pending. Swapping in
+# FakeObjectStorage stands for coming back online: the same trees then sync.
+appId: org.greenstand.android.TreeTracker.debug
+name: D4 Offline sync then retry
+tags: [sync]
+---
+- stopApp
+- openLink: treetracker-e2e://dashboard
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Start Sync Failed, Please try again"}
+    timeout: 60000
+- assertVisible: {id: TreesToSyncCount, text: "2"}
+- assertVisible: {id: TreesSyncedCount, text: "0"}
+- takeScreenshot: sync-failed-offline
+# Back online: a fresh Dashboard over the same data, with uploads working.
+- openLink: treetracker-e2e://dashboard?storage=ok
+- extendedWaitUntil:
+    visible: {id: TrackButton}
+    timeout: 30000
+- assertVisible: {id: TreesToSyncCount, text: "2"}
+- tapOn: {id: UploadButton}
+- extendedWaitUntil:
+    visible: {id: SnackbarMessage, text: "Sync Successful"}
+    timeout: 60000
+- assertVisible: {id: TreesToSyncCount, text: "0"}
+- assertVisible: {id: TreesSyncedCount, text: "2"}
+- takeScreenshot: sync-retry-done
+- stopApp
