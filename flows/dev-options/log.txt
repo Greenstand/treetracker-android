@@ -1,0 +1,19 @@
+   0.000s tb 0.6.3: "I1 Dev options" (/home/runner/work/treetracker-android/treetracker-android/e2e/flows/.ci-dev-options.yaml)
+   0.000s device: android sdk gphone64 x86 64 (emulator-5554)
+   0.763s recording the screen to recording.mp4
+   0.764s ▶ Stop app "org.greenstand.android.TreeTracker.debug"  (.ci-dev-options.yaml:6)
+   1.378s ✓ Stop app "org.greenstand.android.TreeTracker.debug"  614 ms
+   1.378s   --annotate: holding the screen 390ms for the recording
+   1.764s ▶ Open treetracker-e2e://dashboard  (.ci-dev-options.yaml:7)
+   3.302s ✓ Open treetracker-e2e://dashboard  1537 ms
+   3.302s ▶ Assert that "2", id: TreesToSyncCount is visible  (.ci-dev-options.yaml:8)
+   3.404s   snapshot history: screen context changed; discarding 1 snapshots
+   5.368s   snapshot history: screen context changed; discarding 1 snapshots
+   5.368s   found "2", id: TreesToSyncCount: TextView "2" #TreesToSyncCount [82,233][91,300], after 2065 ms and 3 reads
+   5.368s   the device's read had no app window yet (the app's window being replaced, or not listed yet); waits for absence do not judge on it
+   5.368s ✓ Assert that "2", id: TreesToSyncCount is visible  2065 ms
+   5.368s ▶ Take screenshot step-03-end-assertVisible-TreesToSyncCount  (.ci-dev-options.yaml:9)
+   5.553s ✓ Take screenshot step-03-end-assertVisible-TreesToSyncCount  185 ms
+   5.948s --annotate: recording.mp4 is in sync (its frame times say so, within -80 ms)
+   6.384s --annotate: drew 4 captions and 0 touches on recording.mp4 in 436 ms
+   6.384s PASSED in 6.383s

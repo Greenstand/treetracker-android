@@ -1,0 +1,177 @@
+--------- beginning of main
+11-28 18:03:58.793  3418  3551 D SessionLifecycleClient: Notified CRASHLYTICS of new session 889097a1cbff4a5ea8a2ac86f50dcb0b
+11-28 18:03:58.799  3418  3534 W InstallationId: Error getting authentication token.
+11-28 18:03:58.799  3418  3534 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-28 18:03:58.799  3418  3534 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-28 18:03:58.840  3418  3534 D SessionConfigFetcher: Fetching settings from server.
+11-28 18:03:59.003  3418  3427 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-28 18:03:59.075  3418  3565 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-28 18:03:59.357  3418  3418 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-28 18:03:59.388  3418  3551 W eeTracker.debug: Long monitor contention with owner Firebase Background Thread #1 (3549) at java.lang.String com.google.firebase.heartbeatinfo.DefaultHeartBeatController.lambda$getHeartBeatsHeader$1$com-google-firebase-heartbeatinfo-DefaultHeartBeatController()(DefaultHeartBeatController.java:107) waiters=0 in java.lang.Void com.google.firebase.heartbeatinfo.DefaultHeartBeatController.lambda$registerHeartBeat$0$com-google-firebase-heartbeatinfo-DefaultHeartBeatController() for 211ms
+11-28 18:03:59.403  3418  3551 W InstallationId: Error getting authentication token.
+11-28 18:03:59.403  3418  3551 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-28 18:03:59.403  3418  3551 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-28 18:03:59.521  3418  3418 I Choreographer: Skipped 33 frames!  The application may be doing too much work on its main thread.
+11-28 18:03:59.693  3418  3555 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"889097a1cbff4a5ea8a2ac86f50dcb0b","firstSessionId":"889097a1cbff4a5ea8a2ac86f50dcb0b","sessionIndex":0,"eventTimestampUs":1795889038753000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"eoKfHzVjRACkftJmos0PB3","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":3418,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":3418,"importance":100,"defaultProcess":true}]}}}
+11-28 18:03:59.697  3418  3555 D SessionFirelogPublisher: Successfully logged Session Start event: 889097a1cbff4a5ea8a2ac86f50dcb0b
+11-28 18:04:00.317  3418  3656 I FA      : Tag Manager is not found and thus will not be used
+11-28 18:04:00.726  3418  3418 I Choreographer: Skipped 47 frames!  The application may be doing too much work on its main thread.
+11-28 18:04:01.540  3418  3778 I HWUI    : Davey! duration=2548ms; Flags=0, FrameTimelineVsyncId=4331, IntendedVsync=61642619862, Vsync=62192619840, InputEventId=0, HandleInputStart=62197063903, AnimationStart=62197065105, PerformTraversalsStart=62637246123, DrawStart=63187905613, FrameDeadline=61659286528, FrameInterval=62193087643, FrameStartTime=16666666, SyncQueued=63251069596, SyncStart=63255415626, IssueDrawCommandsStart=63255586721, SwapBuffers=64131901419, FrameCompleted=64195467250, DequeueBufferDuration=2023, QueueBufferDuration=719021, GpuCompleted=64195412209, SwapBuffersCompleted=64195467250, DisplayPresentTime=0, CommandSubmissionCompleted=64131901419, 
+11-28 18:04:01.542  3418  3418 I Choreographer: Skipped 37 frames!  The application may be doing too much work on its main thread.
+11-28 18:04:03.133  3418  3874 D ProfileInstaller: Installing profile for org.greenstand.android.TreeTracker.debug
+11-28 18:04:05.518  4143  4143 I eeTracker.debug: Late-enabling -Xcheck:jni
+11-28 18:04:05.540  4143  4143 I eeTracker.debug: Using CollectorTypeCMC GC.
+11-28 18:04:05.542  4143  4143 W eeTracker.debug: Unexpected CPU variant for x86: x86_64.
+11-28 18:04:05.542  4143  4143 W eeTracker.debug: Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+11-28 18:04:05.559  4143  4143 D nativeloader: Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+11-28 18:04:05.649  4143  4143 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+11-28 18:04:05.666  4143  4143 D ApplicationLoaders: Returning zygote-cached class loader: /system_ext/framework/androidx.window.sidecar.jar
+11-28 18:04:05.666  4143  4143 W ziparchive: Unable to open '/data/app/~~BAsHEGSaCW6VgStKmueiVA==/org.greenstand.android.TreeTracker.debug-us5tkBMIlqgnce7YUqCVZw==/base.dm': No such file or directory
+11-28 18:04:05.666  4143  4143 W ziparchive: Unable to open '/data/app/~~BAsHEGSaCW6VgStKmueiVA==/org.greenstand.android.TreeTracker.debug-us5tkBMIlqgnce7YUqCVZw==/base.dm': No such file or directory
+11-28 18:04:06.214  4143  4143 D nativeloader: Configuring clns-7 for other apk /data/app/~~BAsHEGSaCW6VgStKmueiVA==/org.greenstand.android.TreeTracker.debug-us5tkBMIlqgnce7YUqCVZw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~BAsHEGSaCW6VgStKmueiVA==/org.greenstand.android.TreeTracker.debug-us5tkBMIlqgnce7YUqCVZw==/lib/x86_64:/data/app/~~BAsHEGSaCW6VgStKmueiVA==/org.greenstand.android.TreeTracker.debug-us5tkBMIlqgnce7YUqCVZw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/org.greenstand.android.TreeTracker.debug
+11-28 18:04:06.219  4143  4143 V GraphicsEnvironment: Currently set values for:
+11-28 18:04:06.219  4143  4143 V GraphicsEnvironment:   angle_gl_driver_selection_pkgs=[]
+11-28 18:04:06.219  4143  4143 V GraphicsEnvironment:   angle_gl_driver_selection_values=[]
+11-28 18:04:06.219  4143  4143 V GraphicsEnvironment: Global.Settings values are invalid: number of packages: 0, number of values: 0
+11-28 18:04:06.219  4143  4143 V GraphicsEnvironment: Neither updatable production driver nor prerelease driver is supported.
+11-28 18:04:06.227  4143  4143 I MultiDex: VM with version 2.1.0 has multidex support
+11-28 18:04:06.227  4143  4143 I MultiDex: Installing application
+11-28 18:04:06.227  4143  4143 I MultiDex: VM has multidex support, MultiDex support library is disabled.
+11-28 18:04:06.245  4143  4143 D SessionsDependencies: Dependency to CRASHLYTICS added.
+11-28 18:04:06.254  4143  4143 I FirebaseApp: Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+11-28 18:04:06.326  4143  4143 D FirebaseSessions: Initializing Firebase Sessions SDK.
+11-28 18:04:06.332  4143  4143 I FirebaseCrashlytics: Initializing Firebase Crashlytics 18.6.3 for org.greenstand.android.TreeTracker.debug
+11-28 18:04:06.364  4143  4143 D SessionsDependencies: Subscriber CRASHLYTICS registered.
+11-28 18:04:06.437  4143  4143 I FirebaseInitProvider: FirebaseApp initialization successful
+11-28 18:04:06.439  4143  4143 D WM-WrkMgrInitializer: Initializing WorkManager with default configuration.
+11-28 18:04:06.469  4143  4143 D WM-PackageManagerHelper: Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+11-28 18:04:06.469  4143  4143 D WM-Schedulers: Created SystemJobScheduler and enabled SystemJobService
+11-28 18:04:06.482  4143  4143 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-28 18:04:06.483  4143  4143 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-28 18:04:06.518  4143  4143 I AWSKeyValueStore: Detected Android API Level = 35
+11-28 18:04:06.518  4143  4143 I AWSKeyValueStore: Creating the AWSKeyValueStore with key for sharedPreferencesForData = com.amazonaws.android.auth
+11-28 18:04:06.519  4143  4143 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-28 18:04:06.519  4143  4143 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-28 18:04:06.519  4143  4143 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.identityId
+11-28 18:04:06.519  4143  4143 D CognitoCachingCredentia: Loading credentials from SharedPreferences
+11-28 18:04:06.520  4143  4143 E AWSKeyValueStore: com.amazonaws.internal.keyvaluestore.KeyNotFoundException: Error occurred while accessing AndroidKeyStore to retrieve the key for keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-28 18:04:06.520  4143  4143 I AWSKeyValueStore: Deleting the encryption key identified by the keyAlias: com.amazonaws.android.auth.aesKeyStoreAlias
+11-28 18:04:06.520  4143  4143 E AWSKeyValueStore: Error in retrieving the decryption key used to decrypt the data from the persistent store. Returning null for the requested dataKey = dummy-pool-id-test.expirationDate
+11-28 18:04:06.532  4143  4143 W LogFactory: Truncating log tag length as it exceed 23, the limit imposed by Android on certain API Levels
+11-28 18:04:06.533  4143  4143 D AmazonS3Client: initialized with endpoint = https://s3.eu-central-1.amazonaws.com
+11-28 18:04:06.557  4143  4186 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-28 18:04:06.560  4143  4186 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000002/DynamiteLoader.uncompressed.dm': No such file or directory
+11-28 18:04:06.573  4143  4186 I DynamiteModule: Considering local module com.google.android.gms.measurement.dynamite:105 and remote module com.google.android.gms.measurement.dynamite:115
+11-28 18:04:06.573  4143  4186 I DynamiteModule: Selected remote version of com.google.android.gms.measurement.dynamite, version >= 115
+11-28 18:04:06.573  4143  4186 V DynamiteModule: Dynamite loader version >= 2, using loadModule2NoCrashUtils
+11-28 18:04:06.603  4143  4143 D AppCompatDelegate: Checking for metadata for AppLocalesMetadataHolderService : Service not found
+11-28 18:04:06.625  4143  4191 E FirebaseCrashlytics: Settings request failed.
+11-28 18:04:06.645  4143  4188 I FirebaseCrashlytics: No version control information found
+11-28 18:04:06.662  4143  4186 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-28 18:04:06.662  4143  4186 W ziparchive: Unable to open '/data/user_de/0/com.google.android.gms/app_chimera/m/00000007/MeasurementDynamite.dm': No such file or directory
+11-28 18:04:06.689  4143  4143 W eeTracker.debug: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-28 18:04:06.703  4143  4143 W HWUI    : Unknown dataspace 0
+11-28 18:04:06.746  4143  4202 I EGL_emulation: Opening libGLESv1_CM_emulation.so
+11-28 18:04:06.747  4143  4202 I EGL_emulation: Opening libGLESv2_emulation.so
+11-28 18:04:06.785  4143  4202 W HWUI    : Failed to initialize 101010-2 format, error = EGL_SUCCESS
+11-28 18:04:06.830  4143  4202 I Gralloc4: mapper 4.x is not supported
+11-28 18:04:06.853  4143  4181 D OrgRepo : Org set to: Greenstand
+11-28 18:04:06.858  4143  4181 D OrgRepo : Org settings: Org(id=-1, name=Greenstand, walletId=, logoPath=, captureSetupFlow=[Destination(route=user-select, features=null), Destination(route=add-org, features=null)], captureFlow=[Destination(route=capture/{profilePicUrl}, features=null), Destination(route=tree-image-review/{photoPath}, features=null)])
+11-28 18:04:06.981  4143  4225 W eeTracker.debug: Verification of void m.or.p() took 128.986ms (1093.14 bytecodes/s) (5040B approximate peak alloc)
+11-28 18:04:07.055  4143  4225 I FA      : App measurement initialized, version: 95014
+11-28 18:04:07.055  4143  4225 I FA      : To enable debug logging run: adb shell setprop log.tag.FA VERBOSE
+11-28 18:04:07.055  4143  4225 I FA      : To enable faster debug mode event logging run:
+11-28 18:04:07.055  4143  4225 I FA      :   adb shell setprop debug.firebase.analytics.app org.greenstand.android.TreeTracker.debug
+11-28 18:04:07.067  4143  4184 W InstallationId: Error getting authentication token.
+11-28 18:04:07.067  4143  4184 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$1.run(SequentialExecutor.java:117)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-28 18:04:07.067  4143  4184 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-28 18:04:07.074  4143  4192 D SessionConfigFetcher: Fetching settings from server.
+11-28 18:04:07.080  4143  4194 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-28 18:04:07.138  4143  4189 D LifecycleServiceBinder: Binding service to application.
+11-28 18:04:07.157  4143  4184 D SessionLifecycleClient: Queued message 1. Queue size 1
+11-28 18:04:07.295  4143  4143 W eeTracker.debug: Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+11-28 18:04:07.504  4143  4225 I FA      : Tag Manager is not found and thus will not be used
+11-28 18:04:08.016  4143  4143 D SessionLifecycleService: Service bound to new client on process 4143
+11-28 18:04:08.046  4143  4247 D SessionLifecycleService: App has not yet foregrounded. Using previously stored session: null
+11-28 18:04:08.047  4143  4247 D SessionLifecycleService: Client android.os.Messenger@45fdb90 bound at 70688. Clients: 1
+11-28 18:04:08.152  4143  4143 I Choreographer: Skipped 33 frames!  The application may be doing too much work on its main thread.
+11-28 18:04:08.754  4143  4151 I eeTracker.debug: Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+11-28 18:04:08.879  4143  4143 D SessionLifecycleClient: Connected to SessionLifecycleService. Queue size 1
+11-28 18:04:08.884  4143  4192 D SessionLifecycleClient: Sending lifecycle 1 to service
+11-28 18:04:08.892  4143  4159 I HWUI    : Davey! duration=1764ms; Flags=0, FrameTimelineVsyncId=5284, IntendedVsync=69775952870, Vsync=70009286194, InputEventId=0, HandleInputStart=70012493032, AnimationStart=70012496268, PerformTraversalsStart=70272960129, DrawStart=70633991017, FrameDeadline=69792619536, FrameInterval=70012364371, FrameStartTime=16666666, SyncQueued=70677691060, SyncStart=70679307647, IssueDrawCommandsStart=70679360687, SwapBuffers=71478017522, FrameCompleted=71542488211, DequeueBufferDuration=1843, QueueBufferDuration=150675, GpuCompleted=71542488211, SwapBuffersCompleted=71538711447, DisplayPresentTime=0, CommandSubmissionCompleted=71478017522, 
+11-28 18:04:08.898  4143  4143 I Choreographer: Skipped 44 frames!  The application may be doing too much work on its main thread.
+11-28 18:04:08.908  4143  4247 D SessionLifecycleService: Activity foregrounding at 71556.
+11-28 18:04:08.908  4143  4247 D SessionLifecycleService: Cold start detected.
+11-28 18:04:08.931  4143  4247 D SessionLifecycleService: Generated new session e9af43410c364d6e8a696d6659becbf6
+11-28 18:04:08.931  4143  4247 D SessionLifecycleService: Broadcasting new session: SessionDetails(sessionId=e9af43410c364d6e8a696d6659becbf6, firstSessionId=e9af43410c364d6e8a696d6659becbf6, sessionIndex=0, sessionStartTimestampUs=1795889048931000)
+11-28 18:04:08.942  4143  4159 I HWUI    : Davey! duration=775ms; Flags=0, FrameTimelineVsyncId=5319, IntendedVsync=70825952828, Vsync=71559286132, InputEventId=0, HandleInputStart=71570929836, AnimationStart=71570930678, PerformTraversalsStart=71584081157, DrawStart=71584172583, FrameDeadline=71559286132, FrameInterval=71570597782, FrameStartTime=16666666, SyncQueued=71587498214, SyncStart=71588848795, IssueDrawCommandsStart=71588887974, SwapBuffers=71590055232, FrameCompleted=71602600600, DequeueBufferDuration=1832, QueueBufferDuration=201671, GpuCompleted=71602546660, SwapBuffersCompleted=71602600600, DisplayPresentTime=0, CommandSubmissionCompleted=71590055232, 
+11-28 18:04:08.979  4143  4187 D SessionFirelogPublisher: Data Collection is enabled for at least one Subscriber
+11-28 18:04:08.986  4143  4143 D SessionLifecycleClient: Session update received: e9af43410c364d6e8a696d6659becbf6
+11-28 18:04:09.001  4143  4192 D SessionLifecycleClient: Notified CRASHLYTICS of new session e9af43410c364d6e8a696d6659becbf6
+11-28 18:04:09.043  4143  4189 W InstallationId: Error getting authentication token.
+11-28 18:04:09.043  4143  4189 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-28 18:04:09.043  4143  4189 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-28 18:04:09.061  4143  4189 D SessionConfigFetcher: Fetching settings from server.
+11-28 18:04:09.173  4143  4194 E SessionConfigFetcher: Error failing to fetch the remote configs: Unable to resolve host "firebase-settings.crashlytics.com": No address associated with hostname
+11-28 18:04:09.228  4143  4184 W InstallationId: Error getting authentication token.
+11-28 18:04:09.228  4143  4184 W InstallationId: com.google.firebase.installations.FirebaseInstallationsException: Firebase Installations Service is unavailable. Please try again later.
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.installations.remote.FirebaseInstallationServiceClient.createFirebaseInstallation(FirebaseInstallationServiceClient.java:208)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.registerFidWithServer(FirebaseInstallations.java:533)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.doNetworkCallIfNecessary(FirebaseInstallations.java:387)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations.lambda$doRegistrationOrRefresh$3$com-google-firebase-installations-FirebaseInstallations(FirebaseInstallations.java:372)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.installations.FirebaseInstallations$$ExternalSyntheticLambda1.run(D8$$SyntheticClass:0)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.workOnQueue(SequentialExecutor.java:229)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.SequentialExecutor$QueueWorker.run(SequentialExecutor.java:174)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:644)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory.lambda$newThread$0$com-google-firebase-concurrent-CustomThreadFactory(CustomThreadFactory.java:47)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at com.google.firebase.concurrent.CustomThreadFactory$$ExternalSyntheticLambda0.run(D8$$SyntheticClass:0)
+11-28 18:04:09.228  4143  4184 W InstallationId: 	at java.lang.Thread.run(Thread.java:1012)
+11-28 18:04:09.247  4143  4184 D EventGDTLogger: Session Event: {"eventType":1,"sessionData":{"sessionId":"e9af43410c364d6e8a696d6659becbf6","firstSessionId":"e9af43410c364d6e8a696d6659becbf6","sessionIndex":0,"eventTimestampUs":1795889048931000,"dataCollectionStatus":{"performance":1,"crashlytics":2,"sessionSamplingRate":1.0},"firebaseInstallationId":"eoKfHzVjRACkftJmos0PB3","firebaseAuthenticationToken":""},"applicationInfo":{"appId":"1:422699885542:android:11ddac217a11a7f4a0ec27","deviceModel":"sdk_gphone64_x86_64","sessionSdkVersion":"1.2.3","osVersion":"15","logEnvironment":3,"androidAppInfo":{"packageName":"org.greenstand.android.TreeTracker.debug","versionName":"2.2.0","appBuildVersion":"197","deviceManufacturer":"Google","currentProcessDetails":{"processName":"org.greenstand.android.TreeTracker.debug","pid":4143,"importance":100,"defaultProcess":true},"appProcessDetails":[{"processName":"org.greenstand.android.TreeTracker.debug","pid":4143,"importance":100,"defaultProcess":true}]}}}
+11-28 18:04:09.248  4143  4184 D SessionFirelogPublisher: Successfully logged Session Start event: e9af43410c364d6e8a696d6659becbf6
