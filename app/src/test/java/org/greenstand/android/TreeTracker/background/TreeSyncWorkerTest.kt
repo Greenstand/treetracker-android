@@ -164,8 +164,8 @@ class TreeSyncWorkerTest {
         runTest {
             val syncFinished = CompletableDeferred<Boolean>()
             every { treesToSyncHelper.getTreeCountToSync() } returns 10
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 2
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 1
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returns 2
+            coEvery { dao.getNonUploadedTreeCount() } returns 1
             coEvery { syncDataUseCase.execute(Unit) } coAnswers { syncFinished.await() }
             every { syncNotificationManager.updateProgress(any(), any(), any()) } answers { syncFinished.complete(true) }
 
@@ -181,8 +181,8 @@ class TreeSyncWorkerTest {
         runTest {
             val syncFinished = CompletableDeferred<Boolean>()
             every { treesToSyncHelper.getTreeCountToSync() } returns 2
-            coEvery { dao.getNonUploadedLegacyTreeCaptureImageCount() } returns 4
-            coEvery { dao.getNonUploadedTreeImageCount() } returns 1
+            coEvery { dao.getNonUploadedTreeCaptureCount() } returns 4
+            coEvery { dao.getNonUploadedTreeCount() } returns 1
             coEvery { syncDataUseCase.execute(Unit) } coAnswers { syncFinished.await() }
             every { syncNotificationManager.updateProgress(any(), any(), any()) } answers { syncFinished.complete(true) }
 

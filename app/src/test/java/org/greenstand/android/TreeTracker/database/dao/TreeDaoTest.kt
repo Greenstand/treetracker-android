@@ -178,42 +178,42 @@ class TreeDaoTest : InMemoryDatabaseTest() {
         runTest {
             assertEquals(0, dao.getUploadedTreeCount())
             assertEquals(0, dao.getNonUploadedTreeCount())
-            assertEquals(0, dao.getUploadedTreeImageCount())
-            assertEquals(0, dao.getNonUploadedTreeImageCount())
+            assertEquals(0, dao.getUploadedTreeCountFlow().first())
+            assertEquals(0, dao.getNonUploadedTreeCountFlow().first())
         }
 
     @Test
-    fun `image counts split trees by whether they have a photo url`() =
+    fun `upload count flows split trees by the uploaded flag`() =
         runTest {
             val sessionId = insertSession()
-            dao.insertTree(DbFixtures.tree(sessionId, photoUrl = "https://a"))
-            dao.insertTree(DbFixtures.tree(sessionId, photoUrl = "https://b"))
-            dao.insertTree(DbFixtures.tree(sessionId, photoUrl = null))
+            dao.insertTree(DbFixtures.tree(sessionId, uploaded = true, photoUrl = "https://a"))
+            dao.insertTree(DbFixtures.tree(sessionId, uploaded = true, photoUrl = "https://b"))
+            dao.insertTree(DbFixtures.tree(sessionId, uploaded = false, photoUrl = null))
 
-            assertEquals(2, dao.getUploadedTreeImageCount())
-            assertEquals(1, dao.getNonUploadedTreeImageCount())
-            assertEquals(2, dao.getUploadedTreeImageCountFlow().first())
-            assertEquals(1, dao.getNonUploadedTreeImageCountFlow().first())
+            assertEquals(2, dao.getUploadedTreeCountFlow().first())
+            assertEquals(1, dao.getNonUploadedTreeCountFlow().first())
         }
 
     @Test
-    fun `image counts ignore the uploaded flag`() =
+    fun `upload counts ignore the photo url`() =
         runTest {
             val sessionId = insertSession()
-            dao.insertTree(DbFixtures.tree(sessionId, photoUrl = null, uploaded = true))
+            dao.insertTree(DbFixtures.tree(sessionId, photoUrl = "https://photo", uploaded = false))
 
-            assertEquals(1, dao.getNonUploadedTreeImageCount())
-            assertEquals(0, dao.getUploadedTreeImageCount())
+            assertEquals(1, dao.getNonUploadedTreeCount())
+            assertEquals(0, dao.getUploadedTreeCount())
+            assertEquals(1, dao.getNonUploadedTreeCountFlow().first())
+            assertEquals(0, dao.getUploadedTreeCountFlow().first())
         }
 
     @Test
-    fun `getNonUploadedTreeImageCountFlow emits again when a tree without a photo url is added`() =
+    fun `getNonUploadedTreeCountFlow emits again when a tree that is not uploaded is added`() =
         runTest {
             val sessionId = insertSession()
 
             val (before, after) =
-                dao.getNonUploadedTreeImageCountFlow().valuesBeforeAndAfter {
-                    dao.insertTree(DbFixtures.tree(sessionId, photoUrl = null))
+                dao.getNonUploadedTreeCountFlow().valuesBeforeAndAfter {
+                    dao.insertTree(DbFixtures.tree(sessionId, uploaded = false))
                 }
 
             assertEquals(0, before)
@@ -221,13 +221,13 @@ class TreeDaoTest : InMemoryDatabaseTest() {
         }
 
     @Test
-    fun `getUploadedTreeImageCountFlow emits again when a tree gets a photo url`() =
+    fun `getUploadedTreeCountFlow emits again when a tree is marked uploaded`() =
         runTest {
             val sessionId = insertSession()
-            val id = dao.insertTree(DbFixtures.tree(sessionId, photoUrl = null))
-            val uploaded = DbFixtures.tree(sessionId, photoUrl = "https://photo").apply { this.id = id }
+            val id = dao.insertTree(DbFixtures.tree(sessionId, uploaded = false))
+            val uploaded = DbFixtures.tree(sessionId, uploaded = true).apply { this.id = id }
 
-            val (before, after) = dao.getUploadedTreeImageCountFlow().valuesBeforeAndAfter { dao.updateTree(uploaded) }
+            val (before, after) = dao.getUploadedTreeCountFlow().valuesBeforeAndAfter { dao.updateTree(uploaded) }
 
             assertEquals(0, before)
             assertEquals(1, after)

@@ -125,17 +125,17 @@ class TreeDaoLegacyCaptureTest : InMemoryDatabaseTest() {
         }
 
     @Test
-    fun `capture image counts split captures by whether they have a photo url`() =
+    fun `capture upload counts ignore the photo url`() =
         runTest {
             val checkInId = insertCheckIn()
-            dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = "https://a"))
-            dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = null))
-            dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = null))
+            dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = "https://a", uploaded = true))
+            dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = "https://b", uploaded = false))
+            dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = null, uploaded = false))
 
-            assertEquals(1, dao.getUploadedLegacyTreeImageCount())
-            assertEquals(2, dao.getNonUploadedLegacyTreeCaptureImageCount())
-            assertEquals(1, dao.getUploadedLegacyTreeImageCountFlow().first())
-            assertEquals(2, dao.getNonUploadedLegacyTreeCaptureImageCountFlow().first())
+            assertEquals(1, dao.getUploadedTreeCaptureCount())
+            assertEquals(2, dao.getNonUploadedTreeCaptureCount())
+            assertEquals(1, dao.getUploadedTreeCaptureCountFlow().first())
+            assertEquals(2, dao.getNonUploadedTreeCaptureCountFlow().first())
         }
 
     @Test
@@ -143,18 +143,18 @@ class TreeDaoLegacyCaptureTest : InMemoryDatabaseTest() {
         runTest {
             assertEquals(0, dao.getUploadedTreeCaptureCount())
             assertEquals(0, dao.getNonUploadedTreeCaptureCount())
-            assertEquals(0, dao.getUploadedLegacyTreeImageCount())
-            assertEquals(0, dao.getNonUploadedLegacyTreeCaptureImageCount())
+            assertEquals(0, dao.getUploadedTreeCaptureCountFlow().first())
+            assertEquals(0, dao.getNonUploadedTreeCaptureCountFlow().first())
         }
 
     @Test
-    fun `getNonUploadedLegacyTreeCaptureImageCountFlow emits again when a capture is added`() =
+    fun `getNonUploadedTreeCaptureCountFlow emits again when a capture is added`() =
         runTest {
             val checkInId = insertCheckIn()
 
             val (before, after) =
-                dao.getNonUploadedLegacyTreeCaptureImageCountFlow().valuesBeforeAndAfter {
-                    dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = null))
+                dao.getNonUploadedTreeCaptureCountFlow().valuesBeforeAndAfter {
+                    dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, uploaded = false))
                 }
 
             assertEquals(0, before)
@@ -162,13 +162,13 @@ class TreeDaoLegacyCaptureTest : InMemoryDatabaseTest() {
         }
 
     @Test
-    fun `getUploadedLegacyTreeImageCountFlow emits again when a capture gets a photo url`() =
+    fun `getUploadedTreeCaptureCountFlow emits again when a capture is marked uploaded`() =
         runTest {
             val checkInId = insertCheckIn()
-            val id = dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, photoUrl = null))
-            val uploaded = DbFixtures.treeCapture(checkInId, photoUrl = "https://photo").apply { this.id = id }
+            val id = dao.insertTreeCapture(DbFixtures.treeCapture(checkInId, uploaded = false))
+            val uploaded = DbFixtures.treeCapture(checkInId, uploaded = true).apply { this.id = id }
 
-            val (before, after) = dao.getUploadedLegacyTreeImageCountFlow().valuesBeforeAndAfter { dao.updateTreeCapture(uploaded) }
+            val (before, after) = dao.getUploadedTreeCaptureCountFlow().valuesBeforeAndAfter { dao.updateTreeCapture(uploaded) }
 
             assertEquals(0, before)
             assertEquals(1, after)

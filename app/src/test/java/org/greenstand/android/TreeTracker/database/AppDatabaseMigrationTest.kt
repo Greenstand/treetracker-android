@@ -112,7 +112,6 @@ class AppDatabaseMigrationTest {
 
                 assertEquals(listOf("planter@example.com"), database.planterDao().getAllPlanterInfoList().map { it.identifier })
                 assertEquals(1, treeDao.getUploadedTreeCaptureCount())
-                assertEquals(1, treeDao.getUploadedLegacyTreeImageCount())
                 assertEquals(listOf("height" to "4"), treeDao.getTreeAttributeByTreeCaptureId(1L).map { it.key to it.value })
                 val legacyLocations =
                     database.openHelper.readableDatabase
