@@ -41,7 +41,8 @@ import java.util.UUID
 class ObjectStorageClient private constructor(
     applicationContext: Context,
 ) {
-    private var s3Client: AmazonS3? = null
+    // Not private so debug builds can swap in FakeObjectStorage for e2e tests.
+    internal var s3Client: AmazonS3? = null
 
     init {
 

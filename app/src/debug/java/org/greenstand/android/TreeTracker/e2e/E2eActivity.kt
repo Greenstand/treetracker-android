@@ -15,6 +15,7 @@
  */
 package org.greenstand.android.TreeTracker.e2e
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,10 +28,14 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenstand.android.TreeTracker.BuildConfig
+import org.greenstand.android.TreeTracker.api.ObjectStorageClient
 import org.greenstand.android.TreeTracker.appfunctions.AgentAccountCreator
+import org.greenstand.android.TreeTracker.appfunctions.AgentInput
 import org.greenstand.android.TreeTracker.appfunctions.AgentTreeCapturer
 import org.greenstand.android.TreeTracker.models.DeviceConfigUpdater
 import org.greenstand.android.TreeTracker.models.DeviceOrientation
+import org.greenstand.android.TreeTracker.models.FeatureFlags
 import org.greenstand.android.TreeTracker.models.SessionTracker
 import org.greenstand.android.TreeTracker.models.StepCounter
 import org.greenstand.android.TreeTracker.models.TreeTrackerViewModelFactory
@@ -67,8 +72,7 @@ class E2eActivity : AppCompatActivity() {
                     withContext(Dispatchers.IO) {
                         AgentAccountCreator(get(), get())
                             .createAccount("Ada", "Admin", "5551230001", null)
-                        AgentTreeCapturer(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
-                            .captureTrees(2, "5551230001", -3.5, 37.3, "E2E dev tools")
+                        treeCapturer().captureTrees(2, "5551230001", -3.5, 37.3, "E2E dev tools")
                         File(filesDir, SETUP_RESULT).writeText("ready")
                     }
                     finish()
@@ -79,6 +83,17 @@ class E2eActivity : AppCompatActivity() {
                     get<OrgRepo>().ensureInitialized()
                     get<DeviceConfigUpdater>().saveLatestConfig()
                     checkNotNull(get<UserRepo>().getPowerUser()) { "Run e2e/setup-device.sh first" }
+                    // ?trees=N adds N trees. Done before the screen renders, so a flow waits for the screen.
+                    testParameter(uri, "trees")?.let { seedTrees(it.toInt()) }
+                }
+                // ?storage=ok|slow replaces S3 with FakeObjectStorage (?delayMs= sets the slow delay).
+                testParameter(uri, "storage")?.let {
+                    FakeObjectStorage.install(ObjectStorageClient.instance(), it, uri.getQueryParameter("delayMs")?.toLong())
+                }
+                // ?syncChecks=release runs the release-only checks, such as "Nothing to Sync".
+                testParameter(uri, "syncChecks")?.let {
+                    require(it == "release") { "Unknown syncChecks '$it', use release" }
+                    FeatureFlags.releaseSyncChecks = true
                 }
                 val routes =
                     when (uri.host) {
@@ -102,6 +117,31 @@ class E2eActivity : AppCompatActivity() {
                 }
                 finish()
             }
+        }
+    }
+
+    // dev builds compile this activity too and are shipped to testers, where a link that turns
+    // uploads into no-ops would lose their trees. Only debug builds accept these parameters.
+    private fun testParameter(
+        uri: Uri,
+        name: String,
+    ): String? {
+        val value = uri.getQueryParameter(name) ?: return null
+        if (BuildConfig.BUILD_TYPE != "debug") {
+            Timber.w("Ignoring treetracker-e2e parameter '$name' outside debug builds")
+            return null
+        }
+        return value
+    }
+
+    private fun treeCapturer() = AgentTreeCapturer(get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+
+    private suspend fun seedTrees(count: Int) {
+        var remaining = count
+        while (remaining > 0) {
+            val batch = minOf(remaining, AgentInput.MAX_TREES)
+            treeCapturer().captureTrees(batch, "5551230001", -3.5, 37.3, "E2E sync")
+            remaining -= batch
         }
     }
 

@@ -233,6 +233,20 @@ class DashboardViewModelSyncTest {
     }
 
     @Test
+    fun `Sync in debug builds with release sync checks shows nothing to sync`() {
+        every { FeatureFlags.DEBUG_ENABLED } returns true
+        every { FeatureFlags.releaseSyncChecks } returns true
+        nonUploadedTrees.value = 0
+        every { dao.getNonUploadedLegacyTreeCaptureImageCountFlow() } returns flowOf(0)
+        val vm = createViewModel()
+
+        vm.handleAction(DashboardAction.Sync)
+
+        assertEquals(listOf<TextRef>(TextRef.Res(R.string.nothing_to_sync)), vm.snackbarMessages())
+        verify(exactly = 0) { workManager.enqueueUniqueWork(any(), any(), any<OneTimeWorkRequest>()) }
+    }
+
+    @Test
     fun `Sync while a sync is running cancels the work and reports the stop`() {
         val vm = createViewModel()
         postWorkState(WorkInfo.State.RUNNING)

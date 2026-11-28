@@ -117,6 +117,7 @@ fun Root(
                     backgroundColor = AppColors.Green,
                 ) {
                     Text(
+                        modifier = Modifier.testTag(TestTags.SNACKBAR_MESSAGE),
                         text = data.message,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,

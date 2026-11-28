@@ -86,11 +86,11 @@ Run against a test backend or fake; assertions on dashboard counters and snackba
 
 | ID | Flow | Steps | Why | Covered |
 |---|---|---|---|---|
-| D1 | Sync happy path | Capture 2 trees → online → tap sync → "sync started" → counts move from to-sync to synced | Data actually leaving the device is the product | No |
-| D2 | Nothing to sync | Release-like build, 0 trees → tap sync → "nothing to sync" | Snackbar branch (skipped in debug builds, so needs a flag or beta build) | No |
-| D3 | Stop sync | Start sync with many trees (`captureTrees` 50) → tap again → stops, partial counts kept | Cancel path | No |
-| D4 | Offline sync | Airplane mode → sync → failed/blocked message, trees still pending → go online → sync succeeds | Field reality: poor connectivity | No |
-| D5 | Sync reminder | ≥2000 unsynced trees → tap capture → reminder dialog → confirm → user select | Dialog gate before capture | No |
+| D1 | Sync happy path | Capture 2 trees → online → tap sync → "sync started" → counts move from to-sync to synced | Data actually leaving the device is the product | Yes (`sync-happy-path.yaml`) |
+| D2 | Nothing to sync | Release-like build, 0 trees → tap sync → "nothing to sync" | Snackbar branch (skipped in debug builds, so needs a flag or beta build) | Yes (`sync-nothing-to-sync.yaml`) |
+| D3 | Stop sync | Start sync with many trees (`captureTrees` 50) → tap again → stops, partial counts kept | Cancel path | Yes (`sync-stop.yaml`, with 122 trees: trees upload in bundles of 50, so 50 can't stop part-way) |
+| D4 | Offline sync | Airplane mode → sync → failed/blocked message, trees still pending → go online → sync succeeds | Field reality: poor connectivity | Yes (`sync-offline-retry.yaml`; "online" is `FakeObjectStorage`, since CI has no network) |
+| D5 | Sync reminder | ≥2000 unsynced trees → tap capture → reminder dialog → confirm → user select | Dialog gate before capture | Yes (`sync-reminder-dialog.yaml`) |
 
 ### E. Returning user and settings (P1)
 
